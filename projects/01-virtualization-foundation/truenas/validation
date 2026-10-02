@@ -1,1 +1,17 @@
+Verify that hardware-assisted virtualization is available to the host operating system.
+### Commands
 
+```bash
+lscpu | grep -i virtualization
+egrep -c '(vmx|svm)' /proc/cpuinfo
+```
+
+### Results
+
+```text
+Virtualization: VT-x
+8
+```
+### Conclusion
+
+**PASS**
