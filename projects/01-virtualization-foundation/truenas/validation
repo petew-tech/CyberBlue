@@ -1,4 +1,11 @@
+# Cyber Blue-Virtualization Validation
+
+## Hardware validation
+
+### Test
+
 Verify that hardware-assisted virtualization is available to the host operating system.
+
 ### Commands
 
 ```bash
