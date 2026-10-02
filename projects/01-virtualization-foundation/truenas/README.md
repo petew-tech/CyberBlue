@@ -21,8 +21,3 @@ Build, validate, and recover one Ubuntu VM using TrueNAS-managed virtualization.
 - Snapshot recovery: PASS
 - NAS performance check: PASS
 
-## Evidence
-- [Build notes](build-notes.md)
-- [Validation](validation.md)
-- [VM settings](screenshots/01-vm-settings.png)
-- [Recovery result](screenshots/05-recovery-pass.png)
