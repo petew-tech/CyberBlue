@@ -39,3 +39,32 @@ The lab demonstrates how virtual machines connect through virtual network interf
   - Connected to `cyberblue-isolated`
 
 > **Implementation note:** The `cyberblue-lab` and `cyberblue-isolated` libvirt network definitions are persistent. The additional CyberBlue VM NICs used during this lab were attached with `virsh --live` and are therefore temporary across VM restarts.
+> 
+## Architecture Diagram
+
+```text
+                         Home / Management LAN
+                              192.168.1.0/24
+                                     |
+                              TrueNAS SCALE
+                             192.168.1.90
+                                     |
+                 +-------------------+-------------------+
+                 |                                       |
+          cyberblue-lab                         cyberblue-isolated
+          10.10.30.0/24                           10.10.40.0/24
+          Gateway: 10.10.30.1                     Gateway: 10.10.40.1
+          Bridge: virbr30                         Bridge: virbr40
+          NAT forwarding                          No forwarding
+                 |                                       |
+                 |                                       |
+        Ubuntu Server 26.04.1                    Linux Mint 22.3
+           10.10.30.158                            10.10.40.183
+```
+
+The lab uses two separate virtual security zones. `cyberblue-lab` provides a NAT-enabled network for CyberBlue systems, while `cyberblue-isolated` provides a network with no forwarding configured.
+
+During validation, systems attached to the same CyberBlue network successfully communicated with each other. Traffic explicitly sourced from the isolated `10.10.40.0/24` network toward the `10.10.30.0/24` lab network did not receive a response.
+
+Both virtual machines retained their original management/LAN interfaces during testing so the lab networks could be modified and troubleshot without disrupting normal administrative access.
+
