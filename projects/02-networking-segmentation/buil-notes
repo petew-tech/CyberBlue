@@ -215,6 +215,69 @@ Both CyberBlue network definitions are persistent but have autostart disabled.
 
 The additional CyberBlue guest NICs are live-only and must be recreated following a VM restart.
 
+## Kali BlueSOC Network Integration and Troubleshooting
+
+Kali Linux (`BlueSOC`) required additional troubleshooting when adding a second interface to the `cyberblue-lab` network.
+
+### Initial Issue
+
+Kali originally used:
+
+- `eth0` — `192.168.1.91/24`
+- NetworkManager connection — `Wired connection 1`
+- Default gateway — `192.168.1.1`
+
+A live native libvirt NIC was attached to `cyberblue-lab`. During initial testing, activating the additional interface resulted in loss of Kali's management connectivity. Inspection from the local Kali TTY showed that `eth0` had become disconnected in NetworkManager.
+
+The original management connection was restored with:
+
+`sudo nmcli connection up "Wired connection 1"`
+
+This restored `192.168.1.91/24` and the default route through `192.168.1.1`.
+
+### Safer Configuration
+
+Before retrying the CyberBlue attachment, a dedicated NetworkManager profile was created for the second interface:
+
+`cyberblue-lab`
+
+The profile was bound to `eth1`, configured for DHCP, and set with:
+
+`ipv4.never-default yes`
+
+This ensured the CyberBlue interface would not install a competing default route.
+
+The native libvirt NIC was then attached live to the `cyberblue-lab` network.
+
+### Final Result
+
+Kali automatically configured:
+
+- `eth0` — `192.168.1.91/24`
+- `eth1` — `10.10.30.127/24`
+
+Routing validation showed:
+
+- Default route remained through `eth0`
+- `10.10.30.0/24` was directly connected through `eth1`
+
+Kali successfully reached:
+
+- `10.10.30.1` — CyberBlue gateway
+- `10.10.30.158` — Ubuntu CyberBlue host
+
+Both tests returned 4/4 replies with 0% packet loss.
+
+### Troubleshooting Lesson
+
+The earlier management-connectivity failure was observed as the original `eth0` NetworkManager connection becoming disconnected. A competing default route was not established as the confirmed root cause.
+
+For the successful configuration, the second interface was given its own NetworkManager profile with `ipv4.never-default yes`, preserving the intended management/default-route design.
+
+Duplicate live libvirt NICs encountered during troubleshooting were also removed before final validation.
+
+No persistent TrueNAS-owned VM XML was manually modified.
+
 ## Safety Decisions
 
 Several design choices were intentional:
