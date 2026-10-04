@@ -52,6 +52,43 @@ CyberBlue NIC
   Guest address: 10.10.40.183/24
 ```
 
+## Kali BlueSOC Validation
+
+Kali Linux (`BlueSOC`) was successfully integrated into the `cyberblue-lab` network while retaining its management network connection.
+
+### Addressing and Routing
+
+- Management interface: `eth0` — `192.168.1.91/24`
+- CyberBlue interface: `eth1` — `10.10.30.127/24`
+- Default gateway: `192.168.1.1` through `eth0`
+- CyberBlue route: `10.10.30.0/24` through `eth1`
+- NetworkManager profile: `cyberblue-lab`
+- `ipv4.never-default`: `yes`
+
+### Connectivity Tests
+
+| Test | Result |
+|---|---|
+| Kali → `10.10.30.1` CyberBlue gateway | **PASS — 4/4 replies, 0% loss** |
+| Kali → Ubuntu `10.10.30.158` | **PASS — 4/4 replies, 0% loss** |
+| Management/default route remains on `eth0` | **PASS** |
+| Libvirt DHCP lease for Kali `10.10.30.127` | **PASS** |
+
+### DHCP Confirmation
+
+Libvirt DHCP reported:
+
+- `cbunbuntu01` — `10.10.30.158/24`
+- `BlueSOC` — `10.10.30.127/24`
+
+This confirms that both Ubuntu and Kali received addresses from the `cyberblue-lab` DHCP service and can communicate across the dedicated lab segment.
+
+### Persistence Note
+
+The Kali NetworkManager profile persists inside the guest, but the native libvirt `cyberblue-lab` NIC attachment is live-only and does not survive a VM restart.
+
+**Kali CyberBlue integration status: PASS**
+
 ## Test Results
 
 | Test | Expected Result | Actual Result | Status |
