@@ -139,3 +139,122 @@ This troubleshooting exercise demonstrated the difference between:
 It also reinforced the importance of validating networking at multiple layers rather than assuming that an interface being visible inside a VM means the complete Layer 2 and Layer 3 path is operational.
 
 > **Persistence note:** The working CyberBlue VM interfaces were attached using `--live`. This avoided modifying the persistent VM XML managed by TrueNAS, but the additional interfaces must be recreated after a VM restart.
+
+## Segmentation Validation
+
+After validating the NAT-enabled `cyberblue-lab` network, a second virtual network was created to demonstrate segmentation.
+
+### Isolated Network
+
+The isolated network was configured as:
+
+| Setting | Value |
+|---|---|
+| Network | `cyberblue-isolated` |
+| Subnet | `10.10.40.0/24` |
+| Gateway | `10.10.40.1` |
+| Bridge | `virbr40` |
+| DHCP Range | `10.10.40.100-10.10.40.200` |
+| Forwarding | None |
+
+Unlike `cyberblue-lab`, the isolated network definition contains no `<forward>` element.
+
+Linux Mint was moved onto the isolated network and received an address in the `10.10.40.0/24` subnet. The guest successfully reached its local virtual gateway:
+
+```text
+Mint 10.10.40.x  --->  10.10.40.1
+                       SUCCESS
+```
+
+This confirmed that the guest NIC, virtual bridge, DHCP configuration, and local network path were operational.
+
+### Denied Cross-Zone Path
+
+Ubuntu remained connected to `cyberblue-lab` at:
+
+```text
+10.10.30.158/24
+```
+
+A test from Mint explicitly sourced from its isolated-network address toward Ubuntu's CyberBlue address received no replies.
+
+```text
+cyberblue-isolated                    cyberblue-lab
+
+Mint                                  Ubuntu
+10.10.40.x       --- X --->           10.10.30.158
+```
+
+The failed traffic test was evaluated together with the virtual-network definitions. `cyberblue-lab` was configured with NAT forwarding, while `cyberblue-isolated` had no forwarding configuration.
+
+This distinction is important because a failed ping by itself does not prove network isolation. Routing, source-interface selection, host firewalls, and other factors can also cause ICMP failure.
+
+### Routing Validation
+
+The TrueNAS host contained connected routes for both CyberBlue networks:
+
+```text
+10.10.30.0/24 dev virbr30 src 10.10.30.1
+10.10.40.0/24 dev virbr40 src 10.10.40.1
+```
+
+The host's normal default route remained on the physical management network through `enp4s0`.
+
+## Deliberate Network Failure and Recovery
+
+A controlled failure was introduced to demonstrate troubleshooting and recovery.
+
+The live `cyberblue-isolated` interface was deliberately detached from the Linux Mint VM. After removal, the guest no longer displayed its isolated-network interface or `10.10.40.x` address.
+
+Inspection from TrueNAS confirmed that the VM no longer had a libvirt `network` interface connected to `cyberblue-isolated`.
+
+### Root Cause
+
+The failure was caused by removal of the VM's virtual NIC connecting Linux Mint to the isolated CyberBlue network.
+
+### Recovery
+
+The interface was reattached using a native libvirt network connection to:
+
+```text
+cyberblue-isolated
+```
+
+During recovery, two isolated interfaces were temporarily present. The duplicate interface was identified by its MAC address and removed.
+
+The final Mint configuration contained one isolated interface:
+
+```text
+ens8  UP  10.10.40.183/24
+```
+
+TrueNAS showed the corresponding attachment as:
+
+```text
+vnet4  network  cyberblue-isolated  virtio
+```
+
+Connectivity to the isolated gateway was then retested:
+
+```text
+10.10.40.183  --->  10.10.40.1
+                  SUCCESS
+```
+
+The successful gateway test confirmed restoration of the intended network path.
+
+## Lessons Learned
+
+This lab demonstrated that successful network troubleshooting requires validating each layer of the path rather than relying on a single connectivity test.
+
+Key lessons included:
+
+- Distinguishing physical, macvtap, bridge, and native libvirt network interfaces.
+- Verifying DHCP leases rather than assuming an interface received an address.
+- Checking guest addressing and routing before interpreting connectivity failures.
+- Comparing virtual-network definitions when validating segmentation.
+- Using source-specific testing when working with multihomed systems.
+- Introducing a controlled fault, identifying the root cause, restoring the configuration, and validating recovery.
+- Documenting implementation limitations instead of hiding them.
+
+Because the lab VMs retained their original management-LAN interfaces, `cyberblue-isolated` should be understood as an isolated **virtual network segment**, not as complete isolation of the entire VM from the home/management LAN.
