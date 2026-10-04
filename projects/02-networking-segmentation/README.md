@@ -199,6 +199,47 @@ The TrueNAS host contained connected routes for both CyberBlue networks:
 ```
 
 The host's normal default route remained on the physical management network through `enp4s0`.
+## Kali BlueSOC Integration
+
+Kali Linux (`BlueSOC`) was added to the `cyberblue-lab` network while retaining its existing management connection.
+
+### Final Kali Network Configuration
+
+| Interface | Network | Address | Purpose |
+|---|---|---|---|
+| `eth0` | Management LAN | `192.168.1.91/24` | Management and default route |
+| `eth1` | `cyberblue-lab` | `10.10.30.127/24` | CyberBlue lab traffic |
+
+The default route remains on the management interface:
+
+`default via 192.168.1.1 dev eth0`
+
+The CyberBlue subnet is directly connected through the lab interface:
+
+`10.10.30.0/24 dev eth1`
+
+A dedicated NetworkManager profile named `cyberblue-lab` was configured with `ipv4.never-default yes`. This prevents the CyberBlue interface from becoming Kali's default route.
+
+### Connectivity Validation
+
+Kali successfully communicated with:
+
+- CyberBlue gateway `10.10.30.1` — **PASS**, 4/4 replies, 0% packet loss
+- Ubuntu `cbunbuntu01` at `10.10.30.158` — **PASS**, 4/4 replies, 0% packet loss
+
+Libvirt DHCP also confirmed the following CyberBlue leases:
+
+- Ubuntu `cbunbuntu01` — `10.10.30.158/24`
+- Kali `BlueSOC` — `10.10.30.127/24`
+
+### Persistence Limitation
+
+The Kali NetworkManager `cyberblue-lab` profile persists inside the guest. However, the `cyberblue-lab` virtual NIC is currently attached to the VM using a live libvirt network attachment.
+
+Because TrueNAS SCALE 24.10.1 does not represent this native libvirt network attachment through its VM middleware configuration, the lab NIC is not persistent across a VM restart. The NIC must be reattached before the persistent NetworkManager profile can configure it again.
+
+Direct modification of the TrueNAS-owned persistent VM XML was intentionally avoided.
+
 
 ## Deliberate Network Failure and Recovery
 
