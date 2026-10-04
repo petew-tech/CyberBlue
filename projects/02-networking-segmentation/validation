@@ -1,1 +1,140 @@
+# Module 03 — Network Validation
 
+## Validation Objective
+
+Validate the CyberBlue virtual networking environment by confirming:
+
+- Virtual network creation and addressing
+- DHCP operation
+- VM-to-VM communication
+- Network segmentation
+- Routing behavior
+- Controlled network failure
+- Troubleshooting and successful recovery
+
+## Final Network State
+
+| Network | Bridge | Gateway | State | Forwarding |
+|---|---|---|---|---|
+| `cyberblue-lab` | `virbr30` | `10.10.30.1/24` | Active | NAT |
+| `cyberblue-isolated` | `virbr40` | `10.10.40.1/24` | Active | None |
+| `default` | `virbr0` | `192.168.122.1/24` | Inactive | NAT |
+
+Both CyberBlue network definitions were persistent. Autostart was disabled during the lab.
+
+## Final VM Network Placement
+
+### Ubuntu Server
+
+```text
+Management NIC
+  Source: enp4s0
+  Address: 192.168.1.243/24
+
+CyberBlue NIC
+  Interface: vnet2
+  Type: network
+  Source: cyberblue-lab
+  Guest address: 10.10.30.158/24
+```
+
+### Linux Mint
+
+```text
+Management NIC
+  Source: enp4s0
+  Address: 192.168.1.92/24
+
+CyberBlue NIC
+  Interface: vnet4
+  Type: network
+  Source: cyberblue-isolated
+  Guest address: 10.10.40.183/24
+```
+
+## Test Results
+
+| Test | Expected Result | Actual Result | Status |
+|---|---|---|---|
+| `virbr30` gateway available | `10.10.30.1` reachable | Reachable | PASS |
+| Mint DHCP on cyberblue-lab | Receive `10.10.30.x` | `10.10.30.195/24` | PASS |
+| Ubuntu DHCP on cyberblue-lab | Receive `10.10.30.x` | `10.10.30.158/24` | PASS |
+| Mint → Ubuntu while both on lab network | ICMP succeeds | 4/4 replies | PASS |
+| Ubuntu → Mint while both on lab network | ICMP succeeds | 4/4 replies | PASS |
+| Mint isolated gateway | `10.10.40.1` reachable | 4/4 replies | PASS |
+| Isolated-source → Ubuntu lab address | No usable cross-zone path | 0/4 replies | PASS |
+| Deliberately remove Mint isolated NIC | Isolated interface disappears | Interface removed | PASS |
+| Restore Mint isolated NIC | Address/connectivity restored | `10.10.40.183/24`; gateway reachable | PASS |
+
+## Routing Evidence
+
+TrueNAS contained connected routes for both CyberBlue networks:
+
+```text
+10.10.30.0/24 dev virbr30 src 10.10.30.1
+10.10.40.0/24 dev virbr40 src 10.10.40.1
+```
+
+The TrueNAS management/default route remained on `enp4s0`.
+
+## Segmentation Evidence
+
+`cyberblue-lab` was configured with:
+
+```xml
+<forward mode='nat'/>
+```
+
+`cyberblue-isolated` contained no `<forward>` element.
+
+A connectivity failure alone was not treated as proof of segmentation. The failed cross-zone test was evaluated together with source addressing, routing information, and the libvirt network definitions.
+
+## Failure and Recovery Validation
+
+A controlled fault was introduced by removing Linux Mint's live `cyberblue-isolated` NIC.
+
+The guest lost its isolated-network interface and address. TrueNAS-side inspection confirmed that the corresponding libvirt network interface was absent.
+
+The interface was reattached and the final configuration was verified as:
+
+```text
+vnet4   network   cyberblue-isolated   virtio
+```
+
+Linux Mint recovered:
+
+```text
+ens8   UP   10.10.40.183/24
+```
+
+A final ping to `10.10.40.1` returned 4 of 4 replies.
+
+**Recovery status: PASS**
+
+## Implementation Limitation
+
+The `cyberblue-lab` and `cyberblue-isolated` network definitions are persistent, but the additional guest interfaces used for the CyberBlue networks were attached using `virsh --live`.
+
+Therefore, these additional VM interfaces do **not** survive a VM restart in the current implementation.
+
+This approach was intentionally used to avoid directly modifying persistent VM XML managed by TrueNAS SCALE.
+
+The VMs also retained their original management-LAN interfaces. Therefore, the isolated network demonstrates segmentation of the CyberBlue virtual network path rather than complete isolation of the VM from every network.
+
+## Validation Result
+
+**MODULE 03 NETWORK VALIDATION: PASS**
+
+The lab successfully demonstrated:
+
+- Two distinct virtual network zones
+- Separate IP addressing
+- DHCP address assignment
+- NAT and non-forwarding network configurations
+- Allowed same-zone communication
+- A prohibited/unavailable cross-zone path
+- Routing inspection
+- Controlled fault injection
+- Root-cause identification
+- Network restoration
+- Post-recovery validation
