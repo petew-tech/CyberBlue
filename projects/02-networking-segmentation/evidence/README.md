@@ -53,3 +53,19 @@ The cross-zone test was evaluated together with:
 - The absence of forwarding on `cyberblue-isolated`
 
 This provides stronger evidence of the intended network design than relying on ICMP failure alone.
+
+### 15 — Kali CyberBlue Network Validation
+
+**File:** `15-kali-cyberblue-network-validation.png`
+
+Validates the final Kali Linux (`BlueSOC`) network configuration after joining the CyberBlue lab segment.
+
+Evidence shown:
+
+- `eth0` — `192.168.1.91/24` management network
+- `eth1` — `10.10.30.127/24` CyberBlue lab network
+- Default route remains `192.168.1.1` through `eth0`
+- `10.10.30.0/24` is directly routed through `eth1`
+- Confirms the CyberBlue interface does not replace the management/default route
+
+Kali also successfully reached the CyberBlue gateway (`10.10.30.1`) and Ubuntu (`10.10.30.158`) with 0% packet loss.
