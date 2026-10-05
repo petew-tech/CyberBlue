@@ -177,6 +177,14 @@ Sequence:
 
 Result: PASS
 
+### Windows
+
+Sequence:
+
+1. Sysmon confirmed Running / Automatic.
+2. Normal Sysmon configuration backed up.
+3. File Create telemetry deliberately suppressed.
+...
 ---
 
 ## 6. Controlled Timeline
