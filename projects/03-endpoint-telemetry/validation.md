@@ -20,7 +20,7 @@ PASS — controlled endpoint telemetry exercises completed on Windows 11 and Ubu
 
 ### Service Installation
 - Controlled service `CyberBlueTelemetryTest` was created.
-- Windows Security Event ID 4697 confirmed the service installation.
+- Windows Systems Event ID 7045 confirmed the service installation.
 - The test service was subsequently removed.
 - Result: PASS
 
@@ -177,14 +177,6 @@ Sequence:
 
 Result: PASS
 
-### Windows
-
-Sequence:
-
-1. Sysmon confirmed Running / Automatic.
-2. Normal Sysmon configuration backed up.
-3. File Create telemetry deliberately suppressed.
-...
 ---
 
 ## 6. Controlled Timeline
