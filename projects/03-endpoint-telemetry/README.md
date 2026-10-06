@@ -1,5 +1,6 @@
 
 # Project 03 — Endpoint Telemetry & Logging
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/d5c512f1-6235-4e86-95a3-36652ef3f550" />
 
 ## Overview
 
