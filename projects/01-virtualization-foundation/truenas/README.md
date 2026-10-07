@@ -33,7 +33,7 @@ interface and remotely manage the Ubuntu Server VM using SSH.
 - TrueNAS version:ElectricEel-24.10.1
 - Host CPU / installed RAM:i5-3330 / 32G
 - Guest OS and version: Ubuntu Server 26.04.1 LTS (Resolute Raccoon)
-- Guest allocation: 2 vCPUs / 4 GiB RAM / 50 GiB disk
+- Guest allocation: 2 virtual CPU cores / 4 GiB RAM / 60 GiB VirtIO disk
 - Network attachment: VirtIO NIC attached through TrueNAS `enp4s0`
 - Guest interface: `ens3`
 - Guest IPv4 address: `192.168.1.243/24`
