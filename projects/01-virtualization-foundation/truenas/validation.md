@@ -185,6 +185,53 @@ The VM successfully returned to the network and accepted a new SSH connection fr
 
 **PASS — the Ubuntu Server VM completed a controlled restart, returned to network service, restored SSH administration, and reported no failed systemd units.**
 
+## Snapshot and Recovery Validation
+
+### Test
+
+Verify that a ZFS snapshot exists for the Ubuntu Server foundation VM and confirm that the snapshot has previously been used successfully for recovery.
+
+### Snapshot Verification
+
+The following ZFS snapshot was verified:
+
+```text
+Pool1/VM/cbunbubtu01-7x1wpm@cb-foundation-clean
+```
+
+Snapshot properties confirmed that the snapshot was created on September 30, 2026.
+
+The snapshot reported:
+
+```text
+Used: 1.82 GiB
+Referenced: 4.29 GiB
+```
+
+### Recovery Verification
+
+ZFS pool history was reviewed to verify both snapshot creation and rollback activity.
+
+The history confirmed that the snapshot was created:
+
+```text
+2026-09-30 13:53:52
+zfs snapshot Pool1/VM/cbunbubtu01-7x1wpm@cb-foundation-clean
+```
+
+The history also confirmed that the snapshot was subsequently used for a rollback:
+
+```text
+2026-09-30 14:03:11
+zfs rollback -f Pool1/VM/cbunbubtu01-7x1wpm@cb-foundation-clean
+```
+
+This provided historical evidence that the VM disk snapshot had been successfully used as a recovery point.
+
+### Result
+
+**PASS — the Ubuntu Server VM snapshot was verified and ZFS history confirmed a successful rollback operation.**
+
 ## Storage Health and Recovery Validation
 
 ### Test
