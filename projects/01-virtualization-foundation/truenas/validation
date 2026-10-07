@@ -22,3 +22,74 @@ Virtualization: VT-x
 ### Conclusion
 
 **PASS**
+## Storage Health and Recovery Validation
+
+### Test
+
+Validate the health of the TrueNAS `Pool1` RAIDZ1 storage pool and
+investigate a degraded pool member.
+
+### Initial Finding
+
+During validation, `Pool1` reported a `DEGRADED` state because one RAIDZ1
+member had been marked with `too many errors`.
+
+ZFS reported:
+
+- READ errors: 0
+- WRITE errors: 0
+- CHECKSUM errors: 0
+- Known data errors: None
+- Previous resilver: 22.5 GiB completed with 0 errors
+
+### Investigation
+
+The affected pool member was identified using its persistent PARTUUID
+rather than relying on `/dev/sdX` device names.
+
+SMART diagnostics showed:
+
+- SMART short self-test completed without error
+- No reallocated sectors
+- No pending sectors
+- No offline uncorrectable sectors
+- Historical UDMA CRC error count: 289487
+
+The UDMA CRC counter was monitored over time and did not increase.
+
+Kernel logs showed the affected SATA link negotiating normally at
+6.0 Gbps without current I/O errors, failed commands, or link resets.
+
+### Remediation
+
+The TrueNAS host was shut down cleanly and the SATA connection for the
+affected drive was serviced. After restart, the disk was identified
+again using its persistent PARTUUID because Linux `/dev/sdX` assignments
+had changed.
+
+The historical UDMA CRC counter remained unchanged after the hardware
+maintenance.
+
+After validating the device and connection, the stored ZFS fault state
+was cleared.
+
+### Final Validation
+
+`Pool1` returned to:
+
+- Pool state: ONLINE
+- RAIDZ1 state: ONLINE
+- All four members: ONLINE
+- READ errors: 0
+- WRITE errors: 0
+- CHECKSUM errors: 0
+- Known data errors: None
+
+The UDMA CRC counter remained unchanged after recovery.
+
+### Result
+
+**PASS — storage pool returned to ONLINE with no known data errors.**
+
+The historical CRC count will continue to be monitored, and drive
+temperature/airflow will remain part of routine health checks.
