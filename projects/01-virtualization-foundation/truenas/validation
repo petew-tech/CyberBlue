@@ -63,12 +63,15 @@ Kernel logs showed the affected SATA link negotiating normally at
 ### Remediation
 
 The TrueNAS host was shut down cleanly and the SATA connection for the
-affected drive was serviced. After restart, the disk was identified
-again using its persistent PARTUUID because Linux `/dev/sdX` assignments
-had changed.
+affected drive was serviced.
 
-The historical UDMA CRC counter remained unchanged after the hardware
-maintenance.
+After restart, the affected disk changed Linux device names from
+`/dev/sdb` to `/dev/sdc`. The disk was correctly identified using its
+persistent PARTUUID rather than relying on the temporary `/dev/sdX`
+assignment.
+
+The historical UDMA CRC counter remained unchanged at `289487` after
+the hardware maintenance.
 
 After validating the device and connection, the stored ZFS fault state
 was cleared.
@@ -93,3 +96,73 @@ The UDMA CRC counter remained unchanged after recovery.
 
 The historical CRC count will continue to be monitored, and drive
 temperature/airflow will remain part of routine health checks.
+
+## NAS I/O Validation
+
+### Test
+
+Validate basic read/write operation of the TrueNAS `Pool1` storage after storage-path remediation and recovery.
+
+A temporary 1 GiB test file was created on the `Pool1/VM` dataset.
+
+### Write Test
+
+The following command was used to perform a 1 GiB sequential write test:
+
+```bash
+sudo dd if=/dev/zero of=/mnt/Pool1/VM/cyberblue-perf-test.bin bs=1M count=1024 conv=fdatasync status=progress
+```
+
+Result:
+
+```text
+1024+0 records in
+1024+0 records out
+1073741824 bytes (1.1 GB, 1.0 GiB) copied, 0.656506 s, 1.6 GB/s
+```
+
+**Write Test: PASS**
+
+### Read Test
+
+The temporary file was then read back using:
+
+```bash
+sudo dd if=/mnt/Pool1/VM/cyberblue-perf-test.bin of=/dev/null bs=1M status=progress
+```
+
+Result:
+
+```text
+1024+0 records in
+1024+0 records out
+1073741824 bytes (1.1 GB, 1.0 GiB) copied, 0.151447 s, 7.1 GB/s
+```
+
+**Read Test: PASS**
+
+> Note: The reported throughput values may be influenced by ZFS and system caching. They are not presented as sustained physical-disk benchmark results. The purpose of this test was to validate successful storage I/O and confirm pool stability.
+
+### Cleanup
+
+The temporary test file was removed after testing:
+
+```bash
+sudo rm /mnt/Pool1/VM/cyberblue-perf-test.bin
+```
+
+### Post-Test Pool Validation
+
+After the read/write test, `zpool status Pool1` confirmed:
+
+- Pool1: ONLINE
+- RAIDZ1: ONLINE
+- All four pool members: ONLINE
+- READ errors: 0
+- WRITE errors: 0
+- CHECKSUM errors: 0
+- Known data errors: None
+
+### Result
+
+**PASS — storage read/write operations completed successfully and Pool1 remained ONLINE with no ZFS errors.**
