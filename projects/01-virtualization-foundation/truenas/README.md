@@ -11,8 +11,8 @@ storage, and virtual networking resources required by the lab virtual
 machines.
 
 The foundation guest is Ubuntu Server 26.04.1 LTS. The VM is allocated
-2 vCPUs, 4 GiB of RAM, and a 50 GiB virtual disk stored on the TrueNAS
-Pool1 storage pool.
+2 virtual CPU cores, 4 GiB of RAM, and a 60 GiB VirtIO disk stored on
+the TrueNAS Pool1 storage pool.
 
 The Ubuntu VM uses a VirtIO network adapter connected through the
 TrueNAS physical interface `enp4s0`. Inside Ubuntu, the adapter appears
