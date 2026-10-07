@@ -1,4 +1,4 @@
-# Cyber Blue-Virtualization Validation
+# CyberBlue — TrueNAS Virtualization Validation
 
 ## Hardware validation
 
@@ -22,6 +22,7 @@ Virtualization: VT-x
 ### Conclusion
 
 **PASS**
+
 ## Storage Health and Recovery Validation
 
 ### Test
