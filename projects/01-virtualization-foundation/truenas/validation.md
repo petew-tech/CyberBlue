@@ -1,6 +1,6 @@
 # CyberBlue — TrueNAS Virtualization Validation
 
-## Hardware validation
+## Hardware Validation
 
 ### Test
 
