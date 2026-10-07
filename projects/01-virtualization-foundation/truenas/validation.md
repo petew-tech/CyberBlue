@@ -131,6 +131,60 @@ The Ubuntu Server shell was successfully reached and remote administration was c
 
 **PASS — routing, DNS resolution, external connectivity, SSH service availability, and remote administration were successfully validated.**
 
+## Shutdown and Restart Validation
+
+### Test
+
+Validate that the Ubuntu Server foundation VM can perform a controlled reboot, return to normal operation, and restore remote management access without failed system services.
+
+### Pre-Reboot Validation
+
+The current Linux boot ID was recorded before restarting the VM:
+
+```text
+0c0f8686-4bc3-4b2c-a4e2-528527c5f1f0
+```
+
+### Controlled Restart
+
+The Ubuntu Server VM was restarted using:
+
+```bash
+sudo reboot
+```
+
+The SSH session disconnected as expected while the guest restarted.
+
+### Post-Reboot Validation
+
+After the VM returned to service, SSH connectivity was successfully re-established.
+
+The new Linux boot ID was:
+
+```text
+5e1dd1bd-e9a9-4a46-bdaa-70f0da0c8463
+```
+
+The change in boot ID confirmed that a new boot cycle had occurred.
+
+System service health was checked with:
+
+```bash
+systemctl --failed
+```
+
+Result:
+
+```text
+0 loaded units listed
+```
+
+The VM successfully returned to the network and accepted a new SSH connection from the administrative workstation.
+
+### Result
+
+**PASS — the Ubuntu Server VM completed a controlled restart, returned to network service, restored SSH administration, and reported no failed systemd units.**
+
 ## Storage Health and Recovery Validation
 
 ### Test
