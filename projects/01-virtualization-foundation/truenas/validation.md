@@ -23,6 +23,114 @@ Virtualization: VT-x
 
 **PASS**
 
+## Network and SSH Validation
+
+### Test
+
+Validate network connectivity, DNS resolution, routing, and remote SSH administration of the Ubuntu Server foundation VM.
+
+### Guest Network Configuration
+
+The Ubuntu Server management interface was verified as:
+
+```text
+Interface: ens3
+IPv4 address: 192.168.1.243/24
+Default gateway: 192.168.1.1
+```
+
+The primary management network path was verified as:
+
+```text
+TrueNAS enp4s0
+    ↓
+QEMU TAP interface
+    ↓
+VirtIO virtual NIC
+    ↓
+Ubuntu ens3
+    ↓
+Lab LAN
+```
+
+### Routing Validation
+
+The guest routing path to an external address was verified with:
+
+```bash
+ip route get 8.8.8.8
+```
+
+The result confirmed that external traffic used:
+
+```text
+Gateway: 192.168.1.1
+Interface: ens3
+Source: 192.168.1.243
+```
+
+### DNS Validation
+
+DNS resolution was tested with:
+
+```bash
+getent hosts github.com
+```
+
+The hostname successfully resolved to an IP address.
+
+### External Connectivity
+
+External IP connectivity was tested with:
+
+```bash
+ping -c 4 8.8.8.8
+```
+
+Result:
+
+```text
+4 packets transmitted
+4 packets received
+0% packet loss
+```
+
+### SSH Service Validation
+
+The SSH service was verified with:
+
+```bash
+systemctl is-active ssh
+```
+
+Result:
+
+```text
+active
+```
+
+TCP port 22 was also verified as listening:
+
+```bash
+ss -tlnp | grep ':22'
+```
+
+The SSH daemon was listening on IPv4 and IPv6.
+
+### Remote Administration Test
+
+A successful SSH connection was established from the administrative Windows workstation to:
+
+```text
+cyberblue@192.168.1.243
+```
+
+The Ubuntu Server shell was successfully reached and remote administration was confirmed.
+
+### Result
+
+**PASS — routing, DNS resolution, external connectivity, SSH service availability, and remote administration were successfully validated.**
+
 ## Storage Health and Recovery Validation
 
 ### Test
