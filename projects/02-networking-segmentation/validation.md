@@ -164,7 +164,7 @@ The VMs also retained their original management-LAN interfaces. Therefore, the i
 
 ## Validation Result
 
-**MODULE 03 NETWORK VALIDATION: PASS**
+**HISTORICAL LIBVIRT NETWORK VALIDATION: PASS**
 
 The lab successfully demonstrated:
 
