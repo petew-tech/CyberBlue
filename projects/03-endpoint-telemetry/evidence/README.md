@@ -1,4 +1,4 @@
-# Module 04 — Evidence
+# Project 03 — Evidence
 
 This directory contains screenshots and supporting evidence collected during the endpoint telemetry validation.
 
@@ -7,7 +7,7 @@ This directory contains screenshots and supporting evidence collected during the
 | Evidence | Description | Result |
 |---|---|---|
 | 01 | Windows native process creation — Event ID 4688 | PASS |
-| 02 | Windows service installation — Event ID 4697 | PASS |
+| 02 | Windows service installation — System Event ID 7045 | PASS |
 | 03 | Windows file access — Event ID 4663 | PASS |
 | 04 | Linux sudo / administrative telemetry | PASS |
 | 05 | Linux native file visibility baseline | Baseline |
