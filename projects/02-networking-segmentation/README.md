@@ -20,11 +20,13 @@ The lab demonstrates how virtual machines connect through virtual network interf
 
 ## Network Architecture
 
-| Network | Subnet | Gateway | Bridge | Forwarding |
+| Network | Subnet | Gateway | Bridge / Interface | Purpose |
 |---|---|---|---|---|
-| Home / Management LAN | 192.168.1.0/24 | 192.168.1.1 | Physical LAN | External LAN |
-| cyberblue-lab | 10.10.30.0/24 | 10.10.30.1 | virbr30 | NAT |
-| cyberblue-isolated | 10.10.40.0/24 | 10.10.40.1 | virbr40 | None |
+| Home / Management LAN | `192.168.1.0/24` | `192.168.1.1` | `enp4s0` | Management access |
+| CyberBlue Security Lab | `10.10.30.0/24` | `10.10.30.1` | `br30` | Ubuntu and Kali |
+| CyberBlue Isolated Lab | `10.10.40.0/24` | `10.10.40.1` | `br40` | Linux Mint |
+
+**Security:** Routed IPv4 traffic between `br30` and `br40` is blocked by persistent TrueNAS firewall rules. All three Linux VMs retain separate management-network connections.
 
 ### Current Lab Placement
 
