@@ -19,7 +19,7 @@ This directory contains screenshots and supporting evidence collected during the
 | 11 | [Linux auditd telemetry restoration — successful chmod event](11-enhanced-linux-audit.PNG) | PASS |
 | 12 | [Controlled Windows Sysmon visibility gap — Event ID 11 absent](16-visibility-gap.PNG) | PASS |
 | 13 | [Windows Sysmon telemetry restoration — Event ID 11](17-windows-sysmon-telemetry-restored.PNG) | PASS |
-| 14 | Sysmon controlled timeline — documented in validation.md; original Event ID 11 timeline screenshot not yet verified | Evidence pending |
+| 14 | Sysmon historical timeline — Events 1 and 3 supported by screenshots 07 and 08; original October 5 Event ID 11 no longer retained in the current Sysmon log | Partial evidence |
 | 15 | [Final Windows Sysmon service status — Running / Automatic](18-windows-sysmon-final-service-status.PNG) | PASS |
 
 ## Evidence Handling
