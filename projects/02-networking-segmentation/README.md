@@ -288,7 +288,7 @@ Connectivity to the isolated gateway was then retested:
                   SUCCESS
 ```
 
-The successful gateway test confirmed restoration of the intended network path.
+During the original libvirt recovery test, successful connectivity to the isolated gateway confirmed that the intended network path had been restored.
 
 ## Lessons Learned
 
