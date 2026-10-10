@@ -87,7 +87,7 @@ This confirms that both Ubuntu and Kali received addresses from the `cyberblue-l
 
 ### Persistence Note
 
-The Kali NetworkManager profile persists inside the guest, but the native libvirt `cyberblue-lab` NIC attachment is live-only and does not survive a VM restart.
+During the initial libvirt implementation, the Kali NetworkManager profile persisted inside the guest, but the native libvirt `cyberblue-lab` NIC attachment was live-only and did not survive a VM restart. The current Kali lab NIC is configured through TrueNAS VM management and persists across VM restarts.
 
 **Kali CyberBlue integration status: PASS**
 
