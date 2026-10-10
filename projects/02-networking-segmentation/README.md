@@ -498,7 +498,5 @@ The rules were previously verified after a TrueNAS reboot.
 - Evaluate IPv6 separately if IPv6 forwarding is introduced.
 
 No Docker restart or firewall modification was required during this review.
-```bash
-sudo grub-editenv /boot/grub/grubenv list
-```
+
 
