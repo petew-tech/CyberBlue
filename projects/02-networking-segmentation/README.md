@@ -248,7 +248,7 @@ Because TrueNAS SCALE 24.10.1 does not represent this native libvirt network att
 Direct modification of the TrueNAS-owned persistent VM XML was intentionally avoided.
 
 
-## Deliberate Network Failure and Recovery
+## Historical Network Failure and Recovery — Initial Libvirt Tests
 
 A controlled failure was introduced to demonstrate troubleshooting and recovery.
 
