@@ -290,7 +290,7 @@ Connectivity to the isolated gateway was then retested:
 
 During the original libvirt recovery test, successful connectivity to the isolated gateway confirmed that the intended network path had been restored.
 
-## Lessons Learned
+## Lessons Learned — Initial Libvirt Networking Experiments
 
 This lab demonstrated that successful network troubleshooting requires validating each layer of the path rather than relying on a single connectivity test.
 
@@ -450,7 +450,7 @@ TrueNAS middleware and GRUB configuration now both select `24.10.1` for the next
 
 All other boot environments were preserved. No reboot was performed following the correction, so successful automatic boot remains to be validated during a future planned restart.
 
-## Lessons Learned — Initial Libvirt Networking Experiments
+## Lessons Learned — TrueNAS Boot Environment Recovery
 
 - Verify boot-environment selection after TrueNAS updates or unexpected version changes.
 - Use supported TrueNAS middleware commands instead of manually editing generated GRUB files.
