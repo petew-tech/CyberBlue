@@ -299,3 +299,92 @@ Key lessons included:
 - Documenting implementation limitations instead of hiding them.
 
 Because the lab VMs retained their original management-LAN interfaces, `cyberblue-isolated` should be understood as an isolated **virtual network segment**, not as complete isolation of the entire VM from the home/management LAN.
+
+## Network Segmentation — Implementation and Validation (October 10, 2026)
+
+### Lab Network Configuration
+
+TrueNAS SCALE 24.10.1 hosts the CyberBlue virtual machines and two dedicated Linux bridges.
+
+| Network | Bridge / Interface | Addressing | Purpose |
+|---|---|---|---|
+| Management | enp4s0 | 192.168.1.0/24 | VM administration and management access |
+| Security lab | br30 | 10.10.30.0/24 | Ubuntu Server and Kali Linux |
+| Isolated lab | br40 | 10.10.40.0/24 | Linux Mint |
+| TrueNAS security bridge | br30 | 10.10.30.1/24 | Host bridge address |
+| TrueNAS isolated bridge | br40 | 10.10.40.1/24 | Host bridge address |
+
+### Virtual Machine Interface Assignments
+
+| Virtual Machine | Management IP | Lab IP | Lab Bridge |
+|---|---|---|---|
+| Ubuntu Server 26.04.1 | 192.168.1.245 | 10.10.30.10 | br30 |
+| Kali Linux | 192.168.1.91 | 10.10.30.20 | br30 |
+| Linux Mint | 192.168.1.92 | 10.10.40.10 | br40 |
+| Windows 11 | Management network | Not assigned | None |
+
+All three Linux virtual machines retain separate management and lab interfaces.
+
+### Firewall Implementation
+
+A persistent IPv4 firewall script was created on the TrueNAS host:
+
+`/mnt/Pool1/CyberBlue/cyberblue-firewall.sh`
+
+The script applies two forwarding rules:
+
+```bash
+iptables -I FORWARD 1 -i br30 -o br40 -j DROP
+iptables -I FORWARD 1 -i br40 -o br30 -j DROP
+```
+
+The script removes existing copies of these rules before inserting them, preventing duplicate CyberBlue rules.
+
+A TrueNAS **POSTINIT** startup task executes the script during system initialization.
+
+The firewall rules were confirmed present after a TrueNAS reboot.
+
+### Post-Reboot Validation Results
+
+| Test | Result |
+|---|---|
+| br30 and br40 restored after reboot | PASS |
+| Ubuntu and Kali lab connectivity | PASS |
+| Ubuntu to Mint routed IPv4 traffic blocked | PASS |
+| Mint to Ubuntu routed IPv4 traffic blocked | PASS |
+| Firewall DROP counters incremented | PASS |
+| Temporary diagnostic routes removed | PASS |
+| Linux Mint static management IP restored | PASS |
+| Linux Mint gateway connectivity | PASS |
+| Linux Mint DNS resolution | PASS |
+| Linux Mint PuTTY SSH access | PASS |
+
+**Firewall evidence:** Four packets were dropped in each direction during controlled cross-bridge tests, with the corresponding DROP counters incrementing.
+
+**Scope:** These tests demonstrate routed IPv4 isolation between the two lab bridges. They do not establish IPv6 isolation or complete isolation between virtual machines that also share the management network.
+
+### Linux Mint Duplicate IP Correction
+
+Linux Mint initially had two IPv4 addresses on its management interface:
+
+- `192.168.1.92/24` — manually configured
+- `192.168.1.212/24` — DHCP-assigned
+
+The NetworkManager management profile was changed from automatic IPv4 addressing to manual configuration.
+
+Final verified settings:
+
+- Interface: `ens3`
+- IPv4: `192.168.1.92/24`
+- Gateway: `192.168.1.1`
+- DNS: `1.1.1.1`
+
+The duplicate DHCP address was removed. Gateway connectivity, DNS resolution, and PuTTY SSH access were subsequently verified.
+
+### Remaining Follow-Up
+
+- Investigate the TrueNAS GRUB default boot selection. During testing, TrueNAS SCALE 24.10.1 required manual selection at startup.
+- Review firewall startup ordering relative to Docker-managed forwarding chains.
+- Perform additional isolation testing if IPv6 or management-network restrictions are added.
+
+**Result: PASS — Tested IPv4 lab segmentation and post-reboot persistence validated.**
