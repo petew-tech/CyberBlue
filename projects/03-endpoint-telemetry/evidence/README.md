@@ -20,7 +20,7 @@ This directory contains screenshots and supporting evidence collected during the
 | 12 | [Controlled Windows Sysmon visibility gap — Event ID 11 absent](16-visibility-gap.PNG) | PASS |
 | 13 | [Windows Sysmon telemetry restoration — Event ID 11](17-windows-sysmon-telemetry-restored.PNG) | PASS |
 | 14 | Sysmon controlled timeline — documented in validation.md; original Event ID 11 timeline screenshot not yet verified | Evidence pending |
-| 15 | Final Windows Sysmon configuration | PASS |
+| 15 | [Final Windows Sysmon service status — Running / Automatic](18-windows-sysmon-final-service-status.PNG) | PASS |
 
 ## Evidence Handling
 
