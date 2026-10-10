@@ -189,7 +189,13 @@ The following Sysmon events were correlated chronologically:
 | 2:14:27 PM | 3 | TCP connection to Kali :3389 |
 | 2:16:31 PM | 11 | CyberBlue test file created |
 
-Result: PASS
+Result: PASS — Historical test documented; partial supporting evidence retained.
+
+The original October 5, 2026 Sysmon Event ID 11 at 2:16:31 PM
+is no longer available in the current Sysmon event log.
+The original timeline remains documented, but its complete
+three-event sequence cannot be independently reverified
+from the currently retained screenshots and event logs.
 
 ---
 
