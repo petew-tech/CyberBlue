@@ -251,7 +251,7 @@ Direct modification of the TrueNAS-owned persistent VM XML was intentionally avo
 
 A controlled failure was introduced to demonstrate troubleshooting and recovery.
 
-The live `cyberblue-isolated` interface was deliberately detached from the Linux Mint VM. After removal, the guest no longer displayed its isolated-network interface or `10.10.40.x` address.
+During the initial libvirt implementation, the live `cyberblue-isolated` interface was deliberately detached from the Linux Mint VM.
 
 Inspection from TrueNAS confirmed that the VM no longer had a libvirt `network` interface connected to `cyberblue-isolated`.
 
