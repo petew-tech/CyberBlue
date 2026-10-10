@@ -215,7 +215,7 @@ cyberblue-isolated
   Mint: 10.10.40.183
 ```
 
-Both CyberBlue network definitions are persistent but have autostart disabled.
+During the initial libvirt implementation, both CyberBlue network definitions were persistent, but autostart was disabled. These networks were subsequently replaced by the current TrueNAS-managed bridges.
 
 ## Kali BlueSOC Network Integration and Troubleshooting
 
