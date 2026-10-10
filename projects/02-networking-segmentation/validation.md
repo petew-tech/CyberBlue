@@ -190,7 +190,7 @@ The lab successfully demonstrated:
 
 Verify that IPv6 routing does not provide an unintended path between the CyberBlue lab networks.
 
-### Validation Results
+## Historical Libvirt Validation Result
 
 | Configuration | Observed value |
 |---|---|
