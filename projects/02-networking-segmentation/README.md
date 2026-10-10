@@ -452,7 +452,7 @@ All other boot environments were preserved. No reboot was performed following th
 
 ## Lessons Learned — TrueNAS Boot Environment Recovery
 
-- Verify boot-environment selection after TrueNAS updates or unexpected version changes.
+- During the initial libvirt implementation, the lab VMs retained their original management-LAN interfaces. Therefore, `cyberblue-isolated` provided isolation for the virtual lab network, not complete isolation of the VM from every network.
 - Use supported TrueNAS middleware commands instead of manually editing generated GRUB files.
 - Confirm both middleware status and GRUB boot-entry ordering.
 - Avoid unnecessary reboots during active virtualization and network-segmentation work.
