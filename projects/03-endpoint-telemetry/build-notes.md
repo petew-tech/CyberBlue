@@ -17,11 +17,17 @@ Evidence captured during the exercises includes
 native operating-system logging, Sysmon, auditd,
 controlled telemetry blind spots, and recovery testing.
 
-The GitHub evidence folder is being reviewed to
-confirm that supporting screenshots are present
-and accurately match the documented results.
+The GitHub evidence inventory has been reconciled.
 
-Evidence inventory verification remains in progress.
+Fourteen evidence entries are marked PASS, with supporting
+screenshots linked in the evidence index.
+
+Evidence item 14 is marked Partial evidence because the
+original October 5, 2026 Sysmon Event ID 11 is no longer
+retained in the current Windows event log.
+
+This limitation is documented in validation.md and the
+evidence index. No historical evidence was recreated.
 
 ## Environment
 
