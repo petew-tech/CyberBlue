@@ -175,3 +175,44 @@ The lab successfully demonstrated:
 - Root-cause identification
 - Network restoration
 - Post-recovery validation
+
+## IPv6 Network Segmentation Validation
+
+**Date:** October 10, 2026  
+**Platform:** TrueNAS SCALE 24.10.1  
+**Result:** PASS — IPv6 forwarding disabled
+
+### Objective
+
+Verify that IPv6 routing does not provide an unintended path between the CyberBlue lab networks.
+
+### Validation Results
+
+| Configuration | Observed value |
+|---|---|
+| Global IPv6 forwarding | 0 — Disabled |
+| Default IPv6 forwarding | 0 — Disabled |
+| br30 IPv6 forwarding | 0 — Disabled |
+| br40 IPv6 forwarding | 0 — Disabled |
+| enp4s0 IPv6 forwarding | 0 — Disabled |
+| IPv6 FORWARD policy | ACCEPT |
+| Docker IPv6 DOCKER-USER chain | RETURN |
+
+### Bridge IPv6 Addresses
+
+- br30: `fe80::ece9:89ff:fe41:9ce/64`
+- br40: `fe80::78b0:b0ff:fe81:dc/64`
+
+Both addresses are link-local.
+
+### Security Assessment
+
+IPv6 forwarding is disabled on the TrueNAS host and both CyberBlue bridges. No IPv6 routing between the lab networks is currently configured.
+
+The IPv6 FORWARD firewall policy is ACCEPT, and no explicit IPv6 DROP rules exist between br30 and br40. This should be reviewed if IPv6 forwarding is enabled in the future.
+
+### Outcome
+
+**PASS:** Configuration inspection found no enabled IPv6 routing path between the CyberBlue lab bridges.
+
+No firewall or network configuration changes were required.
