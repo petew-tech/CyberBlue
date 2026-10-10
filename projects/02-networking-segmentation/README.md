@@ -15,8 +15,8 @@ The lab demonstrates how virtual machines connect through virtual network interf
 | Linux Mint 22.3 | Lab endpoint |
 | Kali Linux 2026.2 | Security testing workstation |
 | `enp4s0` | TrueNAS physical network interface |
-| `cyberblue-lab` | NAT-enabled CyberBlue network |
-| `cyberblue-isolated` | Isolated CyberBlue network |
+| `br30` | Persistent TrueNAS bridge — Security Lab (`10.10.30.0/24`) |
+| `br40` | Persistent TrueNAS bridge — Isolated Lab (`10.10.40.0/24`) |
 
 ## Network Architecture
 
