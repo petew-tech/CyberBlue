@@ -15,7 +15,7 @@ This directory contains screenshots and supporting evidence collected during the
 | 07 | [Sysmon process creation — Event ID 1](10-enhanced-windows-telemetry.PNG) | PASS |
 | 08 | [Sysmon network connection — Event ID 3](10a-sysmon-network-connection.PNG) | PASS |
 | 09 | [Sysmon file creation — Event ID 11](10b-sysmon-file-create-restored.PNG) | PASS |
-| 10 | Controlled Linux telemetry failure | PASS |
+| 10 | Controlled Linux auditd interruption — test documented in validation.md; interruption screenshot not located | Evidence pending |
 | 11 | [Linux auditd telemetry restoration — successful chmod event](11-enhanced-linux-audit.PNG) | PASS |
 | 12 | [Controlled Windows Sysmon visibility gap — Event ID 11 absent](16-visibility-gap.PNG) | PASS |
 | 13 | [Windows Sysmon telemetry restoration — Event ID 11](17-windows-sysmon-telemetry-restored.PNG) | PASS |
