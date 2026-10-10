@@ -215,7 +215,7 @@ Kali Linux (`BlueSOC`) was added to the `cyberblue-lab` network while retaining 
 | Interface | Network | Address | Purpose |
 |---|---|---|---|
 | `eth0` | Management LAN | `192.168.1.91/24` | Management and default route |
-| `eth1` | `cyberblue-lab` | `10.10.30.20/24` | CyberBlue lab traffic |
+| `eth1` | `cyberblue-lab` | `10.10.30.127/24` | CyberBlue lab traffic |
 
 The default route remains on the management interface:
 
