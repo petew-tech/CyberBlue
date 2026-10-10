@@ -368,19 +368,17 @@ Additional project documentation:
 
 ---
 
-## Project Status
+ ## Project Status
 
-**BUILT / TESTED — EVIDENCE DOCUMENTATION IN PROGRESS**
+**VALIDATED — DOCUMENTATION COMPLETE WITH ONE HISTORICAL EVIDENCE LIMITATION**
 
-Windows and Linux endpoint telemetry exercises were completed,
-including native logging, Sysmon, auditd, controlled visibility
-gaps, and recovery testing.
+Windows and Linux endpoint telemetry exercises were completed, including native logging, Sysmon, auditd, controlled visibility gaps, and recovery testing.
 
-Available screenshots support the major telemetry and recovery
-results. Evidence items 05 and 10 have been verified and linked.
-Evidence item 14 retains a documented historical limitation:
-the original October 5 Sysmon Event ID 11 is no longer available
-in the current event log.
+The evidence inventory has been reconciled:
 
-The project will be marked fully VALIDATED when the remaining
-evidence gaps have been reconciled.
+- 14 evidence entries are marked PASS.
+- Evidence item 14 is marked Partial evidence.
+- The original October 5, 2026 Sysmon Event ID 11 is no longer retained in the current Windows event log.
+- The historical timeline limitation is documented in `validation.md` and `evidence/README.md`.
+
+The project demonstrates endpoint telemetry collection, controlled visibility gaps, and recovery validation. The historical evidence limitation is preserved transparently rather than represented as fully verified.
