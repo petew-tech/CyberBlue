@@ -1,6 +1,6 @@
 # Module 03 — Build Notes
 
-## Environment
+## Historical Environment — Initial Lab Configuration
 
 - **Hypervisor:** TrueNAS SCALE 24.10.1
 - **Virtualization:** KVM/QEMU with libvirt
@@ -12,7 +12,7 @@
 
 | VM | Purpose | Management Network |
 |---|---|---|
-| Ubuntu Server 26.04.1 | CyberBlue / SOC management | `192.168.1.243/24` |
+| Ubuntu Server 26.04.1 | CyberBlue / SOC management | `192.168.1.245/24` |
 | Linux Mint 22.3 | Lab endpoint | `192.168.1.92/24` |
 | Kali Linux 2026.2 | Security testing workstation | `192.168.1.91/24` |
 
