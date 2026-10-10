@@ -8,8 +8,20 @@ Windows and Linux endpoint telemetry were tested,
 including native logging, Sysmon, auditd,
 controlled visibility gaps, and recovery validation.
 
-Evidence inventory and GitHub documentation
-reconciliation are in progress.
+## Evidence
+
+Endpoint telemetry validation was completed using
+controlled Windows and Linux activities.
+
+Evidence captured during the exercises includes
+native operating-system logging, Sysmon, auditd,
+controlled telemetry blind spots, and recovery testing.
+
+The GitHub evidence folder is being reviewed to
+confirm that supporting screenshots are present
+and accurately match the documented results.
+
+Evidence inventory verification remains in progress.
 
 ## Environment
 
