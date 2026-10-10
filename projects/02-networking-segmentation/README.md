@@ -1,4 +1,4 @@
-# CyberBlue Module 03 — Virtual Networking & Segmentation
+# CyberBlue Project 2 — Virtual Networking & Segmentation
 
 ## Project Overview
 
