@@ -207,7 +207,6 @@ The host's normal default route remained on the physical management network thro
 
 ## Historical Kali BlueSOC Integration — Initial Libvirt Network
 
-
 Kali Linux (`BlueSOC`) was added to the `cyberblue-lab` network while retaining its existing management connection.
 
 ### Historical Kali Network Configuration — Initial Libvirt Setup
@@ -221,7 +220,7 @@ During the initial libvirt configuration, Kali's default route remained on the m
 
 `default via 192.168.1.1 dev eth0`
 
-The CyberBlue subnet is directly connected through the lab interface:
+During the initial libvirt configuration, the CyberBlue subnet was directly connected through Kali's lab interface:
 
 `10.10.30.0/24 dev eth1`
 
