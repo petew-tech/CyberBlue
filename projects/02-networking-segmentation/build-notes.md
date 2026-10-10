@@ -191,7 +191,7 @@ vnet2 → cyberblue-lab
 ens8  → 10.10.30.158/24
 ```
 
-## Final State
+## Historical Final State — Initial Libvirt Configuration
 
 **Historical context:** This section records the final state of the original libvirt-managed `virbr30` and `virbr40` implementation. It was subsequently replaced by persistent TrueNAS-managed `br30` and `br40` bridges with static lab IP addresses. The current configuration is documented in the Network Segmentation — Implementation and Validation section below.
 
