@@ -17,7 +17,7 @@ This directory contains screenshots and supporting evidence collected during the
 | 09 | [Sysmon file creation — Event ID 11](10b-sysmon-file-create-restored.PNG) | PASS |
 | 10 | Controlled Linux telemetry failure | PASS |
 | 11 | Linux telemetry restoration | PASS |
-| 12 | Controlled Windows telemetry failure | PASS |
+| 12 | [Controlled Windows Sysmon visibility gap — Event ID 11 absent](16-visibility-gap.PNG) | PASS |
 | 13 | Windows telemetry restoration | PASS |
 | 14 | Sysmon controlled timeline | PASS |
 | 15 | Final Windows Sysmon configuration | PASS |
