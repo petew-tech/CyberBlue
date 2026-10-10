@@ -150,7 +150,9 @@ A final ping to `10.10.40.1` returned 4 of 4 replies.
 
 **Recovery status: PASS**
 
-## Implementation Limitation
+## Historical Implementation Limitation — Temporary VM NIC Attachments
+
+**Historical context:** This limitation applied to the initial libvirt implementation. The current CyberBlue configuration uses persistent TrueNAS-managed `br30` and `br40` bridges and VM network interfaces that survive a reboot.
 
 The `cyberblue-lab` and `cyberblue-isolated` network definitions are persistent, but the additional guest interfaces used for the CyberBlue networks were attached using `virsh --live`.
 
