@@ -144,8 +144,8 @@ This troubleshooting exercise demonstrated the difference between:
 It also reinforced the importance of validating networking at multiple layers rather than assuming that an interface being visible inside a VM means the complete Layer 2 and Layer 3 path is operational.
 
 > **Persistence note:** The working CyberBlue VM interfaces were attached using `--live`. This avoided modifying the persistent VM XML managed by TrueNAS, but the additional interfaces must be recreated after a VM restart.
-
-## Segmentation Validation
+> 
+## Historical Segmentation Validation — Initial Libvirt Networks
 
 After validating the NAT-enabled `cyberblue-lab` network, a second virtual network was created to demonstrate segmentation.
 
