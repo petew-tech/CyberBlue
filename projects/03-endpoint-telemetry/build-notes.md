@@ -1,8 +1,15 @@
-# Module 04 — Endpoint Telemetry Build Notes
+# Project 03 — Endpoint Telemetry Build Notes
 
 ## Status
 
-Work in progress.
+Implementation and validation completed.
+
+Windows and Linux endpoint telemetry were tested,
+including native logging, Sysmon, auditd,
+controlled visibility gaps, and recovery validation.
+
+Evidence inventory and GitHub documentation
+reconciliation are in progress.
 
 ## Environment
 
