@@ -215,8 +215,6 @@ cyberblue-isolated
 
 Both CyberBlue network definitions are persistent but have autostart disabled.
 
-The additional CyberBlue guest NICs are live-only and must be recreated following a VM restart.
-
 ## Kali BlueSOC Network Integration and Troubleshooting
 
 Kali Linux (`BlueSOC`) required additional troubleshooting when adding a second interface to the `cyberblue-lab` network.
