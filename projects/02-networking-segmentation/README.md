@@ -242,7 +242,7 @@ Libvirt DHCP also confirmed the following CyberBlue leases:
 
 During the initial libvirt implementation, the Kali NetworkManager `cyberblue-lab` profile persisted inside the guest. However, the `cyberblue-lab` virtual NIC was attached to the VM using a temporary live libvirt network attachment.
 
-Because TrueNAS SCALE 24.10.1 does not represent this native libvirt network attachment through its VM middleware configuration, the lab NIC is not persistent across a VM restart. The NIC must be reattached before the persistent NetworkManager profile can configure it again.
+During the original implementation, TrueNAS SCALE 24.10.1 did not represent the native libvirt network attachment in its VM middleware configuration. As a result, the additional lab NIC did not persist across VM restarts and had to be reattached before the existing NetworkManager profile could configure it. This limitation was subsequently resolved by configuring persistent TrueNAS-managed VM network interfaces.
 
 Direct modification of the TrueNAS-owned persistent VM XML was intentionally avoided.
 
