@@ -14,7 +14,7 @@ This directory contains screenshots and supporting evidence collected during the
 | 06 | [Linux auditd file telemetry — chmod validation](0-linux-auditd-file-activity.PNG) | PASS |
 | 07 | [Sysmon process creation — Event ID 1](10-enhanced-windows-telemetry.PNG) | PASS |
 | 08 | [Sysmon network connection — Event ID 3](10a-sysmon-network-connection.PNG) | PASS |
-| 09 | Sysmon file creation — Event ID 11 | PASS |
+| 09 | [Sysmon file creation — Event ID 11](10b-sysmon-file-create-restored.PNG) | PASS |
 | 10 | Controlled Linux telemetry failure | PASS |
 | 11 | Linux telemetry restoration | PASS |
 | 12 | Controlled Windows telemetry failure | PASS |
