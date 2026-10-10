@@ -71,7 +71,9 @@ Ubuntu Server and Kali Linux communicate within the `10.10.30.0/24` lab. Linux M
 
 All three Linux VMs also retain independent management connections on `192.168.1.0/24`. Therefore, the firewall controls cross-bridge IPv4 forwarding but does not provide complete VM isolation.
 
-## TrueNAS VM Networking Discovery
+## Historical Troubleshooting — Initial Libvirt Networking Configuration
+
+> **Historical implementation note:** The following sections document the initial CyberBlue networking experiments using libvirt-managed `virbr30` and `virbr40` networks, DHCP addressing, and temporary VM interface attachments. This configuration was subsequently replaced with persistent TrueNAS-managed `br30` and `br40` bridges and static lab addresses. Refer to the Network Architecture section above for the current working configuration.
 
 During the initial build, a second NIC was added to Linux Mint through the TrueNAS VM interface and attached to `virbr30`. The guest detected the new NIC, but DHCP failed and no `10.10.30.0/24` address was assigned.
 
