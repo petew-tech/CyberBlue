@@ -368,7 +368,7 @@ Additional project documentation:
 
 ---
 
- ## Project Status
+## Project Status
 
 **VALIDATED — DOCUMENTATION COMPLETE WITH ONE HISTORICAL EVIDENCE LIMITATION**
 
