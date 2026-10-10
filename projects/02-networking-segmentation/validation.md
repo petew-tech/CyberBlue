@@ -162,7 +162,7 @@ This approach was intentionally used to avoid directly modifying persistent VM X
 
 The VMs also retained their original management-LAN interfaces. Therefore, the isolated network demonstrates segmentation of the CyberBlue virtual network path rather than complete isolation of the VM from every network.
 
-## Validation Result
+## Historical Libvirt Validation Result
 
 **HISTORICAL LIBVIRT NETWORK VALIDATION: PASS**
 
@@ -190,7 +190,7 @@ The lab successfully demonstrated:
 
 Verify that IPv6 routing does not provide an unintended path between the CyberBlue lab networks.
 
-## Historical Libvirt Validation Result
+### Validation Results
 
 | Configuration | Observed value |
 |---|---|
