@@ -304,7 +304,6 @@ Key lessons included:
 - Introducing a controlled fault, identifying the root cause, restoring the configuration, and validating recovery.
 - Documenting implementation limitations instead of hiding them.
 
-Because the lab VMs retained their original management-LAN interfaces, `cyberblue-isolated` should be understood as an isolated **virtual network segment**, not as complete isolation of the entire VM from the home/management LAN.
 
 ## Network Segmentation — Implementation and Validation (October 10, 2026)
 
