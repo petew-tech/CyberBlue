@@ -29,19 +29,19 @@ The lab demonstrates how virtual machines connect through virtual network interf
 **Security:** Routed IPv4 traffic between `br30` and `br40` is blocked by persistent TrueNAS firewall rules. All three Linux VMs retain separate management-network connections.
 
 ### Current Lab Placement
+### Current Lab Placement
 
-- **Ubuntu Server**
-  - Management NIC: `192.168.1.243/24`
-  - CyberBlue NIC: `10.10.30.158/24`
-  - Connected to `cyberblue-lab`
+| Virtual Machine | Management IP | Lab IP | Lab Bridge |
+|---|---|---|---|
+| Ubuntu Server | `192.168.1.245/24` | `10.10.30.10/24` | `br30` |
+| Kali Linux | `192.168.1.91/24` | `10.10.30.20/24` | `br30` |
+| Linux Mint | `192.168.1.92/24` | `10.10.40.10/24` | `br40` |
+| Windows 11 | Management network | Not assigned | None |
 
-- **Linux Mint**
-  - Management NIC: `192.168.1.92/24`
-  - CyberBlue NIC: `10.10.40.183/24`
-  - Connected to `cyberblue-isolated`
+**Implementation note:** The lab NICs are configured through TrueNAS VM management and persist across VM restarts. Ubuntu and Kali share the `br30` security lab, while Linux Mint uses the separate `br40` lab.
 
-> **Implementation note:** The `cyberblue-lab` and `cyberblue-isolated` libvirt network definitions are persistent. The additional CyberBlue VM NICs used during this lab were attached with `virsh --live` and are therefore temporary across VM restarts.
-> 
+All three Linux VMs retain management interfaces on `192.168.1.0/24`. The firewall blocks routed IPv4 forwarding between the two lab bridges but does not isolate the shared management network.
+
 ## Architecture Diagram
 
 ```text
