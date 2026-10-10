@@ -269,7 +269,7 @@ cyberblue-isolated
 
 During recovery, two isolated interfaces were temporarily present. The duplicate interface was identified by its MAC address and removed.
 
-The final Mint configuration contained one isolated interface:
+The recovered Mint configuration in the original libvirt implementation contained one isolated interface:
 
 ```text
 ens8  UP  10.10.40.183/24
