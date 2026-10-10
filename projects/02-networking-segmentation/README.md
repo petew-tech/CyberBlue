@@ -224,7 +224,7 @@ During the initial libvirt configuration, the CyberBlue subnet was directly conn
 
 `10.10.30.0/24 dev eth1`
 
-A dedicated NetworkManager profile named `cyberblue-lab` was configured with `ipv4.never-default yes`. This prevents the CyberBlue interface from becoming Kali's default route.
+A dedicated NetworkManager profile named `cyberblue-lab` was configured with `ipv4.never-default yes`. During the initial libvirt implementation, this setting prevented the CyberBlue interface from becoming Kali's default route.
 
 ### Connectivity Validation
 
