@@ -499,3 +499,8 @@ All other boot environments were preserved. No reboot was performed following th
 - Use supported TrueNAS middleware commands instead of manually editing generated GRUB files.
 - Confirm both middleware status and GRUB boot-entry ordering.
 - Avoid unnecessary reboots during active virtualization and network-segmentation work.
+## Docker Firewall Compatibility Validation
+
+**Date:** October 10, 2026  
+**Platform:** TrueNAS SCALE 24.10.1  
+**Result:** PASS — Current IPv4 isolation verified
