@@ -12,7 +12,9 @@ Validate the CyberBlue virtual networking environment by confirming:
 - Controlled network failure
 - Troubleshooting and successful recovery
 
-## Final Network State
+## Historical Validation — Initial Libvirt Network Configuration
+
+> **Historical validation note:** The following results document the initial CyberBlue networking implementation using libvirt-managed `virbr30` and `virbr40` networks, DHCP-assigned addresses, and temporary VM network attachments. These tests were completed before the network architecture was migrated to persistent TrueNAS-managed `br30` and `br40` bridges with static lab IP addresses. The historical results are retained as evidence of the original implementation, troubleshooting, and recovery.
 
 | Network | Bridge | Gateway | State | Forwarding |
 |---|---|---|---|---|
