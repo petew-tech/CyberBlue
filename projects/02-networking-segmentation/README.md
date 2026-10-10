@@ -388,7 +388,7 @@ The duplicate DHCP address was removed. Gateway connectivity, DNS resolution, an
 
 ### Remaining Follow-Up
 
-- Verify that TrueNAS automatically boots into the activated 24.10.1 boot environment during a future planned restart. The boot environment           activation and GRUB default ordering have been corrected, but automatic boot behavior has not yet been confirmed by a subsequent reboot.
+- Verify that TrueNAS automatically boots into the activated 24.10.1 boot environment during a future planned restart. The boot environment activation and GRUB default ordering default ordering have been corrected, but automatic boot behavior has not yet been confirmed by a subsequent reboot.
 - Review firewall startup ordering relative to Docker-managed forwarding chains.
 - Perform additional isolation testing if IPv6 or management-network restrictions are added.
 
