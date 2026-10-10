@@ -218,3 +218,56 @@ The IPv6 FORWARD firewall policy is ACCEPT, and no explicit IPv6 DROP rules exis
 **PASS:** Configuration inspection found no enabled IPv6 routing path between the CyberBlue lab bridges.
 
 No firewall or network configuration changes were required.
+
+## Current Network Validation — October 10, 2026
+
+### Current Network Configuration
+
+| Component | Interface / Bridge | IPv4 Address |
+|---|---|---|
+| TrueNAS management | `enp4s0` | `192.168.1.90/24` |
+| TrueNAS security bridge | `br30` | `10.10.30.1/24` |
+| TrueNAS isolated bridge | `br40` | `10.10.40.1/24` |
+| Ubuntu management | `mgmt0` | `192.168.1.245/24` |
+| Ubuntu lab | `lab0` | `10.10.30.10/24` |
+| Kali management | `eth0` | `192.168.1.91/24` |
+| Kali lab | `eth1` | `10.10.30.20/24` |
+| Linux Mint management | `ens3` | `192.168.1.92/24` |
+| Linux Mint lab | `ens4` | `10.10.40.10/24` |
+
+### IPv4 Connectivity and Segmentation Tests
+
+| Test | Observed Result | Status |
+|---|---|---|
+| Ubuntu to Kali on `br30` | 4/4 ICMP replies | PASS |
+| Ubuntu to Mint across bridges | 0/4 ICMP replies; DROP counter increased | PASS |
+| Mint to Ubuntu across bridges | 0/4 ICMP replies; DROP counter increased | PASS |
+| Firewall rules restored after TrueNAS reboot | Both DROP rules present | PASS |
+| `br30` and `br40` restored after reboot | Both bridges UP | PASS |
+| Temporary diagnostic routes removed | Confirmed | PASS |
+| Mint management gateway connectivity | Successful | PASS |
+| Mint DNS resolution | Successful | PASS |
+| Mint SSH access | Successful | PASS |
+
+### Firewall Persistence
+
+Persistent firewall script:
+
+`/mnt/Pool1/CyberBlue/cyberblue-firewall.sh`
+
+The script removes duplicate CyberBlue rules before inserting the following IPv4 forwarding restrictions:
+
+```bash
+iptables -I FORWARD 1 -i br30 -o br40 -j DROP
+iptables -I FORWARD 1 -i br40 -o br30 -j DROP
+```
+
+A TrueNAS POSTINIT startup task executes the script. The rules were verified after a previous system reboot.
+
+### Security Scope
+
+**PASS — Routed IPv4 isolation between the CyberBlue lab bridges was validated.**
+
+The tests do not demonstrate complete isolation of the virtual machines because Ubuntu, Kali, and Linux Mint retain management interfaces on the shared `192.168.1.0/24` network.
+
+IPv6 forwarding was separately inspected and found disabled. No explicit IPv6 cross-bridge DROP rules were configured.
