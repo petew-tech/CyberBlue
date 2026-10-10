@@ -370,4 +370,15 @@ Additional project documentation:
 
 ## Project Status
 
-**PASS — Endpoint telemetry, visibility-gap testing, and telemetry restoration successfully validated.**
+**BUILT / TESTED — EVIDENCE DOCUMENTATION IN PROGRESS**
+
+Windows and Linux endpoint telemetry exercises were completed,
+including native logging, Sysmon, auditd, controlled visibility
+gaps, and recovery testing.
+
+Available screenshots support the major telemetry and recovery
+results. Three evidence items remain pending in the evidence
+index.
+
+The project will be marked fully VALIDATED when the remaining
+evidence gaps have been reconciled.
