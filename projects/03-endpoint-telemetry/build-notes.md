@@ -41,6 +41,4 @@ Evidence inventory verification remains in progress.
 - Restore telemetry and verify recovery.
 - Preserve evidence and document limitations.
 
-## Evidence
 
-Evidence will be added after the validation phase.
