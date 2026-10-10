@@ -435,6 +435,52 @@ Inspection of `/boot/grub/grub.cfg` confirmed that `24.10.1` became the first bo
 
 The GRUB environment check returned no saved variables:
 
+## Docker Firewall Compatibility Validation
+
+**Date:** October 10, 2026  
+**Platform:** TrueNAS SCALE 24.10.1  
+**Result:** PASS — Current IPv4 isolation verified
+
+### Objective
+
+Verify that Docker's iptables forwarding chains do not bypass the CyberBlue network-segmentation rules.
+
+### Configuration
+
+- `br30`: `10.10.30.0/24`
+- `br40`: `10.10.40.0/24`
+- Firewall backend: iptables-nft
+- Persistent firewall script: `/mnt/Pool1/CyberBlue/cyberblue-firewall.sh`
+- Startup mechanism: TrueNAS POSTINIT task
+
+### Validation Results
+
+Inspection of the FORWARD chain confirmed:
+
+- `br40` → `br30`: DROP, 4 packets
+- `br30` → `br40`: DROP, 4 packets
+
+Docker chain inspection confirmed:
+
+- `DOCKER-USER` returns packets to FORWARD.
+- `DOCKER-ISOLATION-STAGE-1` does not bypass the CyberBlue isolation rules.
+- `DOCKER-ISOLATION-STAGE-2` contains no rule accepting traffic between the CyberBlue bridges.
+
+TrueNAS middleware reported Docker status as `running`.
+
+### Outcome
+
+**PASS:** The current Docker firewall configuration does not bypass the CyberBlue IPv4 isolation rules.
+
+The rules were previously verified after a TrueNAS reboot.
+
+### Remaining Validation
+
+- Recheck firewall ordering after a future Docker service restart or application subsystem restart.
+- Confirm isolation remains effective following future TrueNAS updates.
+- Evaluate IPv6 separately if IPv6 forwarding is introduced.
+
+No Docker restart or firewall modification was required during this review.
 ```bash
 sudo grub-editenv /boot/grub/grubenv list
 ```
