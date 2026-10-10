@@ -156,7 +156,7 @@ A final ping to `10.10.40.1` returned 4 of 4 replies.
 
 The `cyberblue-lab` and `cyberblue-isolated` network definitions are persistent, but the additional guest interfaces used for the CyberBlue networks were attached using `virsh --live`.
 
-Therefore, these additional VM interfaces do **not** survive a VM restart in the current implementation.
+Therefore, these additional VM interfaces did **not** survive a VM restart in the original libvirt implementation. This limitation was resolved when the lab migrated to persistent TrueNAS-managed network interfaces.
 
 This approach was intentionally used to avoid directly modifying persistent VM XML managed by TrueNAS SCALE.
 
