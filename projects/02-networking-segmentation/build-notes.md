@@ -2,6 +2,8 @@
 
 ## Historical Environment — Initial Lab Configuration
 
+**Documentation note:** This section describes the environment used during the initial libvirt networking experiments. The VM management addresses shown in the table reflect the latest verified addresses, while the networking phases below preserve the original implementation and test results.
+
 - **Hypervisor:** TrueNAS SCALE 24.10.1
 - **Virtualization:** KVM/QEMU with libvirt
 - **Physical NIC:** `enp4s0`
