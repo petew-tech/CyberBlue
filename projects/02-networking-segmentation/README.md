@@ -292,7 +292,7 @@ During the original libvirt recovery test, successful connectivity to the isolat
 
 ## Lessons Learned — Initial Libvirt Networking Experiments
 
-This lab demonstrated that successful network troubleshooting requires validating each layer of the path rather than relying on a single connectivity test.
+During the initial libvirt implementation, the lab VMs retained their original management-LAN interfaces. Therefore, `cyberblue-isolated` provided isolation for the virtual lab network, not complete isolation of the VM from every network.
 
 Key lessons included:
 
