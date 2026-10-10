@@ -450,7 +450,7 @@ TrueNAS middleware and GRUB configuration now both select `24.10.1` for the next
 
 All other boot environments were preserved. No reboot was performed following the correction, so successful automatic boot remains to be validated during a future planned restart.
 
-### Lessons Learned
+## Lessons Learned — Initial Libvirt Networking Experiments
 
 - Verify boot-environment selection after TrueNAS updates or unexpected version changes.
 - Use supported TrueNAS middleware commands instead of manually editing generated GRUB files.
