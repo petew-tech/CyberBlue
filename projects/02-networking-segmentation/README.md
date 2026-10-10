@@ -238,7 +238,7 @@ Libvirt DHCP also confirmed the following CyberBlue leases:
 - Ubuntu `cbunbuntu01` — `10.10.30.158/24`
 - Kali `BlueSOC` — `10.10.30.127/24`
 
-### Persistence Limitation
+### Historical Persistence Limitation — Temporary Libvirt NIC
 
 The Kali NetworkManager `cyberblue-lab` profile persists inside the guest. However, the `cyberblue-lab` virtual NIC is currently attached to the VM using a live libvirt network attachment.
 
