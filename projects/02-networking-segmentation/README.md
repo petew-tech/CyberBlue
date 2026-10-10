@@ -204,7 +204,9 @@ The TrueNAS host contained connected routes for both CyberBlue networks:
 ```
 
 The host's normal default route remained on the physical management network through `enp4s0`.
-## Kali BlueSOC Integration
+
+## Historical Kali BlueSOC Integration — Initial Libvirt Network
+
 
 Kali Linux (`BlueSOC`) was added to the `cyberblue-lab` network while retaining its existing management connection.
 
