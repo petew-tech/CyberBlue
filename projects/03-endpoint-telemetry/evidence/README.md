@@ -10,7 +10,7 @@ This directory contains screenshots and supporting evidence collected during the
 | 02 | [Windows service installation — Event ID 7045](06-windows-service-install-7045.PNG) | PASS |
 | 03 | [Windows file access — Event ID 4663](07-windows-file-audit-4663.PNG) | PASS |
 | 04 | [Linux sudo / administrative telemetry](08-linux-sudo-admin-activity.PNG) | PASS |
-| 05 | Linux native file visibility baseline — documented in validation.md; screenshot not located | Evidence pending |
+| 05 | [Linux native file visibility baseline — no matching journal entry](05-linux-native-file-visibility-gap.PNG) | PASS |
 | 06 | [Linux auditd file telemetry — chmod validation](0-linux-auditd-file-activity.PNG) | PASS |
 | 07 | [Sysmon process creation — Event ID 1](10-enhanced-windows-telemetry.PNG) | PASS |
 | 08 | [Sysmon network connection — Event ID 3](10a-sysmon-network-connection.PNG) | PASS |
