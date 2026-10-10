@@ -271,3 +271,35 @@ A TrueNAS POSTINIT startup task executes the script. The rules were verified aft
 The tests do not demonstrate complete isolation of the virtual machines because Ubuntu, Kali, and Linux Mint retain management interfaces on the shared `192.168.1.0/24` network.
 
 IPv6 forwarding was separately inspected and found disabled. No explicit IPv6 cross-bridge DROP rules were configured.
+
+## Docker Firewall Compatibility Validation — October 10, 2026
+
+### Objective
+
+Verify that Docker's forwarding chains do not bypass the CyberBlue IPv4 isolation rules in the tested TrueNAS configuration.
+
+### Observed Configuration
+
+| Component | Observed Result |
+|---|---|
+| TrueNAS Docker subsystem | Running |
+| Firewall backend | iptables-nft |
+| `DOCKER-USER` | Returns traffic to FORWARD |
+| `DOCKER-ISOLATION-STAGE-1` | No bypass of CyberBlue DROP rules observed |
+| `DOCKER-ISOLATION-STAGE-2` | No ACCEPT rule bypassing CyberBlue isolation |
+| `br30` → `br40` | DROP rule present; 4 packets counted |
+| `br40` → `br30` | DROP rule present; 4 packets counted |
+
+### Outcome
+
+**PASS — The inspected Docker forwarding configuration did not bypass the CyberBlue IPv4 isolation rules.**
+
+The Docker subsystem was running during inspection. No Docker service restart or firewall modification was performed.
+
+### Remaining Validation
+
+- Recheck firewall ordering after a future Docker or TrueNAS Apps subsystem restart.
+- Revalidate isolation following TrueNAS upgrades or changes to Docker networking.
+- Review IPv6 firewall controls if IPv6 forwarding is enabled.
+
+These results apply to the inspected configuration and do not guarantee firewall behavior after future service or configuration changes.
