@@ -1,4 +1,4 @@
-# Module 04 — Endpoint Telemetry Validation
+# Project 03 — Endpoint Telemetry Validation
 
 ## Validation Status
 
