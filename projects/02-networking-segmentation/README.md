@@ -434,6 +434,23 @@ After activation, `bootenv.query` reported:
 Inspection of `/boot/grub/grub.cfg` confirmed that `24.10.1` became the first boot menu entry.
 
 The GRUB environment check returned no saved variables:
+sudo grub-editenv /boot/grub/grubenv list
+
+### Outcome
+
+**PASS — Boot environment selection corrected.**
+
+TrueNAS middleware and GRUB configuration now both select `24.10.1` for the next reboot.
+
+All other boot environments were preserved. No reboot was performed following the correction, so successful automatic boot remains to be validated during a future planned restart.
+
+### Lessons Learned
+
+- Verify boot-environment selection after TrueNAS updates or unexpected version changes.
+- Use supported TrueNAS middleware commands instead of manually editing generated GRUB files.
+- Confirm both middleware status and GRUB boot-entry ordering.
+- Avoid unnecessary reboots during active virtualization and network-segmentation work.
+
 
 ## Docker Firewall Compatibility Validation
 
@@ -484,19 +501,4 @@ No Docker restart or firewall modification was required during this review.
 ```bash
 sudo grub-editenv /boot/grub/grubenv list
 ```
-
-### Outcome
-
-**PASS — Boot environment selection corrected.**
-
-TrueNAS middleware and GRUB configuration now both select `24.10.1` for the next reboot.
-
-All other boot environments were preserved. No reboot was performed following the correction, so successful automatic boot remains to be validated during a future planned restart.
-
-### Lessons Learned
-
-- Verify boot-environment selection after TrueNAS updates or unexpected version changes.
-- Use supported TrueNAS middleware commands instead of manually editing generated GRUB files.
-- Confirm both middleware status and GRUB boot-entry ordering.
-- Avoid unnecessary reboots during active virtualization and network-segmentation work.
 
