@@ -388,3 +388,68 @@ The duplicate DHCP address was removed. Gateway connectivity, DNS resolution, an
 - Perform additional isolation testing if IPv6 or management-network restrictions are added.
 
 **Result: PASS — Tested IPv4 lab segmentation and post-reboot persistence validated.**
+
+## TrueNAS Boot Environment Recovery and Validation
+
+**Date:** October 10, 2026  
+**Platform:** TrueNAS SCALE 24.10.1  
+**Result:** PASS — Boot selection corrected; reboot verification pending
+
+### Issue Identified
+
+Following a system restart, TrueNAS automatically booted into version `24.10.2.4` instead of the intended `24.10.1` environment.
+
+The system was manually booted into `24.10.1` for investigation.
+
+### Root Cause
+
+Inspection of `/boot/grub/grub.cfg` showed:
+
+- GRUB default selection: `0`
+- Original GRUB entry 0: `24.10.2.4`
+- Intended environment: `24.10.1`
+- No saved GRUB environment override
+
+TrueNAS middleware reported `24.10.1` as the currently running environment (`N`) while `24.10.2.4` was selected for reboot (`R`).
+
+### Corrective Action
+
+Used the supported TrueNAS middleware command:
+
+```bash
+sudo midclt call bootenv.activate "24.10.1"
+```
+
+The command returned `true`.
+
+No manual modifications were made to GRUB configuration files.
+
+### Validation
+
+After activation, `bootenv.query` reported:
+
+- `24.10.1`: `active='NR'`, `activated=True`
+- `24.10.2.4`: `active=''`, `activated=False`
+
+Inspection of `/boot/grub/grub.cfg` confirmed that `24.10.1` became the first boot menu entry.
+
+The GRUB environment check returned no saved variables:
+
+```bash
+sudo grub-editenv /boot/grub/grubenv list
+```
+
+### Outcome
+
+**PASS — Boot environment selection corrected.**
+
+TrueNAS middleware and GRUB configuration now both select `24.10.1` for the next reboot.
+
+All other boot environments were preserved. No reboot was performed following the correction, so successful automatic boot remains to be validated during a future planned restart.
+
+### Lessons Learned
+
+- Verify boot-environment selection after TrueNAS updates or unexpected version changes.
+- Use supported TrueNAS middleware commands instead of manually editing generated GRUB files.
+- Confirm both middleware status and GRUB boot-entry ordering.
+- Avoid unnecessary reboots during active virtualization and network-segmentation work.
