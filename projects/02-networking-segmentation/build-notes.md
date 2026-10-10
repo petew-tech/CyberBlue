@@ -193,7 +193,7 @@ ens8  → 10.10.30.158/24
 
 ## Historical Final State — Initial Libvirt Configuration
 
-**Historical context:** This section records the final state of the original libvirt-managed `virbr30` and `virbr40` implementation. It was subsequently replaced by persistent TrueNAS-managed `br30` and `br40` bridges with static lab IP addresses. The current configuration is documented in the Network Segmentation — Implementation and Validation section below.
+**Historical context:** This section records the final state of the original libvirt-managed `virbr30` and `virbr40` implementation. It was subsequently replaced by persistent TrueNAS-managed `br30` and `br40` bridges with static lab IP addresses. The current configuration is documented in the Network Segmentation — Implementation and Validation section below. In the original libvirt implementation, the additional CyberBlue guest NICs were live-only and had to be recreated following a VM restart. This limitation was resolved by migrating to persistent TrueNAS-managed VM network interfaces.
 
 ```text
 cyberblue-lab
