@@ -29,7 +29,6 @@ The lab demonstrates how virtual machines connect through virtual network interf
 **Security:** Routed IPv4 traffic between `br30` and `br40` is blocked by persistent TrueNAS firewall rules. All three Linux VMs retain separate management-network connections.
 
 ### Current Lab Placement
-### Current Lab Placement
 
 | Virtual Machine | Management IP | Lab IP | Lab Bridge |
 |---|---|---|---|
@@ -45,30 +44,32 @@ All three Linux VMs retain management interfaces on `192.168.1.0/24`. The firewa
 ## Architecture Diagram
 
 ```text
-                         Home / Management LAN
-                              192.168.1.0/24
-                                     |
-                              TrueNAS SCALE
-                             192.168.1.90
-                                     |
-                 +-------------------+-------------------+
-                 |                                       |
-          cyberblue-lab                         cyberblue-isolated
-          10.10.30.0/24                           10.10.40.0/24
-          Gateway: 10.10.30.1                     Gateway: 10.10.40.1
-          Bridge: virbr30                         Bridge: virbr40
-          NAT forwarding                          No forwarding
-                 |                                       |
-                 |                                       |
-        Ubuntu Server 26.04.1                    Linux Mint 22.3
-           10.10.30.158                            10.10.40.183
+                  Home / Management LAN
+                       192.168.1.0/24
+                              |
+                       TrueNAS SCALE
+                       192.168.1.90
+                              |
+             +----------------+----------------+
+             |                                 |
+        Security Lab                      Isolated Lab
+       10.10.30.0/24                     10.10.40.0/24
+        Bridge: br30                      Bridge: br40
+       GW: 10.10.30.1                    GW: 10.10.40.1
+             |                                 |
+       +-----+-----+                           |
+       |           |                           |
+     Ubuntu       Kali                       Linux Mint
+  10.10.30.10  10.10.30.20                 10.10.40.10
+
+          br30  <-- IPv4 DROP -->  br40
 ```
 
-The lab uses two separate virtual security zones. `cyberblue-lab` provides a NAT-enabled network for CyberBlue systems, while `cyberblue-isolated` provides a network with no forwarding configured.
+The two dedicated Linux bridges separate CyberBlue lab traffic into security and isolated segments. Persistent TrueNAS firewall rules block routed IPv4 forwarding between `br30` and `br40`.
 
-During validation, systems attached to the same CyberBlue network successfully communicated with each other. Traffic explicitly sourced from the isolated `10.10.40.0/24` network toward the `10.10.30.0/24` lab network did not receive a response.
+Ubuntu Server and Kali Linux communicate within the `10.10.30.0/24` lab. Linux Mint operates on the separate `10.10.40.0/24` lab.
 
-Both virtual machines retained their original management/LAN interfaces during testing so the lab networks could be modified and troubleshot without disrupting normal administrative access.
+All three Linux VMs also retain independent management connections on `192.168.1.0/24`. Therefore, the firewall controls cross-bridge IPv4 forwarding but does not provide complete VM isolation.
 
 ## TrueNAS VM Networking Discovery
 
