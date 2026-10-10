@@ -377,8 +377,10 @@ including native logging, Sysmon, auditd, controlled visibility
 gaps, and recovery testing.
 
 Available screenshots support the major telemetry and recovery
-results. Three evidence items remain pending in the evidence
-index.
+results. Evidence items 05 and 10 have been verified and linked.
+Evidence item 14 retains a documented historical limitation:
+the original October 5 Sysmon Event ID 11 is no longer available
+in the current event log.
 
 The project will be marked fully VALIDATED when the remaining
 evidence gaps have been reconciled.
