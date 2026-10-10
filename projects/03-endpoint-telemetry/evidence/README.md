@@ -12,7 +12,7 @@ This directory contains screenshots and supporting evidence collected during the
 | 04 | [Linux sudo / administrative telemetry](08-linux-sudo-admin-activity.PNG) | PASS |
 | 05 | Linux native file visibility baseline — documented in validation.md; screenshot not located | Evidence pending |
 | 06 | [Linux auditd file telemetry — chmod validation](0-linux-auditd-file-activity.PNG) | PASS |
-| 07 | Sysmon process creation — Event ID 1 | PASS |
+| 07 | [Sysmon process creation — Event ID 1](10-enhanced-windows-telemetry.PNG) | PASS |
 | 08 | Sysmon network connection — Event ID 3 | PASS |
 | 09 | Sysmon file creation — Event ID 11 | PASS |
 | 10 | Controlled Linux telemetry failure | PASS |
