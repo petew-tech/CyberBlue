@@ -6,9 +6,9 @@ This directory contains shared technical documentation for the CyberBlue cyberse
 
 | Document | Purpose | Status |
 |---|---|---|
-| `architecture.md` | Overall lab architecture, virtualization, and system roles | Planned |
-| `networking.md` | Network topology, IP addressing, bridges, and segmentation | Planned |
-| `troubleshooting.md` | Infrastructure troubleshooting, root causes, and recovery procedures | Planned |
+| [`architecture.md`](architecture.md) | Overall lab architecture, virtualization, and system roles | Available |
+| [`networking.md`](networking.md) | Network topology, IP addressing, bridges, and segmentation | Available |
+| [`troubleshooting.md`](troubleshooting.md) | Infrastructure troubleshooting, root causes, and recovery procedures | Available |
 
 ## Documentation Approach
 
@@ -16,4 +16,4 @@ CyberBlue documentation focuses on understanding, implementation, validation, tr
 
 Detailed project-specific build notes, validation results, and supporting evidence remain in their respective directories under `projects/`.
 
-This directory will provide shared references across the CyberBlue environment without duplicating individual project documentation.
+This directory provides shared references across the CyberBlue environment without duplicating individual project documentation.
