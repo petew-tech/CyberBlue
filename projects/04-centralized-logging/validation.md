@@ -75,7 +75,7 @@ This confirms that the Sysmon-related rule **is searchable in the dashboard by r
 
 Screenshot evidence: [Complete pipeline.PNG](Complete%20pipeline.PNG) — server-side Sysmon matching-alert count (`32`) captured during validation.
 
-Dashboard screenshot: [Wazuh-Sysmon-Rule-92205.PNG](Wazuh-Sysmon-Rule-92205.PNG) — Threat Hunting Events search showing 10 matching rule `92205` alerts. Screenshot uploaded during the lab session; verify the link resolves.
+Dashboard screenshot: [Wazuh-Sysmon-Rule-92205.png](Wazuh-Sysmon-Rule-92205.png) — Threat Hunting Events search showing 10 matching rule `92205` alerts. Screenshot uploaded during the lab session.
 
 ### Scope of Validation
 
