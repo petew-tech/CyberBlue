@@ -44,6 +44,7 @@
 | V-21 | Windows agent health and identity | Wazuh agent `002` / `WIN11` showed Active, IP `192.168.1.151`, version `4.14.8`, group `default`, Windows 11 Pro `10.0.26200.9457`, cluster node `node01`, registration Oct 12 2026 19:13:15, and last keep alive Oct 13 2026 07:25:50 (dashboard display time) | PASS |
 | V-22 | Windows CIS password-history remediation | Wazuh CIS check `26000` initially Failed with local password history `0`; Windows policy changed to `24` and independently verified; subsequent SCA scan completed Oct 13 2026 07:40:28 (dashboard time), check Passed, passed count 124→125, failed count 349→348, not applicable remained 9; displayed score stayed 26% due to rounding | PASS |
 | V-23 | Windows CIS minimum-password-age remediation | Wazuh CIS check `26002` initially Failed with local minimum password age `0` days; changed to `1` day and independently verified using `net accounts`; subsequent Wazuh SCA check Passed, with totals changing from 125 Passed / 348 Failed / 9 Not applicable to 126 Passed / 347 Failed / 9 Not applicable after dashboard refresh | PASS |
+| V-24 | Windows CIS minimum-password-length remediation | Wazuh CIS check `26003` initially Failed with local minimum password length `0` characters; Windows policy changed to `14` characters and independently verified with `net accounts`; subsequent Wazuh SCA check Passed, with totals changing from 126 Passed / 347 Failed / 9 Not applicable to 127 Passed / 346 Failed / 9 Not applicable | PASS |
 
 ### Server-side Verification Commands
 
@@ -101,6 +102,8 @@ Dashboard screenshot: [Wazuh-Sysmon-Rule-92205.png](Wazuh-Sysmon-Rule-92205.png)
 CIS remediation after-scan screenshot: [Wazuh-CIS-Remediation-After.png](Wazuh-CIS-Remediation-After.png) — Wazuh Windows 11 SCA summary after the password-history control was corrected, showing 125 Passed, 348 Failed, 9 Not applicable, and scan completion at 07:40:28 on 2026-10-13 (dashboard time).
 
 Minimum-password-age remediation after-scan screenshot: [Wazuh-CIS-Minimum-Password-Age-After.PNG](Wazuh-CIS-Minimum-Password-Age-After.PNG) — Wazuh Windows 11 SCA summary showing 126 Passed, 347 Failed, and 9 Not applicable after CIS check `26002` passed.
+
+Minimum-password-length remediation after-scan screenshot: [Wazuh-CIS-Minimum-Password-Length-After.PNG](Wazuh-CIS-Minimum-Password-Length-After.PNG) — Wazuh Windows 11 SCA summary after CIS check `26003` passed, showing 127 Passed, 346 Failed, and 9 Not applicable.
 
 ### Scope of Validation
 
