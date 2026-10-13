@@ -37,6 +37,7 @@
 | V-14 | Dashboard Sysmon rule lookup | Threat Hunting Events search `rule.id:92205` returned 10 matching alerts for `WIN11`, rule level 9, within Last 24 hours | PASS |
 | V-15 | Dashboard second Sysmon rule lookup | Threat Hunting Events search `rule.id:92021` returned 8 matching alerts for `WIN11`, rule level 3, with Last 7 days selected | PASS |
 | V-16 | Indexed Sysmon event fields | Opened a rule `92021` alert in Discover; verified provider `Microsoft-Windows-Sysmon`, channel `Microsoft-Windows-Sysmon/Operational`, Event ID `1`, decoder `windows_eventchannel`, and agent `002` / `WIN11` | PASS |
+| V-17 | Indexed Sysmon File Create fields | Threat Hunting rule `92205` returned 10 matching alerts; inspected a record and verified Sysmon Event ID `11`, provider `Microsoft-Windows-Sysmon`, channel `Microsoft-Windows-Sysmon/Operational`, and agent `WIN11` | PASS |
 
 ### Server-side Verification Commands
 
@@ -83,9 +84,11 @@ Detailed indexed-event evidence (Word document): [Wazuh-Sysmon-Event-Details.png
 
 Dashboard screenshot: [Wazuh-Sysmon-Rule-92021.png](Wazuh-Sysmon-Rule-92021.png) — Threat Hunting Events search showing 8 matching rule `92021` alerts (Last 7 days).
 
+Detailed Sysmon Event ID 11 evidence (Word document): [Wazuh-Sysmon-EventID11-Details.docx](Wazuh-Sysmon-EventID11-Details.docx) — indexed File Create alert fields verified in Wazuh Threat Hunting.
+
 Dashboard screenshot: [Wazuh-Sysmon-Rule-92205.png](Wazuh-Sysmon-Rule-92205.png) — Threat Hunting Events search showing 10 matching rule `92205` alerts. Screenshot uploaded during the lab session.
 
 ### Scope of Validation
 
 **Validated:** Sysmon telemetry from the Windows endpoint was collected by the Wazuh agent and produced centrally stored Wazuh alerts.  
-**Not yet validated:** Sysmon-specific dashboard search results, complete raw event ingestion coverage, or additional endpoint onboarding.
+**Not yet validated:** Sysmon provider/channel field-search syntax, complete raw event ingestion coverage, or additional endpoint onboarding.
