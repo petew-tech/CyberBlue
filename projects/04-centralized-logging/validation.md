@@ -33,7 +33,8 @@
 | V-10 | Sysmon process event detection | Sysmon Event ID 1, Wazuh rule `92021`, level 3, present in manager alert log | PASS |
 | V-11 | Sysmon file event detection | Sysmon Event ID 11, Wazuh rule `92205`, level 9, present in manager alert log | PASS |
 | V-12 | Sysmon alert count | Server-side matching-alert command returned `32` at test time | PASS |
-| V-13 | Threat Hunting UI query | Queries for Sysmon-specific fields returned no matching results despite server-side alert evidence | FOLLOW-UP |
+| V-13 | Initial Threat Hunting UI queries | Initial Sysmon field/text queries returned no matching results | FOLLOW-UP |
+| V-14 | Dashboard Sysmon rule lookup | Threat Hunting Events search `rule.id:92205` returned 10 matching alerts for `WIN11`, rule level 9, within Last 24 hours | PASS |
 
 ### Server-side Verification Commands
 
@@ -64,13 +65,17 @@ This is a **point-in-time count of matching alert entries**, not the total numbe
 
 These are **rule descriptions**, not independent confirmation of malicious activity.
 
-### Open Follow-up
+### Dashboard Follow-up
 
-The dashboard Threat Hunting searches for `agent.name:"WIN11" AND win.system.providerName:"Microsoft-Windows-Sysmon"`, `agent.name:"WIN11" AND Sysmon`, and `win.system.channel:"Microsoft-Windows-Sysmon/Operational"` did not return results during the test. Because the manager alert log contains Sysmon alerts, this issue needs separate investigation of time range, indexed data, and query field mapping. **Do not mark dashboard Sysmon search as validated yet.**
+**2026-10-13 — Partial resolution:** Threat Hunting → Events, with **Last 24 hours** selected, successfully returned **10** matching alerts for the query `rule.id:92205`. The screenshot showed `WIN11`, rule `92205`, level `9`, and included the previously verified alert at `06:15:57.717`.
+
+This confirms that the Sysmon-related rule **is searchable in the dashboard by rule ID**. Earlier Sysmon provider/channel/text queries did not return results; their field mapping or syntax remains to be investigated separately. A `manager.name: siem-01` filter chip was still visible in the successful search screenshot.
 
 ### Evidence Handling
 
 Screenshot evidence: [Complete pipeline.PNG](Complete%20pipeline.PNG) — server-side Sysmon matching-alert count (`32`) captured during validation.
+
+Dashboard screenshot: [Wazuh-Sysmon-Rule-92205.PNG](Wazuh-Sysmon-Rule-92205.PNG) — Threat Hunting Events search showing 10 matching rule `92205` alerts. Screenshot uploaded during the lab session; verify the link resolves.
 
 ### Scope of Validation
 
