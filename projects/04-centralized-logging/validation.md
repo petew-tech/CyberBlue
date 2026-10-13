@@ -33,11 +33,14 @@
 | V-10 | Sysmon process event detection | Sysmon Event ID 1, Wazuh rule `92021`, level 3, present in manager alert log | PASS |
 | V-11 | Sysmon file event detection | Sysmon Event ID 11, Wazuh rule `92205`, level 9, present in manager alert log | PASS |
 | V-12 | Sysmon alert count | Server-side matching-alert command returned `32` at test time | PASS |
-| V-13 | Initial Threat Hunting UI queries | Initial Sysmon field/text queries returned no matching results | FOLLOW-UP |
+| V-13 | Initial Threat Hunting UI queries | Initial Sysmon field/text queries returned no matching results; subsequent direct Event ID, provider, and channel searches succeeded (V-18–V-20) | RESOLVED |
 | V-14 | Dashboard Sysmon rule lookup | Threat Hunting Events search `rule.id:92205` returned 10 matching alerts for `WIN11`, rule level 9, within Last 24 hours | PASS |
 | V-15 | Dashboard second Sysmon rule lookup | Threat Hunting Events search `rule.id:92021` returned 8 matching alerts for `WIN11`, rule level 3, with Last 7 days selected | PASS |
 | V-16 | Indexed Sysmon event fields | Opened a rule `92021` alert in Discover; verified provider `Microsoft-Windows-Sysmon`, channel `Microsoft-Windows-Sysmon/Operational`, Event ID `1`, decoder `windows_eventchannel`, and agent `002` / `WIN11` | PASS |
 | V-17 | Indexed Sysmon File Create fields | Threat Hunting rule `92205` returned 10 matching alerts; inspected a record and verified Sysmon Event ID `11`, provider `Microsoft-Windows-Sysmon`, channel `Microsoft-Windows-Sysmon/Operational`, and agent `WIN11` | PASS |
+| V-18 | Direct Event ID field search | `data.win.system.eventID:11` returned 92 matching alerts in Last 24 hours | PASS |
+| V-19 | Direct Sysmon provider search | `data.win.system.providerName:"Microsoft-Windows-Sysmon"` returned 113 matching alerts in Last 24 hours | PASS |
+| V-20 | Direct Sysmon channel search | `data.win.system.channel:"Microsoft-Windows-Sysmon/Operational"` returned 113 matching alerts in Last 24 hours | PASS |
 
 ### Server-side Verification Commands
 
@@ -74,7 +77,11 @@ These are **rule descriptions**, not independent confirmation of malicious activ
 
 **2026-10-13 — Additional confirmation:** With **Last 7 days** selected, the Events search `rule.id:92021` returned **8** alerts for `WIN11`, rule level **3**, including the previously confirmed record at `06:15:50.873`. The same search had returned no results with Last 24 hours selected; the cause of that discrepancy is not yet established.
 
-This confirms that the Sysmon-related rule **is searchable in the dashboard by rule ID**. Earlier Sysmon provider/channel/text queries did not return results; their field mapping or syntax remains to be investigated separately. A `manager.name: siem-01` filter chip was still visible in the successful search screenshot.
+This confirms that the Sysmon-related rule **is searchable in the dashboard by rule ID**. Earlier Sysmon provider/channel/text queries did not return results, but subsequent direct Event ID, provider, and channel searches succeeded. The cause of the earlier failed searches was not established; the issue is no longer reproducible for these three fields. A `manager.name: siem-01` filter chip was still visible in the successful search screenshot.
+
+### Direct Field-Search Follow-up
+
+**2026-10-13 — Successful direct searches (Last 24 hours):** `data.win.system.eventID:11` returned **92** matching alerts; `data.win.system.providerName:"Microsoft-Windows-Sysmon"` returned **113**; and `data.win.system.channel:"Microsoft-Windows-Sysmon/Operational"` returned **113**. These are dashboard search hit counts at the time of each query, not counts of unique malicious activities. This resolves the practical field-search validation gap, without establishing why the earlier attempts returned no results.
 
 ### Evidence Handling
 
@@ -91,4 +98,4 @@ Dashboard screenshot: [Wazuh-Sysmon-Rule-92205.png](Wazuh-Sysmon-Rule-92205.png)
 ### Scope of Validation
 
 **Validated:** Sysmon telemetry from the Windows endpoint was collected by the Wazuh agent and produced centrally stored Wazuh alerts.  
-**Not yet validated:** Sysmon provider/channel field-search syntax, complete raw event ingestion coverage, or additional endpoint onboarding.
+**Not yet validated:** Complete raw event ingestion coverage or additional endpoint onboarding.
