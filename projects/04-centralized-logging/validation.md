@@ -47,6 +47,7 @@
 | V-24 | Windows CIS minimum-password-length remediation | Wazuh CIS check `26003` initially Failed with local minimum password length `0` characters; Windows policy changed to `14` characters and independently verified with `net accounts`; subsequent Wazuh SCA check Passed, with totals changing from 126 Passed / 347 Failed / 9 Not applicable to 127 Passed / 346 Failed / 9 Not applicable | PASS |
 | V-25 | Windows CIS relaxed minimum password length limits remediation | Wazuh CIS check `26004` initially Failed with local policy Not Defined; policy set to Enabled and independently verified via registry `HKLM:\SYSTEM\CurrentControlSet\Control\SAM\RelaxMinimumPasswordLengthLimits` = `1`; subsequent Wazuh SCA check Passed, with totals changing from 127 Passed / 346 Failed / 9 Not Applicable to 128 Passed / 345 Failed / 9 Not Applicable | PASS |
 | V-26 | Windows CIS account lockout duration remediation | Wazuh CIS check `26005` initially Failed with local account lockout duration `10` minutes; Windows policy changed to `15` minutes and independently verified with `net accounts`; subsequent Wazuh SCA check Passed, with totals changing from 128 Passed / 345 Failed / 9 Not applicable to 129 Passed / 344 Failed / 9 Not applicable; displayed score 27%, scan ended Oct 13 2026 11:49:29 (dashboard time) | PASS |
+| V-27 | Windows CIS account lockout threshold remediation | Wazuh CIS check `26006` initially Failed with local lockout threshold `10` invalid attempts; changed to `5` and independently verified with `net accounts` (lockout duration `15` minutes, observation window `10` minutes); subsequent SCA summary showed 130 Passed / 343 Failed / 9 Not applicable, score 27%, scan completed Oct 13 2026 11:58:25 (dashboard time) | PASS |
 
 ### Server-side Verification Commands
 
@@ -110,6 +111,8 @@ Minimum-password-length remediation after-scan screenshot: [Wazuh-CIS-Minimum-Pa
 Relaxed password length limits remediation screenshot: [Wazuh-CIS-Relax-Password-Length-After.PNG](Wazuh-CIS-Relax-Password-Length-After.PNG) — Wazuh WIN11 CIS assessment summary after check `26004` passed, showing 128 Passed, 345 Failed, and 9 Not Applicable.
 
 Account lockout duration remediation screenshot: [Wazuh-CIS-Account-Lockout-Duration-After.PNG](Wazuh-CIS-Account-Lockout-Duration-After.PNG) — Wazuh WIN11 CIS assessment summary showing 129 Passed, 344 Failed, 9 Not applicable, score 27%, scan completed Oct 13 2026 11:49:29 (dashboard time).
+
+Account lockout threshold remediation screenshot: [Wazuh-CIS-Account-Lockout-Threshold-After.PNG](Wazuh-CIS-Account-Lockout-Threshold-After.PNG) — Wazuh WIN11 CIS assessment summary showing 130 Passed, 343 Failed, 9 Not applicable, score 27%, scan completed Oct 13 2026 11:58:25 (dashboard time).
 
 ### Scope of Validation
 
