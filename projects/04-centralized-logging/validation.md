@@ -43,7 +43,6 @@
 | V-20 | Direct Sysmon channel search | `data.win.system.channel:"Microsoft-Windows-Sysmon/Operational"` returned 113 matching alerts in Last 24 hours | PASS |
 | V-21 | Windows agent health and identity | Wazuh agent `002` / `WIN11` showed Active, IP `192.168.1.151`, version `4.14.8`, group `default`, Windows 11 Pro `10.0.26200.9457`, cluster node `node01`, registration Oct 12 2026 19:13:15, and last keep alive Oct 13 2026 07:25:50 (dashboard display time) | PASS |
 | V-22 | Windows CIS password-history remediation | Wazuh CIS check `26000` initially Failed with local password history `0`; Windows policy changed to `24` and independently verified; subsequent SCA scan completed Oct 13 2026 07:40:28 (dashboard time), check Passed, passed count 124→125, failed count 349→348, not applicable remained 9; displayed score stayed 26% due to rounding | PASS |
-
 | V-23 | Windows CIS minimum-password-age remediation | Wazuh CIS check `26002` initially Failed with local minimum password age `0` days; changed to `1` day and independently verified using `net accounts`; subsequent Wazuh SCA check Passed, with totals changing from 125 Passed / 348 Failed / 9 Not applicable to 126 Passed / 347 Failed / 9 Not applicable after dashboard refresh | PASS |
 
 ### Server-side Verification Commands
