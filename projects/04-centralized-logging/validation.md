@@ -35,6 +35,7 @@
 | V-12 | Sysmon alert count | Server-side matching-alert command returned `32` at test time | PASS |
 | V-13 | Initial Threat Hunting UI queries | Initial Sysmon field/text queries returned no matching results | FOLLOW-UP |
 | V-14 | Dashboard Sysmon rule lookup | Threat Hunting Events search `rule.id:92205` returned 10 matching alerts for `WIN11`, rule level 9, within Last 24 hours | PASS |
+| V-15 | Dashboard second Sysmon rule lookup | Threat Hunting Events search `rule.id:92021` returned 8 matching alerts for `WIN11`, rule level 3, with Last 7 days selected | PASS |
 
 ### Server-side Verification Commands
 
@@ -69,11 +70,15 @@ These are **rule descriptions**, not independent confirmation of malicious activ
 
 **2026-10-13 — Partial resolution:** Threat Hunting → Events, with **Last 24 hours** selected, successfully returned **10** matching alerts for the query `rule.id:92205`. The screenshot showed `WIN11`, rule `92205`, level `9`, and included the previously verified alert at `06:15:57.717`.
 
+**2026-10-13 — Additional confirmation:** With **Last 7 days** selected, the Events search `rule.id:92021` returned **8** alerts for `WIN11`, rule level **3**, including the previously confirmed record at `06:15:50.873`. The same search had returned no results with Last 24 hours selected; the cause of that discrepancy is not yet established.
+
 This confirms that the Sysmon-related rule **is searchable in the dashboard by rule ID**. Earlier Sysmon provider/channel/text queries did not return results; their field mapping or syntax remains to be investigated separately. A `manager.name: siem-01` filter chip was still visible in the successful search screenshot.
 
 ### Evidence Handling
 
 Screenshot evidence: [Complete pipeline.PNG](Complete%20pipeline.PNG) — server-side Sysmon matching-alert count (`32`) captured during validation.
+
+Dashboard screenshot: [Wazuh-Sysmon-Rule-92021.png](Wazuh-Sysmon-Rule-92021.png) — Threat Hunting Events search showing 8 matching rule `92021` alerts (Last 7 days).
 
 Dashboard screenshot: [Wazuh-Sysmon-Rule-92205.png](Wazuh-Sysmon-Rule-92205.png) — Threat Hunting Events search showing 10 matching rule `92205` alerts. Screenshot uploaded during the lab session.
 
