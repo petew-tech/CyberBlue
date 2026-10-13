@@ -36,6 +36,7 @@
 | V-13 | Initial Threat Hunting UI queries | Initial Sysmon field/text queries returned no matching results | FOLLOW-UP |
 | V-14 | Dashboard Sysmon rule lookup | Threat Hunting Events search `rule.id:92205` returned 10 matching alerts for `WIN11`, rule level 9, within Last 24 hours | PASS |
 | V-15 | Dashboard second Sysmon rule lookup | Threat Hunting Events search `rule.id:92021` returned 8 matching alerts for `WIN11`, rule level 3, with Last 7 days selected | PASS |
+| V-16 | Indexed Sysmon event fields | Opened a rule `92021` alert in Discover; verified provider `Microsoft-Windows-Sysmon`, channel `Microsoft-Windows-Sysmon/Operational`, Event ID `1`, decoder `windows_eventchannel`, and agent `002` / `WIN11` | PASS |
 
 ### Server-side Verification Commands
 
@@ -77,6 +78,8 @@ This confirms that the Sysmon-related rule **is searchable in the dashboard by r
 ### Evidence Handling
 
 Screenshot evidence: [Complete pipeline.PNG](Complete%20pipeline.PNG) — server-side Sysmon matching-alert count (`32`) captured during validation.
+
+Detailed indexed-event evidence (Word document): [Wazuh-Sysmon-Event-Details.png.docx](Wazuh-Sysmon-Event-Details.png.docx) — event fields from Wazuh Discover, including Sysmon provider, channel, and rule `92021`.
 
 Dashboard screenshot: [Wazuh-Sysmon-Rule-92021.png](Wazuh-Sysmon-Rule-92021.png) — Threat Hunting Events search showing 8 matching rule `92021` alerts (Last 7 days).
 
