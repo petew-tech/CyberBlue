@@ -70,7 +70,7 @@ The dashboard Threat Hunting searches for `agent.name:"WIN11" AND win.system.pro
 
 ### Evidence Handling
 
-A screenshot showing the server-side matching-alert count of `32` was saved locally during the lab session. **It has not yet been uploaded to this repository.** Add the screenshot and a relative link here once uploaded.
+Screenshot evidence: [complete pipeline.png](complete%20pipeline.png) — server-side Sysmon matching-alert count (`32`) captured during validation.
 
 ### Scope of Validation
 
