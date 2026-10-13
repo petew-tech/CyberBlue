@@ -41,6 +41,7 @@
 | V-18 | Direct Event ID field search | `data.win.system.eventID:11` returned 92 matching alerts in Last 24 hours | PASS |
 | V-19 | Direct Sysmon provider search | `data.win.system.providerName:"Microsoft-Windows-Sysmon"` returned 113 matching alerts in Last 24 hours | PASS |
 | V-20 | Direct Sysmon channel search | `data.win.system.channel:"Microsoft-Windows-Sysmon/Operational"` returned 113 matching alerts in Last 24 hours | PASS |
+| V-21 | Windows agent health and identity | Wazuh agent `002` / `WIN11` showed Active, IP `192.168.1.151`, version `4.14.8`, group `default`, Windows 11 Pro `10.0.26200.9457`, cluster node `node01`, registration Oct 12 2026 19:13:15, and last keep alive Oct 13 2026 07:25:50 (dashboard display time) | PASS |
 
 ### Server-side Verification Commands
 
