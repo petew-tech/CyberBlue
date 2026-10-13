@@ -70,7 +70,7 @@ The dashboard Threat Hunting searches for `agent.name:"WIN11" AND win.system.pro
 
 ### Evidence Handling
 
-Screenshot evidence: [complete pipeline.png](complete%20pipeline.png) — server-side Sysmon matching-alert count (`32`) captured during validation.
+Screenshot evidence: [Complete pipeline.PNG](Complete%20pipeline.PNG) — server-side Sysmon matching-alert count (`32`) captured during validation.
 
 ### Scope of Validation
 
