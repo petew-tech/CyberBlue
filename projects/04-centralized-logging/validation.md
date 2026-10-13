@@ -97,6 +97,8 @@ Detailed Sysmon Event ID 11 evidence (Word document): [Wazuh-Sysmon-EventID11-De
 
 Dashboard screenshot: [Wazuh-Sysmon-Rule-92205.png](Wazuh-Sysmon-Rule-92205.png) — Threat Hunting Events search showing 10 matching rule `92205` alerts. Screenshot uploaded during the lab session.
 
+CIS remediation after-scan screenshot: [Wazuh-CIS-Remediation-After.png](Wazuh-CIS-Remediation-After.png) — Wazuh Windows 11 SCA summary after the password-history control was corrected, showing 125 Passed, 348 Failed, 9 Not applicable, and scan completion at 07:40:28 on 2026-10-13 (dashboard time).
+
 ### Scope of Validation
 
 **Validated:** Sysmon telemetry from the Windows endpoint was collected by the Wazuh agent and produced centrally stored Wazuh alerts.  
