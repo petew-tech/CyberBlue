@@ -71,8 +71,7 @@ See [Project 02 — Network Segmentation](projects/02-networking-segmentation/RE
 | [01 — Virtualization Foundation](projects/01-virtualization-foundation/truenas/README.md) | TrueNAS VM provisioning, networking, lifecycle, and recovery | **Validated** |
 | [02 — Virtual Networking & Segmentation](projects/02-networking-segmentation/README.md) | Persistent bridges, addressing, routing controls, and troubleshooting | **Validated** |
 | [03 — Endpoint Telemetry & Logging](projects/03-endpoint-telemetry/README.md) | Windows Event Logs, Sysmon, Linux auditd, visibility gaps, and recovery | **Validated — historical evidence limitation documented** |
-| 04 — Centralized Logging & SIEM Foundations | Resource assessment and SIEM architecture planning | **Planning** |
-| [05 — Centralized Logging & SIEM Foundations](projects/05-centralized-logging/README.md) | Wazuh 4.14.8 deployment, Windows agent enrollment, and Sysmon alert validation | **In progress — Windows Sysmon integration validated** |
+| [04 — Centralized Logging & SIEM Foundations](projects/04-centralized-logging/README.md) | Wazuh 4.14.8 deployment, Windows agent enrollment, and Sysmon alert validation | **In progress — Windows Sysmon integration validated** |
 
 Additional projects will be added only as implementation and validation progress.
 
@@ -135,13 +134,11 @@ Investigated native and enhanced security telemetry across Windows and Linux sys
 
 ## Project 04 — Centralized Logging & SIEM Foundations
 
-**Status: Planning / Resource Assessment**
+**Status: In progress — Windows Sysmon integration validated**
 
-This project will evaluate and implement centralized security event collection and analysis using a SIEM platform selected to fit the CyberBlue lab's hardware and operational requirements.
+Deployed Wazuh 4.14.8 on a dedicated Ubuntu Server VM and enrolled the Windows 11 endpoint. Validated end-to-end Sysmon telemetry collection and centralized Wazuh alert generation using server-side alert logs. Dashboard search filters remain a follow-up item.
 
-Initial work includes measuring host memory availability, evaluating VM resource requirements, and planning how Linux and Windows endpoint telemetry will be collected centrally.
-
-No SIEM deployment or event ingestion validation is claimed at this stage.
+[View Project 04 →](projects/04-centralized-logging/README.md)
 
 ---
 
