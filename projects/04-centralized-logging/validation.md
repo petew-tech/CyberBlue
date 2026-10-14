@@ -50,6 +50,7 @@
 | V-27 | Windows CIS account lockout threshold remediation | Wazuh CIS check `26006` initially Failed with local lockout threshold `10` invalid attempts; changed to `5` and independently verified with `net accounts` (lockout duration `15` minutes, observation window `10` minutes); subsequent SCA summary showed 130 Passed / 343 Failed / 9 Not applicable, score 27%, scan completed Oct 13 2026 11:58:25 (dashboard time) | PASS |
 | V-28 | Windows CIS reset account lockout counter remediation | Wazuh CIS check `26007` previously Failed with reset account lockout counter set to `10` minutes; Windows policy changed to `15` minutes and independently verified using `net accounts` (threshold `5`, duration `15`, observation window `15`); following agent restart, Wazuh SCA totals changed from 130 Passed / 343 Failed / 9 Not applicable to 131 Passed / 342 Failed / 9 Not applicable; displayed score 27%, scan ended Oct 13 2026 12:06:20 (dashboard time) | PASS |
 | V-29 | Windows CIS block Microsoft accounts remediation | Wazuh CIS check `26008` initially Failed with **Accounts: Block Microsoft accounts** set to Not Defined; Windows local security policy changed to **Users can't add or log on with Microsoft accounts**, and registry `HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\NoConnectedUser` independently verified as `3`; following Wazuh agent restart, SCA totals changed from 131 Passed / 342 Failed / 9 Not applicable to 132 Passed / 341 Failed / 9 Not applicable; displayed score 27%, scan ended Oct 13 2026 12:24:09 (dashboard time) | PASS |
+| V-30 | Windows CIS rename built-in Administrator account remediation | Wazuh CIS check `26011` initially Failed; the built-in `Administrator` account (SID ending `-500`) was renamed to `CBLocalRecovery` using elevated PowerShell. `Get-LocalUser` verified the renamed account retained SID ending `-500` and remained disabled; `cyberblue` remained enabled. Following Wazuh agent restart, SCA totals changed from 132 Passed / 341 Failed / 9 Not applicable to 133 Passed / 340 Failed / 9 Not applicable; displayed score increased from 27% to 28%, scan ended Oct 14 2026 09:37:20 (dashboard time) | PASS |
 
 ### Server-side Verification Commands
 
@@ -119,6 +120,8 @@ Account lockout threshold remediation screenshot: [Wazuh-CIS-Account-Lockout-Thr
 Account lockout counter remediation screenshot: [Wazuh-CIS-Account-Lockout-Counter-After.PNG](Wazuh-CIS-Account-Lockout-Counter-After.PNG) — Wazuh WIN11 CIS assessment summary showing 131 Passed, 342 Failed, 9 Not applicable, score 27%, scan completed Oct 13 2026 12:06:20 (dashboard time).
 
 Block Microsoft accounts remediation screenshot: [Wazuh-CIS-Block-Microsoft-Accounts-After.PNG](Wazuh-CIS-Block-Microsoft-Accounts-After.PNG) — Wazuh WIN11 CIS assessment summary showing 132 Passed, 341 Failed, 9 Not applicable, score 27%, scan completed Oct 13 2026 12:24:09 (dashboard time).
+
+Rename Administrator account remediation screenshot: [Wazuh-CIS-Rename-Administrator-After.PNG](Wazuh-CIS-Rename-Administrator-After.PNG) — Wazuh WIN11 CIS assessment summary showing 133 Passed, 340 Failed, 9 Not applicable, score 28%, scan completed Oct 14 2026 09:37:20 (dashboard time).
 
 ### Scope of Validation
 
