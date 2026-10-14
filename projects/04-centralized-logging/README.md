@@ -49,7 +49,7 @@ Observed result: `32`.
 
 ## Evidence
 
-A screenshot of the server-side Sysmon alert count was captured during validation but has not yet been uploaded to this repository.
+Evidence is available in this repository, including the [server-side Sysmon alert-count screenshot](Complete%20pipeline.PNG) (32 matching alerts at the time of validation). Additional dashboard search evidence, indexed Sysmon event details, and Windows 11 CIS remediation screenshots are cataloged with their validation results in [validation.md](validation.md), including V-40 through V-45. The latest documented CIS assessment showed 148 Passed, 325 Failed, and 9 Not applicable (31% score); this is a point-in-time hardening assessment, not a claim of full compliance.
 
 ## Status
 
