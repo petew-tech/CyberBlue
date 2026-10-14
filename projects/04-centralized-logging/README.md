@@ -53,4 +53,4 @@ Evidence is available in this repository, including the [server-side Sysmon aler
 
 ## Status
 
-**In progress — Windows Sysmon-to-Wazuh alerting validated.** Further endpoint onboarding, dashboard validation, and documentation may follow.
+**In progress — core SIEM deployment, Windows Sysmon-to-Wazuh alerting, and Threat Hunting dashboard searches validated.** Windows 11 CIS Security Configuration Assessment and selected hardening remediations are documented through V-45 in [validation.md](validation.md). The latest recorded assessment is 148 Passed / 325 Failed / 9 Not applicable (31%); outstanding CIS findings have not all been remediated. Additional endpoint onboarding and complete raw event ingestion coverage have not yet been validated. Project 04 remains in progress pending final scope and documentation consistency review.
