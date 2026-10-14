@@ -1,7 +1,7 @@
 # Project 04 — Centralized Logging & SIEM Foundations
 ## Module 05 — Validation Record
 
-**Validation date:** 2026-10-13  
+**Validation period:** 2026-10-13 through 2026-10-14  
 **Status:** In progress — Windows Sysmon-to-Wazuh alerting and Threat Hunting dashboard searches validated; Windows 11 CIS assessment and selected hardening remediations documented through V-45. Complete raw event ingestion coverage and additional endpoint onboarding remain unvalidated.
 
 ### Environment
