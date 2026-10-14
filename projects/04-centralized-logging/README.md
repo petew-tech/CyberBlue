@@ -45,7 +45,7 @@ sudo grep -c '"groups":\["sysmon"' /var/ossec/logs/alerts/alerts.json
 
 Observed result: `32`.
 
-**Scope note:** This is a count of matching Sysmon *alerts* in the local alert log at the time of the test, not a count of all raw Sysmon events. The Threat Hunting searches attempted during validation returned no results for the chosen filters, while the server-side alert log independently confirmed that Sysmon alerts were generated and stored. Dashboard filter investigation remains a follow-up task.
+**Scope note:** This is a count of matching Sysmon *alerts* in the local alert log at the time of the test, not a count of all raw Sysmon events. Subsequent Threat Hunting dashboard validation confirmed searchable centralized Sysmon alerts for Windows agent `002` (`WIN11`): `data.win.system.eventID:11` returned 92 matching alerts, `data.win.system.providerName:"Microsoft-Windows-Sysmon"` returned 113, and `data.win.system.channel:"Microsoft-Windows-Sysmon/Operational"` returned 113 (point-in-time results within the Last 24 hours window). These counts represent matching alerts for the selected filters, not all raw Sysmon events or evidence of malicious activity. The earlier no-results dashboard observation was superseded by this successful validation.
 
 ## Evidence
 
