@@ -23,6 +23,8 @@ This project documents the deployment and validation of a Wazuh SIEM server and 
 - Added `Microsoft-Windows-Sysmon/Operational` as an `eventchannel` source in the Windows agent's `ossec.conf`.
 - Backed up the original configuration, validated the updated XML, and restarted the Wazuh agent.
 - Confirmed Sysmon64 and the Wazuh Windows service were running.
+- Validated centralized Sysmon alert searches in Wazuh Threat Hunting by rule ID, Event ID, provider, and channel; see [validation.md](validation.md) for the recorded point-in-time results.
+- Performed Windows 11 CIS Security Configuration Assessment and independently verified selected hardening remediations through V-45; the latest recorded assessment was 148 Passed / 325 Failed / 9 Not applicable (31%), with remaining findings not fully remediated.
 
 ## Validation
 
