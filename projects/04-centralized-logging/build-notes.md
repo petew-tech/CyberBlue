@@ -164,9 +164,9 @@ sudo grep -c '"groups":\["sysmon"' /var/ossec/logs/alerts/alerts.json
 
 This counts lines containing the matching beginning of the `rule.groups` array, **not** every raw Sysmon event and not necessarily all Sysmon alerts. A screenshot was saved locally but has not yet been uploaded to GitHub.
 
-## 7. Dashboard Search Limitation
+## 7. Dashboard Search Troubleshooting and Resolution
 
-The Wazuh Threat Hunting interface showed other alerts for `WIN11`, but the attempted Sysmon-specific queries returned no results:
+Early Wazuh Threat Hunting searches for Sysmon-specific events returned no results with these filters:
 
 ```text
 agent.name:"WIN11" AND win.system.providerName:"Microsoft-Windows-Sysmon"
@@ -174,7 +174,19 @@ agent.name:"WIN11" AND Sysmon
 win.system.channel:"Microsoft-Windows-Sysmon/Operational"
 ```
 
-**Current assessment:** Server-side `alerts.json` confirms Sysmon alert generation and storage. The failed UI queries are an **unresolved dashboard visibility/query issue**, not evidence that Sysmon ingestion failed. Investigate time range, index visibility, and actual mapped fields before claiming dashboard Sysmon searches are validated.
+These were historical unsuccessful queries; the server-side `alerts.json` had already independently confirmed Sysmon alert generation and storage. The precise reason those initial dashboard searches failed was not established.
+
+**Subsequent dashboard validation (2026-10-13):** Threat Hunting → Events successfully returned **10** matching alerts for `rule.id:92205` with Last 24 hours selected, and **8** matching alerts for `rule.id:92021` with Last 7 days selected.
+
+**Direct field-search validation (Last 24 hours):**
+
+| Dashboard query | Matching alerts |
+|---|---:|
+| `data.win.system.eventID:11` | 92 |
+| `data.win.system.providerName:"Microsoft-Windows-Sysmon"` | 113 |
+| `data.win.system.channel:"Microsoft-Windows-Sysmon/Operational"` | 113 |
+
+These point-in-time search hit counts confirm that Sysmon-related Wazuh alerts were searchable through the dashboard using the validated fields. They are **not** counts of all raw Sysmon events and do not establish complete ingestion coverage or malicious activity. The earlier search failure is no longer reproducible with these validated queries, although its original cause remains unknown. See [validation.md](validation.md) for the supporting evidence.
 
 ## 8. Operational Notes and Next Actions
 
