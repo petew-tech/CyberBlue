@@ -192,8 +192,8 @@ These point-in-time search hit counts confirm that Sysmon-related Wazuh alerts w
 
 - The Windows VM console did not support convenient clipboard paste; commands were entered manually. Preserve short, carefully checked PowerShell instructions for future Windows changes.
 - Continue to protect Wazuh credentials and enrollment secrets.
-- Upload the saved Sysmon alert-count screenshot and link it from `validation.md`.
-- Investigate Sysmon-specific Threat Hunting searches.
+- Completed: uploaded the [server-side Sysmon alert-count screenshot](Complete%20pipeline.PNG) and linked it in [validation.md](validation.md).
+- Completed: validated Sysmon-specific Threat Hunting searches by rule ID, event ID, provider, and channel; see [Section 7](#7-dashboard-search-troubleshooting-and-resolution) and [validation.md](validation.md) for point-in-time results. The original unsuccessful queries remain documented; their cause was not established.
 - Expand endpoint onboarding only after separate configuration and validation.
 
 ## Result
