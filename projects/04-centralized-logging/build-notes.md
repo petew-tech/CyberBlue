@@ -162,7 +162,7 @@ sudo grep -c '"groups":\["sysmon"' /var/ossec/logs/alerts/alerts.json
 
 **Observed result: `32`.**
 
-This counts lines containing the matching beginning of the `rule.groups` array, **not** every raw Sysmon event and not necessarily all Sysmon alerts. A screenshot was saved locally but has not yet been uploaded to GitHub.
+This counts lines containing the matching beginning of the `rule.groups` array, **not** every raw Sysmon event and not necessarily all Sysmon alerts. The server-side matching-alert count screenshot is uploaded as [Complete pipeline.PNG](Complete%20pipeline.PNG).
 
 ## 7. Dashboard Search Troubleshooting and Resolution
 
