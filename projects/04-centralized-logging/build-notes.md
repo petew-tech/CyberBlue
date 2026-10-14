@@ -200,4 +200,4 @@ These point-in-time search hit counts confirm that Sysmon-related Wazuh alerts w
 
 **Validated:** Windows Sysmon event source → Wazuh Windows agent `002` → Wazuh manager on `siem-01` → Sysmon-specific rules and centrally stored alerts.
 
-**Not yet validated:** Complete raw Sysmon event coverage or reliable Sysmon-specific dashboard search results.
+**Not yet validated:** Complete raw Sysmon event ingestion coverage or additional endpoint onboarding. Sysmon-specific Wazuh alert searches have been successfully validated in Threat Hunting.
