@@ -170,5 +170,5 @@ LAN Manager authentication level remediation screenshot: [Wazuh-CIS-LAN-Manager-
 
 ### Scope of Validation
 
-**Validated:** Sysmon telemetry from the Windows endpoint was collected by the Wazuh agent and produced centrally stored Wazuh alerts.  
+**Validated:** Windows Sysmon telemetry was collected by Wazuh agent `002`, generated centrally stored Wazuh alerts, and was successfully searched in Threat Hunting by rule ID, Event ID, provider, and channel. Selected Windows 11 CIS hardening controls were independently verified and recorded through V-45.  
 **Not yet validated:** Complete raw event ingestion coverage or additional endpoint onboarding.
