@@ -2,7 +2,7 @@
 ## Module 05 — Validation Record
 
 **Validation period:** 2026-10-13 through 2026-10-14  
-**Status:** In progress — Windows Sysmon-to-Wazuh alerting and Threat Hunting dashboard searches validated; Windows 11 CIS assessment and selected hardening remediations documented through V-45. Complete raw event ingestion coverage and additional endpoint onboarding remain unvalidated.
+**Status:** Complete — foundational SIEM deployment and Windows 11 telemetry validation. Windows Sysmon-to-Wazuh alerting and Threat Hunting dashboard searches were validated; Windows 11 CIS assessment and selected hardening remediations were documented through V-45. Complete raw event ingestion coverage, additional endpoint onboarding, and outstanding CIS findings remain future scope; full CIS compliance is not claimed.
 
 ### Environment
 
