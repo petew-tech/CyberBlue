@@ -1,7 +1,7 @@
 # Project 04 — Centralized Logging & SIEM Foundations
 ## Module 05 — Build Notes
 
-**Build status:** In progress; Windows Sysmon-to-Wazuh alerting and Threat Hunting dashboard searches validated, with Windows 11 CIS Security Configuration Assessment and selected hardening remediations documented through V-45 in [validation.md](validation.md). Complete raw Sysmon event ingestion coverage and additional endpoint onboarding remain unvalidated.
+**Build status:** Complete — foundational SIEM deployment and Windows 11 telemetry validation. Windows Sysmon-to-Wazuh alerting and Threat Hunting dashboard searches were validated, with Windows 11 CIS Security Configuration Assessment and selected hardening remediations documented through V-45 in [validation.md](validation.md). Complete raw Sysmon event ingestion coverage, additional endpoint onboarding, and outstanding CIS findings remain future scope; full CIS compliance is not claimed.
 
 These notes distinguish verified lab actions from follow-up work. Commands are recorded for reference, not as an unattended installation script.
 
