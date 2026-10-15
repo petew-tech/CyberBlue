@@ -22,6 +22,7 @@ This repository records actual lab work, including successful tests, troubleshoo
 | Intel Core i5-3330 / 32 GB RAM | Physical lab hardware |
 | KVM/QEMU | Virtualization technology |
 | Ubuntu Server 26.04.1 LTS | Linux endpoint and CyberBlue management server |
+| Ubuntu Server 24.04.5 LTS (`SIEM_01`) | Dedicated Wazuh 4.14.8 SIEM server — manager, indexer, dashboard, and Filebeat |
 | Kali Linux 2026.2 | Controlled security testing |
 | Linux Mint 22.3 | Linux lab endpoint |
 | Windows 11 | Windows endpoint and security event testing |
