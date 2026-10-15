@@ -134,9 +134,11 @@ Investigated native and enhanced security telemetry across Windows and Linux sys
 
 ## Project 04 — Centralized Logging & SIEM Foundations
 
-**Status: In progress — Windows Sysmon integration validated**
+**Status: Complete — Foundational SIEM Deployment**
 
-Deployed Wazuh 4.14.8 on a dedicated Ubuntu Server VM and enrolled the Windows 11 endpoint. Validated end-to-end Sysmon telemetry collection and centralized Wazuh alert generation using server-side alert logs. Dashboard search filters remain a follow-up item.
+Deployed Wazuh 4.14.8 on a dedicated Ubuntu Server VM and enrolled the Windows 11 endpoint. Validated centralized Sysmon alert generation, storage, and Threat Hunting dashboard searches. Performed Windows 11 CIS Security Configuration Assessment and documented selected hardening remediations through V-45.
+
+Additional endpoint onboarding, complete raw-event ingestion coverage, and outstanding CIS findings remain future work.
 
 [View Project 04 →](projects/04-centralized-logging/README.md)
 
