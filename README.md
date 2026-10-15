@@ -71,7 +71,7 @@ See [Project 02 — Network Segmentation](projects/02-networking-segmentation/RE
 | [01 — Virtualization Foundation](projects/01-virtualization-foundation/truenas/README.md) | TrueNAS VM provisioning, networking, lifecycle, and recovery | **Validated** |
 | [02 — Virtual Networking & Segmentation](projects/02-networking-segmentation/README.md) | Persistent bridges, addressing, routing controls, and troubleshooting | **Validated** |
 | [03 — Endpoint Telemetry & Logging](projects/03-endpoint-telemetry/README.md) | Windows Event Logs, Sysmon, Linux auditd, visibility gaps, and recovery | **Validated — historical evidence limitation documented** |
-| [04 — Centralized Logging & SIEM Foundations](projects/04-centralized-logging/README.md) | Wazuh 4.14.8 deployment, Windows agent enrollment, and Sysmon alert validation | **In progress — Windows Sysmon integration validated** |
+| [04 — Centralized Logging & SIEM Foundations](projects/04-centralized-logging/README.md) | Wazuh 4.14.8, Windows Sysmon alerting, Threat Hunting searches, and selected Windows 11 CIS hardening | **Complete — foundational SIEM deployment and Windows 11 telemetry validated** |
 
 Additional projects will be added only as implementation and validation progress.
 
