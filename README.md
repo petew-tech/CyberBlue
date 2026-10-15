@@ -1,6 +1,6 @@
 # CyberBlue — Cybersecurity Home Lab & Portfolio
 
-<img width="1774" height="887" alt="CyberBlue cybersecurity lab banner" src="https://github.com/user-attachments/assets/66fcc580-105e-49e6-88cb-af3863f1498a" />
+![CyberBlue SOC-style cybersecurity home lab and SIEM portfolio banner](CyberBlue-SOC-Banner.png)
 
 ## Overview
 
