@@ -41,6 +41,7 @@ Dual-interface rollout evidence (same date):
 3. [Suricata AF_PACKET dual-interface configuration](evidence/03-suricata-dual-interface-configuration.png) — `ens4` configured with cluster ID `99` and `ens5` configured with cluster ID `100`; configuration test exited `0`.
 4. [Suricata dual-interface initialization](evidence/04-suricata-dual-interface-initialization.png) — process `2922` logged two capture threads initialized on each interface. **EVE flow records confirm some traffic on `ens5`, but Kali's gateway ICMP traffic was not visible to the sensor. Comprehensive inter-VM visibility remains unverified.**
 5. [br30 traffic visibility gap](evidence/05-br30-traffic-visibility-gap.PNG) — Linux Mint's `ens5` capture showed zero matching packets for the tested Kali ICMP exchange, although the Kali ping succeeded. This documents a tested observation gap, not full packet-loss statistics.
+6. [TrueNAS host-side packet capture](evidence/06-br30-truenas-packet-capture.PNG) — `tcpdump` on Kali's host-side `vnet5` captured 4 ICMP echo requests/replies involving `10.10.30.20` and `10.10.30.1`, with 0 kernel drops. This confirms host-side observation for the tested flow.
 
 ## Representative Centralized Alert
 
