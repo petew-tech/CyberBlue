@@ -9,10 +9,21 @@ This document is the shared networking reference for the CyberBlue lab on TrueNA
 | Network | Subnet | TrueNAS interface | Host bridge address | Purpose |
 |---|---|---|---|---|
 | Home / Management LAN | `192.168.1.0/24` | `enp4s0` | TrueNAS management: `192.168.1.90` | Host and guest administration |
+| SOC bridge — new, no VMs yet | `10.10.20.0/24` | `br20` | `10.10.20.1/24` | Planned SOC network, bridge created and registered on 2026-10-16 |
 | Security Lab | `10.10.30.0/24` | `br30` | `10.10.30.1/24` | Ubuntu Server and Kali |
 | Isolated Lab | `10.10.40.0/24` | `br40` | `10.10.40.1/24` | Linux Mint |
 
-The home/management LAN uses gateway `192.168.1.1`. The two lab bridges are persistent TrueNAS-managed Linux bridges, not documented as 802.1Q VLANs.
+The home/management LAN uses gateway `192.168.1.1`. The existing `br30` and `br40` lab bridges are documented as persistent TrueNAS-managed Linux bridges, not 802.1Q VLANs. The new `br20` has been saved and registered in TrueNAS; its post-reboot persistence remains to be tested.
+
+
+
+### SOC Bridge Creation — 2026-10-16
+
+- Created TrueNAS-managed interface `br20` through Network → Interfaces as type **Bridge**, without any physical bridge members. DHCP and IPv6 autoconfiguration were disabled.
+- Configured IPv4 alias `10.10.20.1/24`. An initial unconfirmed Test Changes operation rolled back; the bridge was recreated, saved, and applied through TrueNAS.
+- Verified on TrueNAS with `ip -4 addr show br20`: interface flags `NO-CARRIER,BROADCAST,MULTICAST,UP`, operational `state DOWN`, IPv4 `10.10.20.1/24`. No carrier is expected with no VM ports attached.
+- Verified management-plane registration through `midclt call interface.query`: `name: br20`, `type: BRIDGE`, IPv4 alias `10.10.20.1`, netmask 24.
+- **Status:** Creation and current managed configuration verified; reboot persistence and VM connectivity are **not yet tested**. Existing `br30` and `br40` assignments remain in place pending staged migration. The permanent three-zone target and future VM roles are documented in [architecture.md](architecture.md#13-approved-target-architecture--soc--victim--attack-segmentation-2026-10-16).
 
 ## Virtual Machine Addressing
 
