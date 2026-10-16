@@ -22,10 +22,12 @@
 | V-12 | Automatic recovery | Main PID changed to 13422; `NRestarts=1`; service active/running | PASS |
 | V-13 | Detection after recovery | New SID `1000001` alert observed at 09:29:00 CDT and confirmed in Wazuh | PASS |
 | V-14 | Packet capture statistics | 278 kernel packets, 0 kernel drops, 0 capture errors in sampled stats event | PASS |
-| V-15 | Bridge-wide visibility | No mirroring configuration demonstrated; visibility between other VMs not verified | OPEN |
+| V-15 | Bridge-wide visibility | Temporary, filtered `vnet5` ingress → `vnet7` egress ICMP mirror verified for Kali requests only; full bidirectional, other-host, and `br40` mirroring unverified | PARTIAL — OPEN |
 | V-16 | Dual-interface Suricata initialization | `ens4` and `ens5` each created 2 capture threads under PID `2922`; screenshots `03` and `04` | PASS — initialization only |
 | V-17 | `ens5` EVE flow ingestion | DHCP and IPv6-ICMP flow records tagged `in_iface: ens5` | PASS — observed traffic only |
 | V-18 | Kali-to-gateway unicast observation | Kali `10.10.30.20` pinged `10.10.30.1` successfully (4/4); matching `tcpdump` on Mint `ens5` saw 0 ICMP packets and 0 kernel drops | VISIBILITY GAP — further investigation required |
+| V-19 | Controlled ICMP packet mirror | TrueNAS `tc clsact` on `vnet5` with ingress flower source `10.10.30.20`, `ip_proto icmp`, action `mirred egress mirror dev vnet7`; 4 packets / 336 bytes mirrored, no drops | PASS — scoped test |
+| V-20 | Mirrored packet ingestion | Linux Mint `tcpdump` on `ens5` captured all four mirrored echo requests with zero kernel drops; Suricata EVE JSON `in_iface: ens5` flow recorded `pkts_toserver:4`, `pkts_toclient:0`, `alerted:false` | PASS — one-way flow |
 
 ## Screenshot Evidence
 
@@ -42,6 +44,8 @@ Dual-interface rollout evidence (same date):
 4. [Suricata dual-interface initialization](evidence/04-suricata-dual-interface-initialization.png) — process `2922` logged two capture threads initialized on each interface. **EVE flow records confirm some traffic on `ens5`, but Kali's gateway ICMP traffic was not visible to the sensor. Comprehensive inter-VM visibility remains unverified.**
 5. [br30 traffic visibility gap](evidence/05-br30-traffic-visibility-gap.PNG) — Linux Mint's `ens5` capture showed zero matching packets for the tested Kali ICMP exchange, although the Kali ping succeeded. This documents a tested observation gap, not full packet-loss statistics.
 6. [TrueNAS host-side packet capture](evidence/06-br30-truenas-packet-capture.PNG) — `tcpdump` on Kali's host-side `vnet5` captured 4 ICMP echo requests/replies involving `10.10.30.20` and `10.10.30.1`, with 0 kernel drops. This confirms host-side observation for the tested flow.
+
+7. [Suricata br30 mirrored flow](evidence/07-suricata-br30-mirrored-flow.png) — after temporary TrueNAS mirroring, Suricata `eve.json` on Linux Mint recorded all 4 Kali ICMP requests on `ens5`, no replies (`pkts_toclient:0`) and no alert (`alerted:false`).
 
 ## Representative Centralized Alert
 
@@ -60,4 +64,4 @@ Wazuh recorded the custom detection with:
 
 **PASS:** The tested detection path from ICMP traffic delivered to the Linux Mint sensor through Suricata EVE JSON to Wazuh alerts and the dashboard is validated. Automatic Suricata recovery was demonstrated, and detection resumed afterward.
 
-**OPEN:** Mirrored/unicast coverage for both `br30` and `br40` remains to be implemented and independently validated. The Kali-to-TrueNAS test exposed a specific `br30` observation gap; its [tcpdump evidence screenshot](evidence/05-br30-traffic-visibility-gap.PNG) has been uploaded and verified.
+**PARTIAL / OPEN:** A temporary TrueNAS `tc` rule successfully mirrored a narrowly scoped Kali ICMP request flow on `br30` into Linux Mint `ens5`, where Suricata logged four requests. Only ingress ICMP from Kali was mirrored; replies, other traffic, bridge-wide coverage, `br40`, and post-reboot persistence remain unverified. The prior [visibility-gap screenshot](evidence/05-br30-traffic-visibility-gap.PNG) and subsequent [Suricata mirrored-flow screenshot](evidence/07-suricata-br30-mirrored-flow.png) document the before/after evidence.
