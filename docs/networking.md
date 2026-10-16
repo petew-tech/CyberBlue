@@ -27,12 +27,14 @@ The home/management LAN uses gateway `192.168.1.1`. The existing `br30` and `br4
 
 ### Ubuntu SOC NIC and Three-Network Connectivity — 2026-10-16
 
-- Renamed TrueNAS VM ID `8` from `cbunbubtu01` to `cbubuntu01`; Ubuntu's internal login prompt still used `cbunbuntu01` during this test.
+- Renamed TrueNAS VM ID `8` from `cbunbubtu01` to `cbubuntu01`; Ubuntu's internal hostname was corrected from `cbunbuntu01` to `cbubuntu01` after network validation.
 - Preserved Ubuntu `mgmt0` (TrueNAS NIC device 24, `enp4s0`) and `lab0` (device 41, `br30`, `10.10.30.10/24`).
 - Added VirtIO NIC device `52` on `br20`, MAC `00:a0:98:64:1e:3c`; Ubuntu detected this as `ens4`.
 - Configured Ubuntu `ens4` with Netplan file `/etc/netplan/10-cyberblue-soc.yaml` using MAC match, address `10.10.20.10/24`, disabled DHCP, no additional default route. `netplan generate` and `netplan try --timeout 180` completed successfully. Guest `ip -4 addr show ens4` confirmed `10.10.20.10/24` and link UP.
 - **Validation — all 4/4 replies with 0% loss:** `ping -I ens4 -c 4 10.10.20.1` (SOC); `ping -I mgmt0 -c 4 192.168.1.1` (management); `ping -I lab0 -c 4 10.10.30.1` (existing lab).
 - **Limitation:** These are guest-to-gateway checks, not proof of inter-VM communication or full network isolation. Ubuntu currently has connections to both `br20` and `br30`; do not treat the zone names as an enforced security boundary. TrueNAS reboot persistence and remaining VM migrations are still open.
+- **Hostname correction (2026-10-16):** TrueNAS VM display name is `cbubuntu01` (VM ID `8`). Ubuntu's system hostname originally remained `cbunbuntu01`. Ran `sudo hostnamectl set-hostname cbubuntu01`, verified `hostnamectl --static` returned `cbubuntu01`, changed `/etc/hosts` mapping from `127.0.1.1 cbunbuntu01` to `127.0.1.1 cbubuntu01` using `sudo sed -i.bak 's/cbunbuntu01/cbubuntu01/' /etc/hosts` (backup `/etc/hosts.bak`), then verified `/etc/hosts` contents. Existing session's prompt still showed old name, expected until a fresh shell/login; no restart required.
+
 
 ## Virtual Machine Addressing
 
