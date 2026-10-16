@@ -33,6 +33,11 @@ Actual Wazuh Threat Hunting screenshots from October 16, 2026:
 
 Both screenshots are separate views of the same alert, not two independent detections.
 
+Dual-interface rollout evidence (same date):
+
+3. [Suricata AF_PACKET dual-interface configuration](evidence/03-suricata-dual-interface-configuration.png) — `ens4` configured with cluster ID `99` and `ens5` configured with cluster ID `100`; configuration test exited `0`.
+4. [Suricata dual-interface initialization](evidence/04-suricata-dual-interface-initialization.png) — process `2922` logged two capture threads initialized on each interface. **Operational packet capture on both bridges and comprehensive inter-VM visibility remain unverified.**
+
 ## Representative Centralized Alert
 
 Wazuh recorded the custom detection with:
