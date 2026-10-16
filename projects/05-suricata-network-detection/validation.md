@@ -22,7 +22,10 @@
 | V-12 | Automatic recovery | Main PID changed to 13422; `NRestarts=1`; service active/running | PASS |
 | V-13 | Detection after recovery | New SID `1000001` alert observed at 09:29:00 CDT and confirmed in Wazuh | PASS |
 | V-14 | Packet capture statistics | 278 kernel packets, 0 kernel drops, 0 capture errors in sampled stats event | PASS |
-| V-15 | Bridge-wide visibility | No mirroring configuration was demonstrated; visibility between other VMs not verified | OPEN |
+| V-15 | Bridge-wide visibility | No mirroring configuration demonstrated; visibility between other VMs not verified | OPEN |
+| V-16 | Dual-interface Suricata initialization | `ens4` and `ens5` each created 2 capture threads under PID `2922`; screenshots `03` and `04` | PASS — initialization only |
+| V-17 | `ens5` EVE flow ingestion | DHCP and IPv6-ICMP flow records tagged `in_iface: ens5` | PASS — observed traffic only |
+| V-18 | Kali-to-gateway unicast observation | Kali `10.10.30.20` pinged `10.10.30.1` successfully (4/4); matching `tcpdump` on Mint `ens5` saw 0 ICMP packets and 0 kernel drops | VISIBILITY GAP — further investigation required |
 
 ## Screenshot Evidence
 
@@ -36,7 +39,7 @@ Both screenshots are separate views of the same alert, not two independent detec
 Dual-interface rollout evidence (same date):
 
 3. [Suricata AF_PACKET dual-interface configuration](evidence/03-suricata-dual-interface-configuration.png) — `ens4` configured with cluster ID `99` and `ens5` configured with cluster ID `100`; configuration test exited `0`.
-4. [Suricata dual-interface initialization](evidence/04-suricata-dual-interface-initialization.png) — process `2922` logged two capture threads initialized on each interface. **Operational packet capture on both bridges and comprehensive inter-VM visibility remain unverified.**
+4. [Suricata dual-interface initialization](evidence/04-suricata-dual-interface-initialization.png) — process `2922` logged two capture threads initialized on each interface. **EVE flow records confirm some traffic on `ens5`, but Kali's gateway ICMP traffic was not visible to the sensor. Comprehensive inter-VM visibility remains unverified.**
 
 ## Representative Centralized Alert
 
@@ -55,4 +58,4 @@ Wazuh recorded the custom detection with:
 
 **PASS:** The tested detection path from ICMP traffic delivered to the Linux Mint sensor through Suricata EVE JSON to Wazuh alerts and the dashboard is validated. Automatic Suricata recovery was demonstrated, and detection resumed afterward.
 
-**OPEN:** Monitoring of traffic exchanged between other virtual machines across TrueNAS bridge `br40` has not been demonstrated. This will be handled as a separate follow-up.
+**OPEN:** Mirrored/unicast coverage for both `br30` and `br40` remains to be implemented and independently validated. The Kali-to-TrueNAS test exposed a specific `br30` observation gap. The screenshot of the zero-packet capture has been supplied in the conversation; its GitHub repository upload remains unverified.
