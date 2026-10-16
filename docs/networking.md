@@ -9,7 +9,7 @@ This document is the shared networking reference for the CyberBlue lab on TrueNA
 | Network | Subnet | TrueNAS interface | Host bridge address | Purpose |
 |---|---|---|---|---|
 | Home / Management LAN | `192.168.1.0/24` | `enp4s0` | TrueNAS management: `192.168.1.90` | Host and guest administration |
-| SOC bridge — new, no VMs yet | `10.10.20.0/24` | `br20` | `10.10.20.1/24` | Planned SOC network, bridge created and registered on 2026-10-16 |
+| SOC bridge — Ubuntu connected | `10.10.20.0/24` | `br20` | `10.10.20.1/24` | Ubuntu `cbubuntu01` `ens4` on `10.10.20.10/24`, tested 2026-10-16 |
 | Security Lab | `10.10.30.0/24` | `br30` | `10.10.30.1/24` | Ubuntu Server and Kali |
 | Isolated Lab | `10.10.40.0/24` | `br40` | `10.10.40.1/24` | Linux Mint |
 
@@ -23,7 +23,16 @@ The home/management LAN uses gateway `192.168.1.1`. The existing `br30` and `br4
 - Configured IPv4 alias `10.10.20.1/24`. An initial unconfirmed Test Changes operation rolled back; the bridge was recreated, saved, and applied through TrueNAS.
 - Verified on TrueNAS with `ip -4 addr show br20`: interface flags `NO-CARRIER,BROADCAST,MULTICAST,UP`, operational `state DOWN`, IPv4 `10.10.20.1/24`. No carrier is expected with no VM ports attached.
 - Verified management-plane registration through `midclt call interface.query`: `name: br20`, `type: BRIDGE`, IPv4 alias `10.10.20.1`, netmask 24.
-- **Status:** Creation and current managed configuration verified; reboot persistence and VM connectivity are **not yet tested**. Existing `br30` and `br40` assignments remain in place pending staged migration. The permanent three-zone target and future VM roles are documented in [architecture.md](architecture.md#13-approved-target-architecture--soc--victim--attack-segmentation-2026-10-16).
+- **Status:** Bridge creation and initial Ubuntu-to-host VM connectivity verified; reboot persistence, inter-VM traffic and bridge-wide security controls **not yet tested**. Existing `br30` and `br40` assignments remain in place pending staged migration. The permanent three-zone target and future VM roles are documented in [architecture.md](architecture.md#13-approved-target-architecture--soc--victim--attack-segmentation-2026-10-16).
+
+### Ubuntu SOC NIC and Three-Network Connectivity — 2026-10-16
+
+- Renamed TrueNAS VM ID `8` from `cbunbubtu01` to `cbubuntu01`; Ubuntu's internal login prompt still used `cbunbuntu01` during this test.
+- Preserved Ubuntu `mgmt0` (TrueNAS NIC device 24, `enp4s0`) and `lab0` (device 41, `br30`, `10.10.30.10/24`).
+- Added VirtIO NIC device `52` on `br20`, MAC `00:a0:98:64:1e:3c`; Ubuntu detected this as `ens4`.
+- Configured Ubuntu `ens4` with Netplan file `/etc/netplan/10-cyberblue-soc.yaml` using MAC match, address `10.10.20.10/24`, disabled DHCP, no additional default route. `netplan generate` and `netplan try --timeout 180` completed successfully. Guest `ip -4 addr show ens4` confirmed `10.10.20.10/24` and link UP.
+- **Validation — all 4/4 replies with 0% loss:** `ping -I ens4 -c 4 10.10.20.1` (SOC); `ping -I mgmt0 -c 4 192.168.1.1` (management); `ping -I lab0 -c 4 10.10.30.1` (existing lab).
+- **Limitation:** These are guest-to-gateway checks, not proof of inter-VM communication or full network isolation. Ubuntu currently has connections to both `br20` and `br30`; do not treat the zone names as an enforced security boundary. TrueNAS reboot persistence and remaining VM migrations are still open.
 
 ## Virtual Machine Addressing
 
