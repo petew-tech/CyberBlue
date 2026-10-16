@@ -63,6 +63,12 @@ Windows 11 currently uses the management network and has been used for endpoint 
 
 See [Project 02 — Network Segmentation](projects/02-networking-segmentation/README.md) for implementation details and limitations.
 
+### Approved Future Network Layout (Not Yet Deployed)
+
+CyberBlue will evolve toward a three-zone architecture using **TrueNAS-managed `br20` (SOC, `10.10.20.0/24`), `br30` (Victim, `10.10.30.0/24`), and `br40` (Attack, `10.10.40.0/24`)**. Intended placement is Ubuntu Server and Linux Mint for SOC functions, Windows 11 for victim exercises, and Kali Linux for controlled attack exercises. Existing management connectivity and the dedicated Wazuh SIEM will be preserved during staged migration. Network changes and monitoring coverage will only be treated as complete after validation and evidence. The diagram above remains the **current documented lab configuration**, not the future layout.
+
+See the [approved target design and staged-migration safeguards](docs/architecture.md#13-approved-target-architecture--soc--victim--attack-segmentation-2026-10-16).
+
 ---
 
 ## CyberBlue Project Index
