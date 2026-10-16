@@ -73,6 +73,7 @@ See [Project 02 — Network Segmentation](projects/02-networking-segmentation/RE
 | [02 — Virtual Networking & Segmentation](projects/02-networking-segmentation/README.md) | Persistent bridges, addressing, routing controls, and troubleshooting | **Validated** |
 | [03 — Endpoint Telemetry & Logging](projects/03-endpoint-telemetry/README.md) | Windows Event Logs, Sysmon, Linux auditd, visibility gaps, and recovery | **Validated — historical evidence limitation documented** |
 | [04 — Centralized Logging & SIEM Foundations](projects/04-centralized-logging/README.md) | Wazuh 4.14.8, Windows Sysmon alerting, Threat Hunting searches, and selected Windows 11 CIS hardening | **Complete — foundational SIEM deployment and Windows 11 telemetry validated** |
+| [05 — Suricata Network Detection & Wazuh Integration](projects/05-suricata-network-detection/README.md) | Linux Mint Suricata IDS, custom ICMP detection, Wazuh alert ingestion, and controlled service recovery | **Validated — bridge-wide visibility remains an open follow-up** |
 
 Additional projects will be added only as implementation and validation progress.
 
@@ -142,6 +143,18 @@ Deployed Wazuh 4.14.8 on a dedicated Ubuntu Server VM and enrolled the Windows 1
 Additional endpoint onboarding, complete raw-event ingestion coverage, and outstanding CIS findings remain future work.
 
 [View Project 04 →](projects/04-centralized-logging/README.md)
+
+---
+
+## Project 05 — Suricata Network Detection & Wazuh Integration
+
+**Status: Validated — Sensor Detection and Recovery**
+
+Configured Suricata on Linux Mint to detect a controlled ICMP test, forward EVE JSON telemetry through the Wazuh agent, and generate a centralized Wazuh alert. A controlled Suricata process failure confirmed systemd automatic recovery; the sensor resumed detection and Wazuh continued receiving alerts. Point-in-time capture statistics reported zero kernel drops and zero capture errors.
+
+Visibility into traffic exchanged between other VMs on TrueNAS bridge `br40` has not been demonstrated and remains a separate follow-up.
+
+[View Project 05 →](projects/05-suricata-network-detection/README.md)
 
 ---
 
