@@ -227,12 +227,12 @@ Historical configurations, security limitations, and validation results are pres
 
 ## 13. Approved Target Architecture — SOC / Victim / Attack Segmentation (2026-10-16)
 
-**Status: APPROVED DESIGN TARGET — NOT YET DEPLOYED.** The existing, validated Project 02 networking above remains the historical/current documented implementation until individual migration stages are tested. This plan follows the general roles of a peer's Proxmox lab but retains TrueNAS SCALE and CyberBlue's own addressing, workloads and resource constraints.
+**Status: PARTIALLY IMPLEMENTED — `br20` CREATED; VM MIGRATION NOT YET DONE.** The existing, validated Project 02 networking above remains the historical/current documented implementation until individual migration stages are tested. This plan follows the general roles of a peer's Proxmox lab but retains TrueNAS SCALE and CyberBlue's own addressing, workloads and resource constraints.
 
 | Zone | Planned TrueNAS bridge | Planned subnet | Intended systems and role |
 |---|---|---|---|
 | Home / management | Existing management interface `enp4s0` | `192.168.1.0/24` | TrueNAS management `192.168.1.90`; retain existing management connectivity during migration |
-| SOC | **New** `br20` | `10.10.20.0/24` | Ubuntu Server and Linux Mint SOC/sensor functions; exact guest addresses and management paths to be verified before assignment |
+| SOC | **Created; no VMs attached yet** `br20` | `10.10.20.0/24` | Ubuntu Server and Linux Mint SOC/sensor functions; exact guest addresses and management paths to be verified before assignment |
 | Victim | Existing `br30` | `10.10.30.0/24` | Windows 11 as intended victim endpoint, subject to VM NIC and addressing validation |
 | Attack | Existing `br40` | `10.10.40.0/24` | Kali Linux as intended controlled attack host, subject to NIC and addressing validation |
 
@@ -256,6 +256,16 @@ Historical configurations, security limitations, and validation results are pres
 ```
 
 **Diagram notes:** This is logical placement, not evidence of connectivity, completed VM moves or full isolation. Linux Mint may retain dedicated receive-only capture NICs on the monitored victim/attack bridges while using a separate SOC/management connection. The Wazuh SIEM is already deployed separately as `SIEM_01` (`192.168.1.213`), and the existing working telemetry path must remain usable during migration. Do not conflate the existing Ubuntu management/endpoint VM with the dedicated SIEM VM.
+
+
+
+### First Implementation Milestone — SOC Bridge Created (2026-10-16)
+
+- TrueNAS SCALE Network → Interfaces configuration created a new bridge named `br20` with **no physical bridge members** and IPv4 alias `10.10.20.1/24`.
+- The first temporary application reverted when the confirmation window expired; the operator repeated the configuration and saved it through TrueNAS.
+- TrueNAS shell check `ip -4 addr show br20` showed interface administratively **UP**, `NO-CARRIER` / operational `DOWN`, with `inet 10.10.20.1/24`. No guest ports were attached yet, so lack of carrier was expected.
+- TrueNAS `midclt call interface.query` confirmed `{name: br20, type: BRIDGE, aliases: [{type: INET, address: 10.10.20.1, netmask: 24}]}`.
+- **Validated:** Bridge existence, IP assignment, TrueNAS-managed configuration. **Not yet validated:** reboot persistence, attached VM traffic, routing/firewall boundaries involving `br20`, and workload migrations. Existing management, Suricata and Wazuh integrations must be retained throughout staged changes.
 
 ### Current-versus-target boundary
 
