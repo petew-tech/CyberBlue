@@ -24,6 +24,15 @@
 | V-14 | Packet capture statistics | 278 kernel packets, 0 kernel drops, 0 capture errors in sampled stats event | PASS |
 | V-15 | Bridge-wide visibility | No mirroring configuration was demonstrated; visibility between other VMs not verified | OPEN |
 
+## Screenshot Evidence
+
+Actual Wazuh Threat Hunting screenshots from October 16, 2026:
+
+1. [Suricata alert details](evidence/01-wazuh-suricata-alert-details.png) — Wazuh agent `003`, source address `192.168.1.92`, Suricata signature `CYBERBLUE TEST - ICMP Echo Request` (SID `1000001`), destination `10.10.40.1`.
+2. [Wazuh rule and timestamp](evidence/02-wazuh-suricata-rule-and-timestamp.png) — `ens4`, source `10.10.40.10`, event source `/var/log/suricata/eve.json`, manager `siem-01`, Wazuh rule `86601`, and recorded timestamp.
+
+Both screenshots are separate views of the same alert, not two independent detections.
+
 ## Representative Centralized Alert
 
 Wazuh recorded the custom detection with:
