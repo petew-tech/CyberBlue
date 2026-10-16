@@ -221,3 +221,56 @@ These future capabilities are not claimed as completed until their implementatio
 CyberBlue architecture documentation reflects observed and documented lab configurations.
 
 Historical configurations, security limitations, and validation results are preserved so the portfolio demonstrates both technical implementation and engineering judgment.
+
+
+---
+
+## 13. Approved Target Architecture — SOC / Victim / Attack Segmentation (2026-10-16)
+
+**Status: APPROVED DESIGN TARGET — NOT YET DEPLOYED.** The existing, validated Project 02 networking above remains the historical/current documented implementation until individual migration stages are tested. This plan follows the general roles of a peer's Proxmox lab but retains TrueNAS SCALE and CyberBlue's own addressing, workloads and resource constraints.
+
+| Zone | Planned TrueNAS bridge | Planned subnet | Intended systems and role |
+|---|---|---|---|
+| Home / management | Existing management interface `enp4s0` | `192.168.1.0/24` | TrueNAS management `192.168.1.90`; retain existing management connectivity during migration |
+| SOC | **New** `br20` | `10.10.20.0/24` | Ubuntu Server and Linux Mint SOC/sensor functions; exact guest addresses and management paths to be verified before assignment |
+| Victim | Existing `br30` | `10.10.30.0/24` | Windows 11 as intended victim endpoint, subject to VM NIC and addressing validation |
+| Attack | Existing `br40` | `10.10.40.0/24` | Kali Linux as intended controlled attack host, subject to NIC and addressing validation |
+
+### Proposed Logical Layout
+
+```text
+                HOME / MANAGEMENT LAN
+                    192.168.1.0/24
+                           |
+                TrueNAS SCALE 24.10.1
+                   192.168.1.90
+                           |
+         +-----------------+-----------------+
+         |                 |                 |
+        br20              br30              br40
+       SOC ZONE        VICTIM ZONE        ATTACK ZONE
+   10.10.20.0/24     10.10.30.0/24     10.10.40.0/24
+         |                 |                 |
+   Ubuntu Server       Windows 11        Kali Linux
+   Linux Mint sensor
+```
+
+**Diagram notes:** This is logical placement, not evidence of connectivity, completed VM moves or full isolation. Linux Mint may retain dedicated receive-only capture NICs on the monitored victim/attack bridges while using a separate SOC/management connection. The Wazuh SIEM is already deployed separately as `SIEM_01` (`192.168.1.213`), and the existing working telemetry path must remain usable during migration. Do not conflate the existing Ubuntu management/endpoint VM with the dedicated SIEM VM.
+
+### Current-versus-target boundary
+
+- **Existing setup as last verified:** `br30` hosts Kali on `10.10.30.20`; Linux Mint uses `10.10.40.10` on `br40` and a passive `ens5` connection to `br30`. Windows 11 has not yet been migrated onto `br30`.
+- **Project 05 proof of concept:** Temporary, narrowly scoped TrueNAS `tc` ingress and egress filters on Kali's `vnet5` mirrored one Kali ↔ TrueNAS ICMP exchange to Mint's `vnet7`/`ens5`. Suricata's EVE flow logged four requests and four replies. This does **not** demonstrate all-protocol, full-bridge or persistent monitoring.
+- **Current segmentation caveat:** Existing shared management-LAN NICs create other potential network paths; bridge separation alone does not establish complete end-to-end VM isolation. Existing firewall controls must be reassessed after any new bridge or migration.
+
+### Migration and module-growth guardrails
+
+1. Preserve a verified rollback plan, TrueNAS access, and the functioning Suricata → EVE JSON → Wazuh integration. Avoid removing current NICs or bridges prematurely.
+2. Validate resources (32 GB RAM, four-core Intel i5), VM states, host bridge identities, and precise interface/IP mappings before modifying topology.
+3. Add `br20` as a planned change, then validate an initial SOC participant and management reachability before moving any existing detection services.
+4. Stage Windows 11 onto `br30` and Kali onto `br40` only after checking their guest interfaces, current routes, security boundaries and test connectivity.
+5. Plan explicit, narrowly scoped and reversible inter-zone test paths if an attack-zone exercise must reach the victim zone; do **not** permanently merge bridges, enable unrestricted routing or assume isolation based on zone labels.
+6. Reassess TrueNAS packet mirroring after VM port mappings change. The current `vnet5` and `vnet7` references are runtime-specific and must not be hardcoded as future persistent topology.
+7. For each new module: record its zone, systems, security controls, validation, evidence and rollback steps. Update this architecture only when implemented facts are independently verified; keep the target diagram clearly designated as proposed until complete.
+
+**Related evidence:** [Project 05 — Suricata build notes](../projects/05-suricata-network-detection/build-notes.md) and [validation record](../projects/05-suricata-network-detection/validation.md).
