@@ -12,6 +12,7 @@ This folder is reserved for screenshots captured from the actual CyberBlue lab d
 | [04-suricata-dual-interface-initialization.png](04-suricata-dual-interface-initialization.png) | Suricata process `2922` initialized capture threads on both interfaces | Uploaded and verified |
 | [05-br30-traffic-visibility-gap.PNG](05-br30-traffic-visibility-gap.PNG) | On Linux Mint `ens5`, tcpdump observed zero matching ICMP packets from Kali during the test; kernel drops were zero | Uploaded and verified |
 | [06-br30-truenas-packet-capture.PNG](06-br30-truenas-packet-capture.PNG) | TrueNAS `vnet5` captured 4 ICMP echo requests/replies between Kali `10.10.30.20` and bridge `10.10.30.1`, with 0 kernel drops | Uploaded and verified |
+| [07-suricata-br30-mirrored-flow.png](07-suricata-br30-mirrored-flow.png) | Linux Mint Suricata EVE JSON recorded 4 mirrored ICMP echo requests from Kali `10.10.30.20` to `10.10.30.1` on `ens5`; no replies and no alert | Uploaded and verified |
 
 Screenshots 01 and 02 are two views of the same detection, not two separate detections. Screenshots 03 and 04 show the later dual-interface configuration and service initialization; they do not demonstrate bridge-wide traffic visibility. The source timestamp and indexed alert timestamp differ slightly, reflecting event collection and processing.
 
