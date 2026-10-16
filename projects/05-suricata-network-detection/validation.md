@@ -40,6 +40,7 @@ Dual-interface rollout evidence (same date):
 
 3. [Suricata AF_PACKET dual-interface configuration](evidence/03-suricata-dual-interface-configuration.png) — `ens4` configured with cluster ID `99` and `ens5` configured with cluster ID `100`; configuration test exited `0`.
 4. [Suricata dual-interface initialization](evidence/04-suricata-dual-interface-initialization.png) — process `2922` logged two capture threads initialized on each interface. **EVE flow records confirm some traffic on `ens5`, but Kali's gateway ICMP traffic was not visible to the sensor. Comprehensive inter-VM visibility remains unverified.**
+5. [br30 traffic visibility gap](evidence/05-br30-traffic-visibility-gap.PNG) — Linux Mint's `ens5` capture showed zero matching packets for the tested Kali ICMP exchange, although the Kali ping succeeded. This documents a tested observation gap, not full packet-loss statistics.
 
 ## Representative Centralized Alert
 
@@ -58,4 +59,4 @@ Wazuh recorded the custom detection with:
 
 **PASS:** The tested detection path from ICMP traffic delivered to the Linux Mint sensor through Suricata EVE JSON to Wazuh alerts and the dashboard is validated. Automatic Suricata recovery was demonstrated, and detection resumed afterward.
 
-**OPEN:** Mirrored/unicast coverage for both `br30` and `br40` remains to be implemented and independently validated. The Kali-to-TrueNAS test exposed a specific `br30` observation gap. The screenshot of the zero-packet capture has been supplied in the conversation; its GitHub repository upload remains unverified.
+**OPEN:** Mirrored/unicast coverage for both `br30` and `br40` remains to be implemented and independently validated. The Kali-to-TrueNAS test exposed a specific `br30` observation gap; its [tcpdump evidence screenshot](evidence/05-br30-traffic-visibility-gap.PNG) has been uploaded and verified.
