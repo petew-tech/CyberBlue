@@ -227,12 +227,12 @@ Historical configurations, security limitations, and validation results are pres
 
 ## 13. Approved Target Architecture — SOC / Victim / Attack Segmentation (2026-10-16)
 
-**Status: PARTIALLY IMPLEMENTED — `br20` CREATED; VM MIGRATION NOT YET DONE.** The existing, validated Project 02 networking above remains the historical/current documented implementation until individual migration stages are tested. This plan follows the general roles of a peer's Proxmox lab but retains TrueNAS SCALE and CyberBlue's own addressing, workloads and resource constraints.
+**Status: PARTIALLY IMPLEMENTED — `br20` ACTIVE, FIRST SOC VM CONNECTED; FULL VM MIGRATION NOT YET DONE.** The existing, validated Project 02 networking above remains the historical/current documented implementation until individual migration stages are tested. This plan follows the general roles of a peer's Proxmox lab but retains TrueNAS SCALE and CyberBlue's own addressing, workloads and resource constraints.
 
 | Zone | Planned TrueNAS bridge | Planned subnet | Intended systems and role |
 |---|---|---|---|
 | Home / management | Existing management interface `enp4s0` | `192.168.1.0/24` | TrueNAS management `192.168.1.90`; retain existing management connectivity during migration |
-| SOC | **Created; no VMs attached yet** `br20` | `10.10.20.0/24` | Ubuntu Server and Linux Mint SOC/sensor functions; exact guest addresses and management paths to be verified before assignment |
+| SOC | **Created; Ubuntu attached and tested** `br20` | `10.10.20.0/24` | Ubuntu Server `cbubuntu01` is on `10.10.20.10/24`; Linux Mint SOC move remains planned |
 | Victim | Existing `br30` | `10.10.30.0/24` | Windows 11 as intended victim endpoint, subject to VM NIC and addressing validation |
 | Attack | Existing `br40` | `10.10.40.0/24` | Kali Linux as intended controlled attack host, subject to NIC and addressing validation |
 
@@ -265,11 +265,21 @@ Historical configurations, security limitations, and validation results are pres
 - The first temporary application reverted when the confirmation window expired; the operator repeated the configuration and saved it through TrueNAS.
 - TrueNAS shell check `ip -4 addr show br20` showed interface administratively **UP**, `NO-CARRIER` / operational `DOWN`, with `inet 10.10.20.1/24`. No guest ports were attached yet, so lack of carrier was expected.
 - TrueNAS `midclt call interface.query` confirmed `{name: br20, type: BRIDGE, aliases: [{type: INET, address: 10.10.20.1, netmask: 24}]}`.
-- **Validated:** Bridge existence, IP assignment, TrueNAS-managed configuration. **Not yet validated:** reboot persistence, attached VM traffic, routing/firewall boundaries involving `br20`, and workload migrations. Existing management, Suricata and Wazuh integrations must be retained throughout staged changes.
+- **Validated:** Bridge existence, IP assignment, TrueNAS-managed configuration and initial Ubuntu guest-to-host `br20` connectivity. **Not yet validated:** reboot persistence, inter-guest SOC traffic, routing/firewall boundaries involving `br20`, and remaining workload migrations. Existing management, Suricata and Wazuh integrations must be retained throughout staged changes.
+
+### First Ubuntu SOC Connection — 2026-10-16
+
+- Renamed the TrueNAS VM display name from `cbunbubtu01` to **`cbubuntu01`**, VM ID `8`, while stopped. The Ubuntu guest shell still displayed hostname `cbunbuntu01` at this stage; correcting the internal hostname is separate work.
+- Preserved original VirtIO NICs: TrueNAS device `24` → `enp4s0` / Ubuntu `mgmt0` (MAC `00:a0:98:76:2c:c2`) and device `41` → `br30` / Ubuntu `lab0` (MAC `00:a0:98:11:81:0a`).
+- Added TrueNAS VirtIO NIC device `52` → `br20` / Ubuntu `ens4` (MAC `00:a0:98:64:1e:3c`), verified through `vm.device.query`.
+- On Ubuntu, existing Netplan `/etc/netplan/00-installer-config.yaml` retained management DHCP on `mgmt0` and static `10.10.30.10/24` on `lab0`. Created separate `/etc/netplan/10-cyberblue-soc.yaml`, MAC-matched `ens4` with static `10.10.20.10/24`, DHCPv4 and DHCPv6 off, no new default gateway; permissions `600`. `sudo netplan generate` passed and the configuration was activated with `sudo netplan try --timeout 180`.
+- `ip -4 addr show ens4` confirmed link UP, `inet 10.10.20.10/24`.
+- **Connectivity validation (all 4 transmitted / 4 received / 0% loss):** Ubuntu `ens4` → TrueNAS `br20` `10.10.20.1` (average RTT 0.318 ms); `mgmt0` → home gateway `192.168.1.1` (0.507 ms); `lab0` → TrueNAS `br30` `10.10.30.1` (0.300 ms).
+- **Result:** One Ubuntu SOC participant connected and its existing management/lab connectivity preserved. No inter-guest SOC test, bridge reboot test, new inter-zone firewall validation or remaining VM move has been completed.
 
 ### Current-versus-target boundary
 
-- **Existing setup as last verified:** `br30` hosts Kali on `10.10.30.20`; Linux Mint uses `10.10.40.10` on `br40` and a passive `ens5` connection to `br30`. Windows 11 has not yet been migrated onto `br30`.
+- **Existing setup as last verified:** `br30` hosts Kali on `10.10.30.20` and Ubuntu `lab0` on `10.10.30.10`; Ubuntu also now uses `br20` with `ens4` / `10.10.20.10`. Linux Mint uses `10.10.40.10` on `br40` and a passive `ens5` connection to `br30`. Windows 11 has not yet been migrated onto `br30`.
 - **Project 05 proof of concept:** Temporary, narrowly scoped TrueNAS `tc` ingress and egress filters on Kali's `vnet5` mirrored one Kali ↔ TrueNAS ICMP exchange to Mint's `vnet7`/`ens5`. Suricata's EVE flow logged four requests and four replies. This does **not** demonstrate all-protocol, full-bridge or persistent monitoring.
 - **Current segmentation caveat:** Existing shared management-LAN NICs create other potential network paths; bridge separation alone does not establish complete end-to-end VM isolation. Existing firewall controls must be reassessed after any new bridge or migration.
 
