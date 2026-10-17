@@ -15,6 +15,12 @@ This folder is reserved for screenshots captured from the actual CyberBlue lab d
 | [07-suricata-br30-mirrored-flow.png](07-suricata-br30-mirrored-flow.png) | Linux Mint Suricata EVE JSON recorded 4 mirrored ICMP echo requests from Kali `10.10.30.20` to `10.10.30.1` on `ens5`; no replies and no alert | Uploaded and verified |
 | [08-suricata-br30-bidirectional-flow.png](08-suricata-br30-bidirectional-flow.png) | Suricata EVE `ens5` flow confirmed 4 Kali ICMP requests and 4 TrueNAS replies (`pkts_toserver:4`, `pkts_toclient:4`, `state:established`, `alerted:false`) after adding scoped egress mirror | Uploaded and verified |
 
+## Captured screenshot — 2026-10-17
+
+| Screenshot | Content | Status |
+|---|---|---|
+| [09-wazuh-post-soc-migration-alerts.png](09-wazuh-post-soc-migration-alerts.png) | Wazuh Threat Hunting after Linux Mint SOC NIC addition: manager `siem-01`, agent `003` (`cyberblue-suricata`), DQL `rule.id: 86601`; four level-3 ICMP test alerts around 12:24 PM CDT on October 17 | Uploaded and GitHub file verified |
+
 Screenshots 01 and 02 are two views of the same detection, not two separate detections. Screenshots 03 and 04 show the later dual-interface configuration and service initialization; they do not demonstrate bridge-wide traffic visibility. The source timestamp and indexed alert timestamp differ slightly, reflecting event collection and processing.
 
 Both original dashboard screenshots have been uploaded to this GitHub folder and their filenames verified.
