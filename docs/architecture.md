@@ -311,4 +311,4 @@ Historical configurations, security limitations, and validation results are pres
 
 - Wazuh dashboard Threat Hunting screenshot verified **4 hits** matching DQL query `rule.id: 86601`, manager `siem-01`, agent `003` / `cyberblue-suricata`, at ~12:24 CDT on October 17. All four rows show level 3 and `Suricata: Alert - CYBERBLUE TEST - ICMP Echo Request`.
 - **Result: PASS** for tested Suricata -> Wazuh agent -> manager -> dashboard alert path after adding Linux Mint's SOC NIC. The earlier `agent.id: 002` dashboard filter had excluded the sensor; opening agent 003 and filtering by rule displayed the correct events.
-- Screenshot was provided in conversation but has not yet been uploaded as a GitHub evidence image. Unrestricted cross-zone routing, final-state isolation, and comprehensive passive capture are not established.
+- Screenshot [09-wazuh-post-soc-migration-alerts.png](../projects/05-suricata-network-detection/evidence/09-wazuh-post-soc-migration-alerts.png) has been uploaded and verified in GitHub. Unrestricted cross-zone routing, final-state isolation, and comprehensive passive capture are not established.
