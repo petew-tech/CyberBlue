@@ -286,7 +286,8 @@ Historical configurations, security limitations, and validation results are pres
 - Configured Mint's NetworkManager profile `Wired connection 4` (only `ens6`) with static `10.10.20.11/24`, `ipv4.never-default yes`, no gateway, and IPv6 disabled. Activated it with `sudo nmcli connection up "Wired connection 4" ifname ens6`; `ip -4 addr show ens6` confirmed link UP and `10.10.20.11/24`.
 - **Validated:** From Mint `ens6`, pinged TrueNAS `10.10.20.1` (4/4, 0% loss, average 0.153 ms) and Ubuntu `cbubuntu01` `10.10.20.10` (4/4, 0% loss, average 0.461 ms). The latter validates **VM-to-VM traffic** on the SOC bridge.
 - **Service recovery check:** Mint `systemctl is-active suricata` and `systemctl is-active wazuh-agent` both returned `active`. Wazuh agent log at `2026/10/17 12:13:31` reported successful connection to SIEM `192.168.1.213:1514/tcp`.
-- **Still open:** Post-restart Suricata capture and alert generation, live Wazuh dashboard event verification, management/isolated-network connectivity checks, TrueNAS `br20` reboot persistence, and full firewall/mirroring coverage on the final topology.
+- **Post-restart verification (2026-10-17):** Suricata 7.0.3 initialized two capture threads on each of Mint `ens4` and `ens5`, loaded 53,144 rules without errors, and logged fresh `ens5` traffic. Mint sent 4 ICMP probes using `ens4` to TrueNAS `br40` (4/4 replies); Suricata EVE JSON recorded four corresponding alerts with SID `1000001`. Wazuh manager `siem-01` recorded matching rule `86601` level-3 alerts from agent `003`, confirming end-to-end alert delivery. Mint management `ens3` ping to `192.168.1.1` also passed (4/4 replies, zero loss). Detailed evidence is in Project 05 validation.
+- **Still open:** Post-migration Wazuh dashboard view, TrueNAS `br20` reboot persistence, full bridge mirroring and inter-zone firewall/isolation tests.
 
 ### Current-versus-target boundary
 
