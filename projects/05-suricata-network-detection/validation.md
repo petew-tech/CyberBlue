@@ -69,3 +69,17 @@ Wazuh recorded the custom detection with:
 **PASS:** The tested detection path from ICMP traffic delivered to the Linux Mint sensor through Suricata EVE JSON to Wazuh alerts and the dashboard is validated. Automatic Suricata recovery was demonstrated, and detection resumed afterward.
 
 **PARTIAL / OPEN:** Temporary ingress and egress `tc` ICMP mirrors on TrueNAS `vnet5` successfully delivered **4 requests and 4 replies** from a controlled Kali ↔ TrueNAS gateway test to Linux Mint `ens5`, and Suricata logged a matching established bidirectional flow. The earlier [visibility-gap screenshot](evidence/05-br30-traffic-visibility-gap.PNG), [one-way proof](evidence/07-suricata-br30-mirrored-flow.png), and [bidirectional proof](evidence/08-suricata-br30-bidirectional-flow.png) establish this progression. All-protocol/other-VM coverage, `br40` mirror configuration, persistence and a new Wazuh alert for mirrored `br30` traffic remain unverified.
+
+## SOC Migration Regression Checks — 2026-10-17
+
+| ID | Validation | Evidence | Result |
+|---|---|---|---|
+| V-23 | SOC guest connectivity | Mint ens6, 10.10.20.11/24, reached TrueNAS br20 10.10.20.1 and Ubuntu 10.10.20.10: 4/4 replies each, zero loss | PASS |
+| V-24 | Monitoring engine after Mint reboot | Suricata 7.0.3 started two capture threads each on ens4 and ens5; 53,144 rules loaded with zero failures | PASS |
+| V-25 | Live capture post-reboot | Fresh ens5 IPv6-ICMP flows and stats in EVE JSON; sampled 696 kernel packets, zero drops and errors | PASS |
+| V-26 | Custom alert after network change | Ping via ens4 to 10.10.40.1 succeeded 4/4; EVE logged four SID 1000001 ICMP alerts from 10.10.40.10 at about 12:24 CDT | PASS |
+| V-27 | Wazuh manager delivery | SIEM_01 alerts.json recorded corresponding Wazuh rule 86601 level-3 alerts, agent 003 cyberblue-suricata (192.168.1.92), with firedtimes reaching 4 | PASS |
+| V-28 | Management network preserved | Mint ens3, 192.168.1.92, reached 192.168.1.1: 4/4 replies, zero loss, average RTT 0.711 ms | PASS |
+| V-29 | Scoped mirrored-traffic POC cleanup | Temporary TrueNAS clsact mirroring qdisc removed from vnet5 and absence confirmed before Mint restart | PASS |
+
+**Remaining gaps:** The post-migration alerts have not yet been checked in the Wazuh dashboard. The temporary br30 ICMP mirroring proof of concept has been removed and is not an active monitoring capability. Full inter-zone separation, TrueNAS br20 reboot persistence, and full network visibility remain unverified.
