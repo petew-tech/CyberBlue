@@ -227,12 +227,12 @@ Historical configurations, security limitations, and validation results are pres
 
 ## 13. Approved Target Architecture — SOC / Victim / Attack Segmentation (2026-10-16)
 
-**Status: PARTIALLY IMPLEMENTED — `br20` ACTIVE, FIRST SOC VM CONNECTED; FULL VM MIGRATION NOT YET DONE.** The existing, validated Project 02 networking above remains the historical/current documented implementation until individual migration stages are tested. This plan follows the general roles of a peer's Proxmox lab but retains TrueNAS SCALE and CyberBlue's own addressing, workloads and resource constraints.
+**Status: PARTIALLY IMPLEMENTED — `br20` OPERATIONAL FOR UBUNTU ↔ MINT; VICTIM/ATTACK VM MIGRATION NOT YET DONE.** The existing, validated Project 02 networking above remains the historical/current documented implementation until individual migration stages are tested. This plan follows the general roles of a peer's Proxmox lab but retains TrueNAS SCALE and CyberBlue's own addressing, workloads and resource constraints.
 
 | Zone | Planned TrueNAS bridge | Planned subnet | Intended systems and role |
 |---|---|---|---|
 | Home / management | Existing management interface `enp4s0` | `192.168.1.0/24` | TrueNAS management `192.168.1.90`; retain existing management connectivity during migration |
-| SOC | **Created; Ubuntu attached and tested** `br20` | `10.10.20.0/24` | Ubuntu Server `cbubuntu01` is on `10.10.20.10/24`; Linux Mint SOC move remains planned |
+| SOC | **Operational: two guests attached** `br20` | `10.10.20.0/24` | Ubuntu `cbubuntu01` `10.10.20.10/24` and Linux Mint `10.10.20.11/24` (VM-to-VM ping verified) |
 | Victim | Existing `br30` | `10.10.30.0/24` | Windows 11 as intended victim endpoint, subject to VM NIC and addressing validation |
 | Attack | Existing `br40` | `10.10.40.0/24` | Kali Linux as intended controlled attack host, subject to NIC and addressing validation |
 
@@ -265,7 +265,7 @@ Historical configurations, security limitations, and validation results are pres
 - The first temporary application reverted when the confirmation window expired; the operator repeated the configuration and saved it through TrueNAS.
 - TrueNAS shell check `ip -4 addr show br20` showed interface administratively **UP**, `NO-CARRIER` / operational `DOWN`, with `inet 10.10.20.1/24`. No guest ports were attached yet, so lack of carrier was expected.
 - TrueNAS `midclt call interface.query` confirmed `{name: br20, type: BRIDGE, aliases: [{type: INET, address: 10.10.20.1, netmask: 24}]}`.
-- **Validated:** Bridge existence, IP assignment, TrueNAS-managed configuration and initial Ubuntu guest-to-host `br20` connectivity. **Not yet validated:** reboot persistence, inter-guest SOC traffic, routing/firewall boundaries involving `br20`, and remaining workload migrations. Existing management, Suricata and Wazuh integrations must be retained throughout staged changes.
+- **Validated:** Bridge existence, IP assignment, TrueNAS-managed configuration, and Ubuntu ↔ Linux Mint `br20` guest-to-guest ping. **Not yet validated:** host reboot persistence, inter-zone routing/firewall boundaries involving `br20`, and victim/attack workload migrations. Existing management, Suricata and Wazuh integrations must be retained throughout staged changes.
 
 ### First Ubuntu SOC Connection — 2026-10-16
 
@@ -279,10 +279,19 @@ Historical configurations, security limitations, and validation results are pres
 - **Hostname correction (2026-10-16):** TrueNAS VM display name is `cbubuntu01` (VM ID `8`). Ubuntu's system hostname originally remained `cbunbuntu01`. Ran `sudo hostnamectl set-hostname cbubuntu01`, verified `hostnamectl --static` returned `cbubuntu01`, changed `/etc/hosts` mapping from `127.0.1.1 cbunbuntu01` to `127.0.1.1 cbubuntu01` using `sudo sed -i.bak 's/cbunbuntu01/cbubuntu01/' /etc/hosts` (backup `/etc/hosts.bak`), then verified `/etc/hosts` contents. Existing session's prompt still showed old name, expected until a fresh shell/login; no restart required.
 
 
+### Linux Mint SOC Connection — 2026-10-17
+
+- Before changing Mint's NICs, removed the **temporary** Kali `vnet5` traffic-control mirroring attachment with `sudo tc qdisc del dev vnet5 clsact`; verified `sudo tc qdisc show dev vnet5` returned only the `noqueue` root qdisc. Historical mirroring test evidence remains in Project 05, but that mirror is **no longer active**.
+- Stopped Linux Mint (TrueNAS VM ID `7`) and retained existing VirtIO devices: `20` management `enp4s0` / guest `ens3`, `43` `br40` / guest `ens4`, and `51` `br30` / guest `ens5`. Added VirtIO device `53`, MAC `00:a0:98:7e:12:f8`, attached to `br20`; guest recognized it as `ens6`.
+- Configured Mint's NetworkManager profile `Wired connection 4` (only `ens6`) with static `10.10.20.11/24`, `ipv4.never-default yes`, no gateway, and IPv6 disabled. Activated it with `sudo nmcli connection up "Wired connection 4" ifname ens6`; `ip -4 addr show ens6` confirmed link UP and `10.10.20.11/24`.
+- **Validated:** From Mint `ens6`, pinged TrueNAS `10.10.20.1` (4/4, 0% loss, average 0.153 ms) and Ubuntu `cbubuntu01` `10.10.20.10` (4/4, 0% loss, average 0.461 ms). The latter validates **VM-to-VM traffic** on the SOC bridge.
+- **Service recovery check:** Mint `systemctl is-active suricata` and `systemctl is-active wazuh-agent` both returned `active`. Wazuh agent log at `2026/10/17 12:13:31` reported successful connection to SIEM `192.168.1.213:1514/tcp`.
+- **Still open:** Post-restart Suricata capture and alert generation, live Wazuh dashboard event verification, management/isolated-network connectivity checks, TrueNAS `br20` reboot persistence, and full firewall/mirroring coverage on the final topology.
+
 ### Current-versus-target boundary
 
-- **Existing setup as last verified:** `br30` hosts Kali on `10.10.30.20` and Ubuntu `lab0` on `10.10.30.10`; Ubuntu also now uses `br20` with `ens4` / `10.10.20.10`. Linux Mint uses `10.10.40.10` on `br40` and a passive `ens5` connection to `br30`. Windows 11 has not yet been migrated onto `br30`.
-- **Project 05 proof of concept:** Temporary, narrowly scoped TrueNAS `tc` ingress and egress filters on Kali's `vnet5` mirrored one Kali ↔ TrueNAS ICMP exchange to Mint's `vnet7`/`ens5`. Suricata's EVE flow logged four requests and four replies. This does **not** demonstrate all-protocol, full-bridge or persistent monitoring.
+- **Existing setup as last verified:** `br20` now connects Ubuntu `ens4` / `10.10.20.10` and Mint `ens6` / `10.10.20.11` with guest-to-guest ping verified. `br30` still hosts Kali `10.10.30.20`, Ubuntu `lab0` `10.10.30.10`, and Mint passive `ens5`. Mint continues to use `10.10.40.10` on `br40`. Windows 11 and Kali have not yet moved to their target victim/attack placements.
+- **Project 05 proof of concept, now cleaned up:** Temporary, narrowly scoped TrueNAS `tc` ingress and egress filters on Kali's former `vnet5` mirrored one Kali ↔ TrueNAS ICMP exchange to Mint's `vnet7`/`ens5`. Suricata logged four requests and four replies. The temporary `clsact` filters were subsequently **removed** and removal verified; this does **not** demonstrate active or persistent full-bridge monitoring.
 - **Current segmentation caveat:** Existing shared management-LAN NICs create other potential network paths; bridge separation alone does not establish complete end-to-end VM isolation. Existing firewall controls must be reassessed after any new bridge or migration.
 
 ### Migration and module-growth guardrails
