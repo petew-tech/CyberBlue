@@ -306,3 +306,9 @@ Historical configurations, security limitations, and validation results are pres
 7. For each new module: record its zone, systems, security controls, validation, evidence and rollback steps. Update this architecture only when implemented facts are independently verified; keep the target diagram clearly designated as proposed until complete.
 
 **Related evidence:** [Project 05 — Suricata build notes](../projects/05-suricata-network-detection/build-notes.md) and [validation record](../projects/05-suricata-network-detection/validation.md).
+
+### Post-Migration Threat Hunting Confirmation — 2026-10-17
+
+- Wazuh dashboard Threat Hunting screenshot verified **4 hits** matching DQL query `rule.id: 86601`, manager `siem-01`, agent `003` / `cyberblue-suricata`, at ~12:24 CDT on October 17. All four rows show level 3 and `Suricata: Alert - CYBERBLUE TEST - ICMP Echo Request`.
+- **Result: PASS** for tested Suricata -> Wazuh agent -> manager -> dashboard alert path after adding Linux Mint's SOC NIC. The earlier `agent.id: 002` dashboard filter had excluded the sensor; opening agent 003 and filtering by rule displayed the correct events.
+- Screenshot was provided in conversation but has not yet been uploaded as a GitHub evidence image. Unrestricted cross-zone routing, final-state isolation, and comprehensive passive capture are not established.
