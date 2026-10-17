@@ -130,4 +130,4 @@ These checks did not establish traffic mirroring. They also do not conclusively 
 
 - Wazuh Threat Hunting dashboard screenshot showed `rule.id: 86601`, manager `siem-01`, sensor agent `003`, and **4 hits** for October 17 around 12:24 CDT, all `cyberblue-suricata` with level 3 and matching ICMP test alert description.
 - Originally, the dashboard's existing `agent.id: 002` filter excluded the sensor; after opening agent `003` the correct alerts were visible. This was a dashboard filter-selection issue, not evidence of SIEM ingest failure.
-- **End-to-end PASS** for tested ICMP event from Suricata to Wazuh Dashboard. Screenshot evidence is awaiting GitHub file upload. Full victim/attack bridge mirroring and zone isolation remain open.
+- **End-to-end PASS** for tested ICMP event from Suricata to Wazuh Dashboard. Screenshot [09-wazuh-post-soc-migration-alerts.png](evidence/09-wazuh-post-soc-migration-alerts.png) was uploaded and verified in GitHub. Full victim/attack bridge mirroring and zone isolation remain open.
