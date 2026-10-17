@@ -9,7 +9,7 @@ This document is the shared networking reference for the CyberBlue lab on TrueNA
 | Network | Subnet | TrueNAS interface | Host bridge address | Purpose |
 |---|---|---|---|---|
 | Home / Management LAN | `192.168.1.0/24` | `enp4s0` | TrueNAS management: `192.168.1.90` | Host and guest administration |
-| SOC bridge — Ubuntu connected | `10.10.20.0/24` | `br20` | `10.10.20.1/24` | Ubuntu `cbubuntu01` `ens4` on `10.10.20.10/24`, tested 2026-10-16 |
+| SOC bridge — Ubuntu and Mint connected | `10.10.20.0/24` | `br20` | `10.10.20.1/24` | Ubuntu `10.10.20.10/24` and Linux Mint `10.10.20.11/24`; VM-to-VM ping verified 2026-10-17 |
 | Security Lab | `10.10.30.0/24` | `br30` | `10.10.30.1/24` | Ubuntu Server and Kali |
 | Isolated Lab | `10.10.40.0/24` | `br40` | `10.10.40.1/24` | Linux Mint |
 
@@ -23,7 +23,7 @@ The home/management LAN uses gateway `192.168.1.1`. The existing `br30` and `br4
 - Configured IPv4 alias `10.10.20.1/24`. An initial unconfirmed Test Changes operation rolled back; the bridge was recreated, saved, and applied through TrueNAS.
 - Verified on TrueNAS with `ip -4 addr show br20`: interface flags `NO-CARRIER,BROADCAST,MULTICAST,UP`, operational `state DOWN`, IPv4 `10.10.20.1/24`. No carrier is expected with no VM ports attached.
 - Verified management-plane registration through `midclt call interface.query`: `name: br20`, `type: BRIDGE`, IPv4 alias `10.10.20.1`, netmask 24.
-- **Status:** Bridge creation and initial Ubuntu-to-host VM connectivity verified; reboot persistence, inter-VM traffic and bridge-wide security controls **not yet tested**. Existing `br30` and `br40` assignments remain in place pending staged migration. The permanent three-zone target and future VM roles are documented in [architecture.md](architecture.md#13-approved-target-architecture--soc--victim--attack-segmentation-2026-10-16).
+- **Status:** Bridge creation and Ubuntu ↔ Mint VM-to-VM SOC connectivity verified; reboot persistence and inter-zone security controls **not yet tested**. Existing `br30` and `br40` assignments remain in place pending staged migration. The permanent three-zone target and future VM roles are documented in [architecture.md](architecture.md#13-approved-target-architecture--soc--victim--attack-segmentation-2026-10-16).
 
 ### Ubuntu SOC NIC and Three-Network Connectivity — 2026-10-16
 
@@ -35,6 +35,15 @@ The home/management LAN uses gateway `192.168.1.1`. The existing `br30` and `br4
 - **Limitation:** These are guest-to-gateway checks, not proof of inter-VM communication or full network isolation. Ubuntu currently has connections to both `br20` and `br30`; do not treat the zone names as an enforced security boundary. TrueNAS reboot persistence and remaining VM migrations are still open.
 - **Hostname correction (2026-10-16):** TrueNAS VM display name is `cbubuntu01` (VM ID `8`). Ubuntu's system hostname originally remained `cbunbuntu01`. Ran `sudo hostnamectl set-hostname cbubuntu01`, verified `hostnamectl --static` returned `cbubuntu01`, changed `/etc/hosts` mapping from `127.0.1.1 cbunbuntu01` to `127.0.1.1 cbubuntu01` using `sudo sed -i.bak 's/cbunbuntu01/cbubuntu01/' /etc/hosts` (backup `/etc/hosts.bak`), then verified `/etc/hosts` contents. Existing session's prompt still showed old name, expected until a fresh shell/login; no restart required.
 
+
+### Linux Mint SOC Attachment and Validation — 2026-10-17
+
+- TrueNAS Mint VM ID `7` retained management NIC device `20` (`enp4s0`), Suricata monitoring NIC `43` (`br40`), and monitoring NIC `51` (`br30`). Added fourth VirtIO NIC device `53` to `br20`, MAC `00:a0:98:7e:12:f8`; guest interface `ens6`.
+- Linux Mint's NetworkManager connection `Wired connection 4` for `ens6` was changed from automatic addressing to `ipv4.method manual`, `ipv4.addresses 10.10.20.11/24`, no IPv4 gateway, `ipv4.never-default yes`, and `ipv6.method disabled`. Activation succeeded; `ip -4 addr show ens6` showed `10.10.20.11/24`, link UP.
+- **Connectivity (2026-10-17):** `ping -I ens6 -c 4 10.10.20.1` (TrueNAS) = 4/4, 0% loss; `ping -I ens6 -c 4 10.10.20.10` (Ubuntu) = 4/4, 0% loss. This confirms **guest-to-guest SOC network communication**.
+- After restarting Mint, Suricata and Wazuh agent both returned `active`; Wazuh agent log showed a successful connection to `192.168.1.213:1514/tcp` at 12:13:31 local time. Further Suricata packet-processing and Wazuh dashboard validation remain open.
+- Removed the temporary `vnet5` `tc clsact` mirroring proof-of-concept filters before stopping Mint; TrueNAS `tc qdisc show dev vnet5` returned only `noqueue`. Earlier mirroring evidence is historical, **not a live packet-mirroring deployment**. After NIC changes, virtual port IDs may change.
+- The old guest-to-management and guest-to-`br40` connectivity after Mint's restart have not yet been independently retested. Inter-zone isolation and TrueNAS `br20` reboot persistence are also open.
 
 ## Virtual Machine Addressing
 
