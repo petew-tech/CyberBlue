@@ -46,7 +46,7 @@ VM operating states and resource availability may vary during testing to accommo
 
 ## 4. Network Architecture
 
-The CyberBlue environment uses three primary IPv4 networks.
+**Historical Project 02 baseline (superseded for guest placement by later stages):** The following diagram and table show the original two-lab-bridge configuration. The [2026-10-18 migration record](#module-06--ubuntu-and-windows-ip-migration-2026-10-18) below provides the latest verified guest addressing.
 
 | Network | Subnet | Interface / Bridge | Purpose |
 |---|---|---|---|
@@ -100,7 +100,7 @@ The CyberBlue Security Lab and Isolated Lab use separate persistent TrueNAS-mana
 
 Persistent firewall rules on TrueNAS block routed IPv4 forwarding between `br30` and `br40`.
 
-Ubuntu Server and Kali Linux share the Security Lab, while Linux Mint uses the separate Isolated Lab.
+In the **Project 02 baseline**, Ubuntu and Kali shared the Security Lab, while Mint used the Isolated Lab. The later guest migration changes this placement; the historical firewall rules alone do not establish final three-zone isolation.
 
 ### Important Security Limitation
 
@@ -227,16 +227,16 @@ Historical configurations, security limitations, and validation results are pres
 
 ## 13. Approved Target Architecture — SOC / Victim / Attack Segmentation (2026-10-16)
 
-**Status: PARTIALLY IMPLEMENTED — `br20` OPERATIONAL FOR UBUNTU ↔ MINT; VICTIM/ATTACK VM MIGRATION NOT YET DONE.** The existing, validated Project 02 networking above remains the historical/current documented implementation until individual migration stages are tested. This plan follows the general roles of a peer's Proxmox lab but retains TrueNAS SCALE and CyberBlue's own addressing, workloads and resource constraints.
+**Status: PARTIALLY IMPLEMENTED — `br20` SOC GUEST CONNECTIVITY VALIDATED; WINDOWS VICTIM ADDRESS MIGRATION VALIDATED; KALI ATTACK-ZONE MOVE AND FINAL ISOLATION STILL OPEN.** Project 02 documents the historical baseline. The newest observed changes are recorded in [Project 05 Module 06](../projects/05-suricata-network-detection/README.md#module-06--staged-network-migration-2026-10-18).
 
 | Zone | Planned TrueNAS bridge | Planned subnet | Intended systems and role |
 |---|---|---|---|
 | Home / management | Existing management interface `enp4s0` | `192.168.1.0/24` | TrueNAS management `192.168.1.90`; retain existing management connectivity during migration |
 | SOC | **Operational: two guests attached** `br20` | `10.10.20.0/24` | Ubuntu `cbubuntu01` `10.10.20.10/24` and Linux Mint `10.10.20.11/24` (VM-to-VM ping verified) |
-| Victim | Existing `br30` | `10.10.30.0/24` | Windows 11 as intended victim endpoint, subject to VM NIC and addressing validation |
-| Attack | Existing `br40` | `10.10.40.0/24` | Kali Linux as intended controlled attack host, subject to NIC and addressing validation |
+| Victim | Existing `br30` | `10.10.30.0/24` | Windows 11 **validated** at `10.10.30.10/24`; Kali still documented on `br30` pending move |
+| Attack | Existing `br40` | `10.10.40.0/24` | **Target:** Kali Linux. Currently verified Mint Suricata capture address `10.10.40.10/24`; Kali move not yet tested |
 
-### Proposed Logical Layout
+### Target Logical Layout (not yet fully implemented)
 
 ```text
                 HOME / MANAGEMENT LAN
@@ -287,11 +287,11 @@ Historical configurations, security limitations, and validation results are pres
 - **Validated:** From Mint `ens6`, pinged TrueNAS `10.10.20.1` (4/4, 0% loss, average 0.153 ms) and Ubuntu `cbubuntu01` `10.10.20.10` (4/4, 0% loss, average 0.461 ms). The latter validates **VM-to-VM traffic** on the SOC bridge.
 - **Service recovery check:** Mint `systemctl is-active suricata` and `systemctl is-active wazuh-agent` both returned `active`. Wazuh agent log at `2026/10/17 12:13:31` reported successful connection to SIEM `192.168.1.213:1514/tcp`.
 - **Post-restart verification (2026-10-17):** Suricata 7.0.3 initialized two capture threads on each of Mint `ens4` and `ens5`, loaded 53,144 rules without errors, and logged fresh `ens5` traffic. Mint sent 4 ICMP probes using `ens4` to TrueNAS `br40` (4/4 replies); Suricata EVE JSON recorded four corresponding alerts with SID `1000001`. Wazuh manager `siem-01` recorded matching rule `86601` level-3 alerts from agent `003`, confirming end-to-end alert delivery. Mint management `ens3` ping to `192.168.1.1` also passed (4/4 replies, zero loss). Detailed evidence is in Project 05 validation.
-- **Still open:** Post-migration Wazuh dashboard view, TrueNAS `br20` reboot persistence, full bridge mirroring and inter-zone firewall/isolation tests.
+- **At this 2026-10-17 checkpoint:** Wazuh dashboard view, TrueNAS `br20` host reboot persistence, full bridge mirroring and inter-zone firewall/isolation tests were open. The later dashboard validation is recorded below; remaining infrastructure checks are still open.
 
 ### Current-versus-target boundary
 
-- **Existing setup as last verified:** `br20` now connects Ubuntu `ens4` / `10.10.20.10` and Mint `ens6` / `10.10.20.11` with guest-to-guest ping verified. `br30` still hosts Kali `10.10.30.20`, Ubuntu `lab0` `10.10.30.10`, and Mint passive `ens5`. Mint continues to use `10.10.40.10` on `br40`. Windows 11 and Kali have not yet moved to their target victim/attack placements.
+- **As verified through 2026-10-18:** `br20` carries Ubuntu `ens4` / `10.10.20.10` and Mint `ens6` / `10.10.20.11`; guest-to-guest ping was previously verified. Windows 11 Victim NIC on `br30` now uses `10.10.30.10/24` and retained that address after restart. Ubuntu released its old `10.10.30.10` address/route; its `br30` virtual NIC remains attached but without IPv4 (renamed `ens3` after reboot). Kali remains last documented at `10.10.30.20` on `br30`, pending a future move to `br40`. Mint's passive `br30` `ens5` and `br40` capture `10.10.40.10` remain part of the documented sensor layout.
 - **Project 05 proof of concept, now cleaned up:** Temporary, narrowly scoped TrueNAS `tc` ingress and egress filters on Kali's former `vnet5` mirrored one Kali ↔ TrueNAS ICMP exchange to Mint's `vnet7`/`ens5`. Suricata logged four requests and four replies. The temporary `clsact` filters were subsequently **removed** and removal verified; this does **not** demonstrate active or persistent full-bridge monitoring.
 - **Current segmentation caveat:** Existing shared management-LAN NICs create other potential network paths; bridge separation alone does not establish complete end-to-end VM isolation. Existing firewall controls must be reassessed after any new bridge or migration.
 
@@ -322,5 +322,14 @@ Historical configurations, security limitations, and validation results are pres
 - The new NIC initially received APIPA `169.254.133.82` without DHCP. TrueNAS `ping -I br30 -c 4 -W 1 10.10.30.11` returned no replies; this was a preliminary availability check, **not conclusive proof** no other device used the address. `arping` was not installed.
 - Configured Windows Victim NIC via elevated PowerShell `New-NetIPAddress -InterfaceAlias "Ethernet" -IPAddress 10.10.30.11 -PrefixLength 24` with no additional default gateway. Initial `Tentative`/ `Invalid` state in command output resolved; `Get-NetIPAddress` confirmed `10.10.30.11/24`, `Preferred`.
 - **Connectivity (all four replies, 0% loss):** Windows `10.10.30.11` → TrueNAS `br30` `10.10.30.1` (average RTT reported 0 ms); Windows `10.10.30.11` → Ubuntu `lab0` `10.10.30.10` (3 ms); Windows management `192.168.1.151` → home gateway `192.168.1.1` (0 ms).
-- **Status: PARTIAL / PASS for dual-NIC onboarding and tested traffic.** Windows currently uses **temporary Victim IP `10.10.30.11`**, **not** target `10.10.30.10`: Ubuntu still has that address on `br30`. Do not duplicate the IP or remove Ubuntu's NIC without a separate planned migration. Other guests and network paths remain; full isolation is unverified.
+- **Historical onboarding result:** Windows initially used temporary Victim IP `10.10.30.11` while Ubuntu still held `10.10.30.10`. **Superseded by Module 06 below**; the initial setup and gateway-ping results remain valid historical evidence. Other guests and network paths remain; full isolation is unverified.
 
+
+### Module 06 — Ubuntu and Windows IP Migration (2026-10-18)
+
+- **Ubuntu SOC/management preserved:** `mgmt0 192.168.1.243/24` and `ens4 10.10.20.10/24` persisted through an Ubuntu guest reboot; default gateway remained `192.168.1.1`. After applying corrected Netplan, the former `lab0` interface lost `10.10.30.10/24` and its connected route. The VirtIO NIC still exists: after the guest reboot it appeared as `ens3` with IPv6 link-local only.
+- **Windows Victim address migration:** Windows `Ethernet` moved from `10.10.30.11/24` to `10.10.30.10/24`. The original address was removed. Management `Ethernet 3 192.168.1.151/24` and default route via `192.168.1.1` remained. The Windows guest reboot preserved both IPs and both routes.
+- **Connectivity after Windows reboot:** `ping -S 10.10.30.10 -n 4 10.10.30.1` and `ping -S 192.168.1.151 -n 4 192.168.1.1` each received 4/4 responses (0% loss).
+- **Validated guest-level changes:** Ubuntu and Windows address/routing persistence. **Not yet established:** TrueNAS host reboot persistence for `br20`, Kali move to `br40`, current cross-zone firewall enforcement, complete isolation, or broad Suricata mirroring. Guest IP removal does not imply guest NIC detachment.
+
+Four screenshots were uploaded to [Project 05 evidence](../projects/05-suricata-network-detection/evidence/README.md#module-06--network-migration-evidence-2026-10-18), with detailed [build notes](../projects/05-suricata-network-detection/build-notes.md#module-06--ubuntu-and-windows-ip-migration-2026-10-18) and [validation](../projects/05-suricata-network-detection/validation.md#module-06--staged-network-migration-validation-2026-10-18).
