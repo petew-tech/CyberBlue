@@ -44,22 +44,21 @@ This repository records actual lab work, including successful tests, troubleshoo
          +----------------+----------------+
          |                |                |
        br20             br30             br40
-      SOC ZONE        VICTIM ZONE    TARGET ATTACK ZONE
+      SOC ZONE        VICTIM ZONE        ATTACK ZONE
    10.10.20.0/24     10.10.30.0/24     10.10.40.0/24
          |                |                |
-   Ubuntu .20.10    Windows .30.10    Mint .40.10
-   Mint   .20.11    Kali    .30.20*  (Suricata capture)
-
-   * Kali's move from br30 to br40 is still pending.
+   Ubuntu .20.10    Windows .30.10    Kali .40.20
+   Mint   .20.11                      Mint .40.10
+                                  (Suricata capture)
 ```
 
-Ubuntu's former `br30` VirtIO NIC remains present without an IPv4 address (it appeared as `ens3` after guest reboot); Mint also has a passive capture NIC on `br30`. The Windows Victim NIC uses `10.10.30.10/24`, after Ubuntu released it. Separate management NICs remain in use; the dedicated Wazuh SIEM is still on the management LAN.
+Ubuntu's former `br30` VirtIO NIC remains present without an IPv4 address (it appeared as `ens3` after guest reboot); Mint also has a passive capture NIC on `br30`. Windows Victim uses `10.10.30.10/24` after Ubuntu released it. Kali Attack uses `10.10.40.20/24` on `br40` after its validated migration and recovery. Separate management NICs remain in use; the dedicated Wazuh SIEM is still on the management LAN.
 
 Historically verified TrueNAS firewall rules block routed IPv4 forwarding between `br30` and `br40`, but **their effectiveness in the changing three-zone topology, IPv6 isolation, and alternative management-LAN paths have not been fully revalidated**. Guest reboot tests do not establish TrueNAS host bridge reboot persistence.
 
 ### Approved Target Zones — Migration In Progress
 
-The planned end state is **`br20` for SOC (Ubuntu and Mint), `br30` for Windows Victim, and `br40` for Kali Attack**, while preserving required Mint sensor connections and management access. SOC connectivity and Windows addressing have been tested; Kali migration, final zone boundaries, and comprehensive passive monitoring remain open.
+The intended **guest placement** is now validated: `br20` for SOC (Ubuntu and Mint), `br30` for Windows Victim, and `br40` for Kali Attack, with Mint sensor connections and management access preserved in the recorded layout. **Final security boundaries, TrueNAS host reboot persistence, and comprehensive passive monitoring remain open**.
 
 See the [approved target design and staged-migration safeguards](docs/architecture.md#13-approved-target-architecture--soc--victim--attack-segmentation-2026-10-16) and [Project 05 Module 06 results](projects/05-suricata-network-detection/README.md#module-06--staged-network-migration-2026-10-18).
 
@@ -73,7 +72,7 @@ See the [approved target design and staged-migration safeguards](docs/architectu
 | [02 — Virtual Networking & Segmentation](projects/02-networking-segmentation/README.md) | Persistent bridges, addressing, routing controls, and troubleshooting | **Validated** |
 | [03 — Endpoint Telemetry & Logging](projects/03-endpoint-telemetry/README.md) | Windows Event Logs, Sysmon, Linux auditd, visibility gaps, and recovery | **Validated — historical evidence limitation documented** |
 | [04 — Centralized Logging & SIEM Foundations](projects/04-centralized-logging/README.md) | Wazuh 4.14.8, Windows Sysmon alerting, Threat Hunting searches, and selected Windows 11 CIS hardening | **Complete — foundational SIEM deployment and Windows 11 telemetry validated** |
-| [05 — Suricata Network Detection & Wazuh Integration](projects/05-suricata-network-detection/README.md) | Suricata/Wazuh validation and Module 06 staged SOC/Victim network migration | **Sensor validated; Module 06 guest migration validated; full zone isolation OPEN** |
+| [05 — Suricata Network Detection & Wazuh Integration](projects/05-suricata-network-detection/README.md) | Suricata/Wazuh validation and Module 06 SOC/Victim/Attack guest network migration | **Sensor validated; all three guest migrations validated; full zone isolation OPEN** |
 
 Additional projects will be added only as implementation and validation progress.
 
@@ -154,7 +153,7 @@ Configured Suricata on Linux Mint to detect a controlled ICMP test, forward EVE 
 
 Visibility into traffic exchanged between other VMs on TrueNAS bridge `br40` has not been demonstrated and remains a separate follow-up.
 
-**Module 06 update (2026-10-18):** Ubuntu released `10.10.30.10` while retaining `192.168.1.243` management and `10.10.20.10` SOC addresses. Windows 11 moved from temporary `10.10.30.11` to `10.10.30.10` on `br30`, retaining management `192.168.1.151`. Guest reboot persistence and Windows gateway connectivity were verified with four evidence screenshots. Kali's zone migration and final isolation testing remain open. See [Module 06 evidence and validation](projects/05-suricata-network-detection/validation.md#module-06--staged-network-migration-validation-2026-10-18).
+**Module 06 update (2026-10-18):** Ubuntu released `10.10.30.10` while retaining management `192.168.1.243` and SOC `10.10.20.10`. Windows moved from temporary `10.10.30.11` to Victim `10.10.30.10` on `br30`, retaining management `192.168.1.151`. Kali moved from `br30` / `10.10.30.20` to Attack `br40` / `10.10.40.20`, retaining management `192.168.1.91`. After an interface-order change interrupted Kali SSH, we recovered the VM using its SPICE console, set persistent NIC MAC addresses and MAC-bound NetworkManager profiles, and validated guest reboot persistence, SSH and both gateway connections. Six screenshots are recorded. **Inter-zone security controls, full IDS visibility and TrueNAS host bridge reboot persistence remain open.** See [Module 06 validation](projects/05-suricata-network-detection/validation.md#module-06--staged-network-migration-validation-2026-10-18).
 
 [View Project 05 →](projects/05-suricata-network-detection/README.md)
 
