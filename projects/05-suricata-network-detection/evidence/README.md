@@ -37,5 +37,7 @@ See [Project validation record](../validation.md).
 | [project06-netplan-post-reboot-validation.png](project06-netplan-post-reboot-validation.png) | Ubuntu guest reboot kept management/SOC IPv4 and routes while old Victim IPv4 remained absent | Uploaded and verified |
 | [module06-windows-victim-ip-pre-reboot.png](module06-windows-victim-ip-pre-reboot.png) | Windows `10.10.30.10` Victim and `192.168.1.151` management addresses are Preferred before reboot | Uploaded and verified |
 | [module06-windows-victim-post-reboot-validation.png](module06-windows-victim-post-reboot-validation.png) | Windows retained intended two addresses and routes after guest reboot | Uploaded and verified |
+| [module06-kali-attack-network-pre-reboot.png](module06-kali-attack-network-pre-reboot.png) | Kali Attack `10.10.40.20/24`, management `192.168.1.91/24`, default and connected routes before final reboot | Uploaded and verified |
+| [module06-kali-attack-network-post-reboot.png](module06-kali-attack-network-post-reboot.png) | Kali retained the intended two IPv4 addresses and routes after final reboot | Uploaded and verified |
 
 The two files named `project06-` are **Module 06 evidence within Project 05**; filenames were retained because they were already uploaded. Screenshots document specific guest addressing/routing states, not full zone isolation, TrueNAS host bridge persistence or comprehensive IDS visibility.
