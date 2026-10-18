@@ -154,3 +154,13 @@ The duplicate DHCP address was removed; gateway connectivity, DNS, and SSH were 
 - [Project 02 Validation](../projects/02-networking-segmentation/validation.md)
 
 **Documentation status:** This shared reference summarizes recorded Project 02 findings; it does not claim new tests or configuration changes.
+
+
+### Windows 11 Victim Network Addition — 2026-10-18
+
+- TrueNAS WIN11 VM `11`: retained management VirtIO NIC device `36` (`enp4s0`, MAC `00:a0:98:0a:82:2b`) and added second VirtIO NIC device `54` (`br30`, MAC `00:a0:98:31:78:bd`); verified both via `midclt call vm.device.query`.
+- Windows adapter identification by MAC: management `Ethernet 3`, interface `19`, `192.168.1.151` with gateway/DNS `192.168.1.1`; new Victim `Ethernet`, interface `3`. New NIC's DHCP attempt yielded `169.254.133.82` APIPA; no DHCP service is configured on `br30`.
+- TrueNAS ping to proposed `10.10.30.11` received no responses (not definitive absence of conflict); `arping` unavailable. On Windows Administrator PowerShell added static `10.10.30.11/24` on `Ethernet`, **without** default gateway. Follow-up `Get-NetIPAddress` reported state `Preferred`.
+- **Validation PASS (each 4/4, zero packet loss):** Windows Victim `10.10.30.11` to TrueNAS `10.10.30.1` and to Ubuntu `10.10.30.10` over `br30`; Windows management `192.168.1.151` to `192.168.1.1` using `ping -S`. Management connectivity preserved.
+- **Address allocation note:** `10.10.30.11` is an interim Windows address. `10.10.30.10` remains active on Ubuntu and must not also be assigned to Windows. Windows migration to its target address and removal of Ubuntu's `br30` presence remain separate, uncompleted changes. Existing NICs and shared management paths mean **complete inter-zone isolation is not established**.
+
