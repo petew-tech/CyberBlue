@@ -66,9 +66,9 @@ The capture statistics are a point-in-time sample, not proof of zero packet loss
 
 ## Module 06 — Staged Network Migration (2026-10-18)
 
-**Status: VALIDATED for Ubuntu/Windows guest address migration; broader three-zone migration remains IN PROGRESS.** This is Module 06 of **Project 05**, not a separate Project 06.
+**Status: VALIDATED for Ubuntu, Windows and Kali guest network migrations; three-zone isolation and monitoring coverage remain OPEN.** This is Module 06 of **Project 05**, not a separate Project 06.
 
-This checkpoint released Ubuntu's old `br30` IPv4 address `10.10.30.10/24`, preserved its management and SOC networking, and migrated Windows 11 from temporary Victim address `10.10.30.11/24` to `10.10.30.10/24`.
+This module released Ubuntu's old `br30` IPv4 address `10.10.30.10/24`, preserved its management and SOC networking, migrated Windows 11 from temporary Victim address `10.10.30.11/24` to `10.10.30.10/24`, and migrated Kali from `br30` / `10.10.30.20/24` to `br40` / `10.10.40.20/24`.
 
 | Check | Verified result | Status |
 |---|---|---|
@@ -79,9 +79,14 @@ This checkpoint released Ubuntu's old `br30` IPv4 address `10.10.30.10/24`, pres
 | Windows management | `Ethernet 3 192.168.1.151/24`, default via `192.168.1.1` | PASS |
 | Windows reboot persistence | Both required addresses and routes retained | PASS |
 | Windows gateway connectivity after reboot | Victim `10.10.30.10 → 10.10.30.1` and management `192.168.1.151 → 192.168.1.1`, each 4/4 replies, 0% loss | PASS |
+| Kali bridge reassignment and permanent MACs | TrueNAS VM `6`, device `42` now `br40`, MAC `00:a0:98:76:2d:fd`; device `16` management on `enp4s0`, MAC `00:a0:98:5b:5f:c8` | PASS |
+| Kali address/route persistence | Attack `10.10.40.20/24` on `eth0`; management `192.168.1.91/24` on `eth1`; default through management; no `10.10.30.0/24` route after reboot | PASS |
+| Kali post-reboot connectivity and SSH | Attack `10.10.40.20 → 10.10.40.1` and management `192.168.1.91 → 192.168.1.1`, each 4/4 replies, 0% loss; SSH reconnect successful | PASS |
 
 **Verified evidence:** [Ubuntu applied routing](evidence/project06-netplan-routing-validated.png), [Ubuntu post-reboot](evidence/project06-netplan-post-reboot-validation.png), [Windows pre-reboot](evidence/module06-windows-victim-ip-pre-reboot.png), [Windows post-reboot](evidence/module06-windows-victim-post-reboot-validation.png). The existing `project06-` screenshot filenames are retained to avoid breaking uploaded links; this work belongs to Project 05 Module 06.
 
-**Not established:** Ubuntu's unused VirtIO NIC was not detached from TrueNAS `br30` (after reboot it appeared as `ens3`, with no IPv4 address); TrueNAS **host** reboot persistence of `br20`, final Kali attack-zone migration, isolation/firewall behavior on the new topology, and comprehensive Suricata traffic mirroring remain open. Gateway ping success alone does not prove segmentation.
+**Not established:** Ubuntu's unused VirtIO NIC was not detached from TrueNAS `br30` (after reboot it appeared as `ens3`, with no IPv4 address); TrueNAS **host** reboot persistence of `br20`, isolation/firewall behavior on the new topology, and comprehensive Suricata traffic mirroring remain open. Gateway ping success alone does not prove segmentation.
 
 See [build notes](build-notes.md#module-06--ubuntu-and-windows-ip-migration-2026-10-18) and [validation](validation.md#module-06--staged-network-migration-validation-2026-10-18).
+
+**Kali evidence:** [pre-reboot configuration](evidence/module06-kali-attack-network-pre-reboot.png) and [post-reboot configuration](evidence/module06-kali-attack-network-post-reboot.png). NetworkManager initially bound management to `eth0` and Attack to `eth1` after NIC ordering changed, causing SSH loss. The guest was recovered using the TrueNAS SPICE console; both profiles were rebound to explicitly configured stable MAC addresses and validated after another reboot. See [Kali recovery build notes](build-notes.md#kali-attack-zone-migration--nic-order-recovery-and-mac-persistence-2026-10-18).
