@@ -91,3 +91,29 @@ Wazuh recorded the custom detection with:
 | V-30 | Post-SOC-change Wazuh dashboard visibility | User screenshot of Wazuh Threat Hunting on Oct 17 shows query `rule.id: 86601`, filters `manager.name: siem-01` and `agent.id: 003`, **4 hits** at approximately 12:24 CDT, agent `cyberblue-suricata`, rule level 3, and description `Suricata: Alert - CYBERBLUE TEST - ICMP Echo Request`. | **PASS — dashboard confirmed** |
 
 This completes the validated test path: Linux Mint `ens4` ping -> Suricata SID `1000001` EVE alert -> Wazuh agent `003` -> manager `siem-01` rule `86601` -> dashboard Threat Hunting. Screenshot [09-wazuh-post-soc-migration-alerts.png](evidence/09-wazuh-post-soc-migration-alerts.png) was uploaded to the Project 05 `evidence/` directory and its GitHub file verified. This does not prove full bridge traffic mirroring or inter-zone isolation.
+
+---
+
+## Module 06 — Staged Network Migration Validation (2026-10-18)
+
+This section validates **guest address cleanup and migration only**, not full zone isolation or TrueNAS host reboot persistence.
+
+| ID | Test | Observed evidence | Status |
+|---|---|---|---|
+| V-31 | Ubuntu Netplan syntax/effective config | `netplan generate` returned without errors; `netplan get` contained `mgmt0` and `ens4`, not old `lab0` configuration | PASS |
+| V-32 | Ubuntu live address/route cleanup | After `netplan try` was accepted, `mgmt0 192.168.1.243/24`, `ens4 10.10.20.10/24`; `lab0` had no IPv4; `10.10.30.0/24` route absent | PASS |
+| V-33 | Ubuntu guest reboot persistence | Reconnected over SSH; `ens3` (former `lab0`) had IPv6 link-local only; required `mgmt0`/`ens4` addresses and default/SOC routes remained | PASS |
+| V-34 | Windows new Victim IP | `10.10.30.10/24` Preferred; `10.10.30.11` removed; `192.168.1.151/24` Preferred on management NIC | PASS |
+| V-35 | Windows Victim routing/connectivity | Direct `10.10.30.0/24` route on `Ethernet`; ping from `10.10.30.10` to `10.10.30.1` 4/4, 0% loss after removing old address | PASS |
+| V-36 | Windows management preserved | Default route via `192.168.1.1` on `Ethernet 3`; ping from `192.168.1.151` 4/4, 0% loss | PASS |
+| V-37 | Windows guest reboot persistence | Both desired IPs and routes persisted; post-reboot Victim and management gateway pings each 4/4, 0% loss | PASS |
+| V-38 | Three-zone isolation and host persistence | Kali attack-zone migration, updated firewall/inter-zone policy, full capture visibility and TrueNAS host reboot of `br20` not demonstrated | OPEN |
+
+### Module 06 evidence (files verified in GitHub)
+
+- [Ubuntu routes after applied Netplan change](evidence/project06-netplan-routing-validated.png)
+- [Ubuntu interfaces/routes after guest reboot](evidence/project06-netplan-post-reboot-validation.png)
+- [Windows Victim and management IPs before reboot](evidence/module06-windows-victim-ip-pre-reboot.png)
+- [Windows Victim/management IPs and routes after reboot](evidence/module06-windows-victim-post-reboot-validation.png)
+
+**Interpretation:** Ubuntu's old `br30` VirtIO link still exists without a guest IPv4 address. IP persistence is not proof of physical attachment removal, TrueNAS host persistence, passive packet-mirror coverage, or firewall-enforced separation.
