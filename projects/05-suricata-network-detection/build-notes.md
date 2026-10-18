@@ -131,3 +131,28 @@ These checks did not establish traffic mirroring. They also do not conclusively 
 - Wazuh Threat Hunting dashboard screenshot showed `rule.id: 86601`, manager `siem-01`, sensor agent `003`, and **4 hits** for October 17 around 12:24 CDT, all `cyberblue-suricata` with level 3 and matching ICMP test alert description.
 - Originally, the dashboard's existing `agent.id: 002` filter excluded the sensor; after opening agent `003` the correct alerts were visible. This was a dashboard filter-selection issue, not evidence of SIEM ingest failure.
 - **End-to-end PASS** for tested ICMP event from Suricata to Wazuh Dashboard. Screenshot [09-wazuh-post-soc-migration-alerts.png](evidence/09-wazuh-post-soc-migration-alerts.png) was uploaded and verified in GitHub. Full victim/attack bridge mirroring and zone isolation remain open.
+
+---
+
+## Module 06 — Ubuntu and Windows IP Migration (2026-10-18)
+
+### Ubuntu: retire `10.10.30.10/24` from the guest
+
+- Edited `/etc/netplan/00-installer-config.yaml` to retain only `mgmt0` matched by MAC `00:a0:98:76:2c:c2`, with `dhcp4: true` and `dhcp6: true`. The separate SOC Netplan definition for `ens4` stayed at `10.10.20.10/24`.
+- `sudo netplan generate` returned to the prompt with no errors; `sudo netplan get` listed `mgmt0` and `ens4`, **not** `lab0`. The former generated runtime file still configured `lab0` at `10.10.30.10/24` until the new configuration was activated, as shown by `networkctl status lab0 --no-pager`.
+- Confirmed default IPv4 route `via 192.168.1.1 dev mgmt0` and SOC connected route `10.10.20.0/24 dev ens4`. Opened TrueNAS Ubuntu VM console as fallback before applying a potentially disruptive change to the SSH-managed guest.
+- Ran `sudo netplan try --timeout 300`, observed no errors, verified live interfaces/routes from SSH, and accepted the configuration. `lab0` remained a live VirtIO interface but with IPv6 link-local only; the IPv4 route `10.10.30.0/24` disappeared.
+- Captured [applied routing screenshot](evidence/project06-netplan-routing-validated.png), rebooted Ubuntu with `sudo reboot`, successfully reconnected over SSH, and repeated `ip -br addr && ip -4 route`. After reboot the former `lab0` appeared as default interface `ens3` without IPv4; `mgmt0 192.168.1.243/24` and `ens4 10.10.20.10/24` persisted with the expected routes. Captured [post-reboot screenshot](evidence/project06-netplan-post-reboot-validation.png).
+- **Limit:** The old virtual NIC was not removed from TrueNAS, and absence of a guest IPv4 address is not proof of physical or Layer-2 isolation.
+
+### Windows 11: take over the released Victim address
+
+- Verified management `Ethernet 3`: `192.168.1.151/24`, gateway/DNS `192.168.1.1`; Victim NIC `Ethernet` initially had temporary `10.10.30.11/24`, Preferred.
+- Examined apparent target-address ping responses before reassignment. A repeat test reported `Reply from 10.10.30.11: Destination host unreachable`, **not** echo replies from `10.10.30.10`; `Get-NetNeighbor` showed an `Unreachable` neighbor with all-zero MAC. No active claimant was observed, although these checks do not absolutely rule out a conflict.
+- In elevated PowerShell ran `New-NetIPAddress -InterfaceAlias "Ethernet" -IPAddress 10.10.30.10 -PrefixLength 24`. Initial `Tentative`/`Invalid` creation output became `Preferred` on follow-up for the new and old addresses.
+- The new source IP successfully pinged TrueNAS `10.10.30.1` with 4/4 replies. Then ran `Remove-NetIPAddress -InterfaceAlias "Ethernet" -IPAddress "10.10.30.11" -Confirm:$false`.
+- Validated `Ethernet 10.10.30.10/24` and `Ethernet 3 192.168.1.151/24`, both Preferred; the old address was absent. IPv4 routes showed `10.10.30.0/24` directly connected on `Ethernet` and default `0.0.0.0/0` via `192.168.1.1` on `Ethernet 3`.
+- Before restart, gateway pings from each respective source IP passed (4/4, 0% loss). Captured and uploaded [pre-reboot Windows evidence](evidence/module06-windows-victim-ip-pre-reboot.png).
+- Restarted Windows using `Restart-Computer`. Rechecked addresses, routes and connectivity: `10.10.30.10 → 10.10.30.1` returned 4/4 (0% loss, average 2 ms); `192.168.1.151 → 192.168.1.1` returned 4/4 (0% loss, average reported 0 ms). Captured and uploaded [post-reboot evidence](evidence/module06-windows-victim-post-reboot-validation.png).
+
+**Pending:** Kali attack-zone attachment/migration, revised firewall/isolation tests, any planned Ubuntu virtual NIC removal, full passive sensor coverage, and independent TrueNAS host bridge reboot-persistence testing. No final three-zone isolation claim is made here.
