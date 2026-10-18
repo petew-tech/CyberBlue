@@ -227,16 +227,16 @@ Historical configurations, security limitations, and validation results are pres
 
 ## 13. Approved Target Architecture — SOC / Victim / Attack Segmentation (2026-10-16)
 
-**Status: PARTIALLY IMPLEMENTED — `br20` SOC GUEST CONNECTIVITY VALIDATED; WINDOWS VICTIM ADDRESS MIGRATION VALIDATED; KALI ATTACK-ZONE MOVE AND FINAL ISOLATION STILL OPEN.** Project 02 documents the historical baseline. The newest observed changes are recorded in [Project 05 Module 06](../projects/05-suricata-network-detection/README.md#module-06--staged-network-migration-2026-10-18).
+**Status: GUEST NETWORK PLACEMENT VALIDATED — SOC ON `br20`, WINDOWS VICTIM ON `br30`, KALI ATTACK ON `br40`; FINAL ISOLATION AND MONITORING COVERAGE REMAIN OPEN.** Project 02 documents the historical baseline. The newest observed guest changes, troubleshooting, and reboot checks are recorded in [Project 05 Module 06](../projects/05-suricata-network-detection/README.md#module-06--staged-network-migration-2026-10-18).
 
 | Zone | Planned TrueNAS bridge | Planned subnet | Intended systems and role |
 |---|---|---|---|
 | Home / management | Existing management interface `enp4s0` | `192.168.1.0/24` | TrueNAS management `192.168.1.90`; retain existing management connectivity during migration |
 | SOC | **Operational: two guests attached** `br20` | `10.10.20.0/24` | Ubuntu `cbubuntu01` `10.10.20.10/24` and Linux Mint `10.10.20.11/24` (VM-to-VM ping verified) |
-| Victim | Existing `br30` | `10.10.30.0/24` | Windows 11 **validated** at `10.10.30.10/24`; Kali still documented on `br30` pending move |
-| Attack | Existing `br40` | `10.10.40.0/24` | **Target:** Kali Linux. Currently verified Mint Suricata capture address `10.10.40.10/24`; Kali move not yet tested |
+| Victim | Existing `br30` | `10.10.30.0/24` | Windows 11 validated at `10.10.30.10/24`; Mint passive `ens5` attached; Ubuntu old NIC present without IPv4 |
+| Attack | Existing `br40` | `10.10.40.0/24` | Kali Linux validated at `10.10.40.20/24` after reboot; Mint Suricata capture `ens4 10.10.40.10/24` previously validated |
 
-### Target Logical Layout (not yet fully implemented)
+### Validated Guest Placement — Logical Layout (isolation testing still open)
 
 ```text
                 HOME / MANAGEMENT LAN
@@ -255,7 +255,7 @@ Historical configurations, security limitations, and validation results are pres
    Linux Mint sensor
 ```
 
-**Diagram notes:** This is logical placement, not evidence of connectivity, completed VM moves or full isolation. Linux Mint may retain dedicated receive-only capture NICs on the monitored victim/attack bridges while using a separate SOC/management connection. The Wazuh SIEM is already deployed separately as `SIEM_01` (`192.168.1.213`), and the existing working telemetry path must remain usable during migration. Do not conflate the existing Ubuntu management/endpoint VM with the dedicated SIEM VM.
+**Diagram notes:** Ubuntu/Mint SOC, Windows Victim, and Kali Attack guest placement and selected connectivity have been validated in stages. This diagram does **not** prove bridge isolation, comprehensive IDS visibility, or host-reboot persistence. Linux Mint retains dedicated Suricata capture interfaces on `br30` and `br40`, plus its SOC and management connectivity. The separate Wazuh SIEM is `SIEM_01` (`192.168.1.213`); do not conflate that dedicated VM with the Ubuntu SOC/endpoint VM.
 
 
 
@@ -291,7 +291,7 @@ Historical configurations, security limitations, and validation results are pres
 
 ### Current-versus-target boundary
 
-- **As verified through 2026-10-18:** `br20` carries Ubuntu `ens4` / `10.10.20.10` and Mint `ens6` / `10.10.20.11`; guest-to-guest ping was previously verified. Windows 11 Victim NIC on `br30` now uses `10.10.30.10/24` and retained that address after restart. Ubuntu released its old `10.10.30.10` address/route; its `br30` virtual NIC remains attached but without IPv4 (renamed `ens3` after reboot). Kali remains last documented at `10.10.30.20` on `br30`, pending a future move to `br40`. Mint's passive `br30` `ens5` and `br40` capture `10.10.40.10` remain part of the documented sensor layout.
+- **As verified through 2026-10-18:** `br20` carries Ubuntu `ens4` / `10.10.20.10` and Mint `ens6` / `10.10.20.11` (earlier guest-to-guest ping). Windows Victim NIC on `br30` uses `10.10.30.10/24`, retained after restart. Ubuntu's previous `br30` NIC remains attached without IPv4 (default guest name `ens3` after reboot). **Kali has now migrated from `br30` / `10.10.30.20` to `br40` / `10.10.40.20`** and retained both Attack and management networks after reboot; SSH was restored following an interface-name mapping fault. Mint's passive `br30` `ens5` and `br40` capture `10.10.40.10` remain in the documented sensor layout.
 - **Project 05 proof of concept, now cleaned up:** Temporary, narrowly scoped TrueNAS `tc` ingress and egress filters on Kali's former `vnet5` mirrored one Kali ↔ TrueNAS ICMP exchange to Mint's `vnet7`/`ens5`. Suricata logged four requests and four replies. The temporary `clsact` filters were subsequently **removed** and removal verified; this does **not** demonstrate active or persistent full-bridge monitoring.
 - **Current segmentation caveat:** Existing shared management-LAN NICs create other potential network paths; bridge separation alone does not establish complete end-to-end VM isolation. Existing firewall controls must be reassessed after any new bridge or migration.
 
@@ -330,6 +330,16 @@ Historical configurations, security limitations, and validation results are pres
 - **Ubuntu SOC/management preserved:** `mgmt0 192.168.1.243/24` and `ens4 10.10.20.10/24` persisted through an Ubuntu guest reboot; default gateway remained `192.168.1.1`. After applying corrected Netplan, the former `lab0` interface lost `10.10.30.10/24` and its connected route. The VirtIO NIC still exists: after the guest reboot it appeared as `ens3` with IPv6 link-local only.
 - **Windows Victim address migration:** Windows `Ethernet` moved from `10.10.30.11/24` to `10.10.30.10/24`. The original address was removed. Management `Ethernet 3 192.168.1.151/24` and default route via `192.168.1.1` remained. The Windows guest reboot preserved both IPs and both routes.
 - **Connectivity after Windows reboot:** `ping -S 10.10.30.10 -n 4 10.10.30.1` and `ping -S 192.168.1.151 -n 4 192.168.1.1` each received 4/4 responses (0% loss).
-- **Validated guest-level changes:** Ubuntu and Windows address/routing persistence. **Not yet established:** TrueNAS host reboot persistence for `br20`, Kali move to `br40`, current cross-zone firewall enforcement, complete isolation, or broad Suricata mirroring. Guest IP removal does not imply guest NIC detachment.
+- **Validated guest-level changes at this checkpoint:** Ubuntu and Windows address/routing persistence. The later Kali migration and guest reboot are recorded directly below. **Still not established:** TrueNAS host reboot persistence for `br20`, current cross-zone firewall enforcement, complete isolation, or broad Suricata mirroring. Guest IP removal does not imply guest NIC detachment.
 
 Four screenshots were uploaded to [Project 05 evidence](../projects/05-suricata-network-detection/evidence/README.md#module-06--network-migration-evidence-2026-10-18), with detailed [build notes](../projects/05-suricata-network-detection/build-notes.md#module-06--ubuntu-and-windows-ip-migration-2026-10-18) and [validation](../projects/05-suricata-network-detection/validation.md#module-06--staged-network-migration-validation-2026-10-18).
+
+### Module 06 — Kali Attack-Zone Migration and Recovery (2026-10-18)
+
+- **TrueNAS reattachment:** Kali VM `6` retained management NIC device `16` on `enp4s0`, MAC `00:a0:98:5b:5f:c8`. Its lab NIC device `42` was moved from `br30` to `br40` while Kali was shut down. After the change, the guest's interface names mapped differently than the original IP profiles.
+- **Observed and recovered fault:** Kali initially booted with the management address on the Attack-connected guest NIC and the Attack address on the management-connected NIC; SSH was unavailable and the management ping failed. The TrueNAS SPICE console enabled inspection and recovery. NetworkManager profile bindings were corrected to match the actual NIC connections, restoring management ping and PuTTY SSH.
+- **Persistent mapping:** Kali Attack device `42` was assigned explicit MAC `00:a0:98:76:2d:fd`; device `16` retained management MAC `00:a0:98:5b:5f:c8`. Both Kali NetworkManager profiles were configured to match these MACs, rather than `eth0`/`eth1` name restrictions.
+- **Post-reboot result:** Kali `eth0 10.10.40.20/24` on `br40`, `eth1 192.168.1.91/24` on management, default via `192.168.1.1 dev eth1`, `10.10.40.0/24` connected on `eth0`, no `10.10.30.0/24` connected route. SSH reconnected. Post-reboot `10.10.40.1` and `192.168.1.1` gateway tests each succeeded with 4/4 replies and 0% loss.
+- **Scope:** Kali guest NIC persistence, IPs, routing, gateway reachability and SSH **PASS**. This is not an inter-zone firewall test, a TrueNAS **host** reboot test, or a demonstration of bridge-wide Suricata visibility.
+
+[Pre-reboot Kali evidence](../projects/05-suricata-network-detection/evidence/module06-kali-attack-network-pre-reboot.png) · [Post-reboot Kali evidence](../projects/05-suricata-network-detection/evidence/module06-kali-attack-network-post-reboot.png) · [Detailed validation](../projects/05-suricata-network-detection/validation.md#kali-attack-zone-migration-and-recovery--2026-10-18)
