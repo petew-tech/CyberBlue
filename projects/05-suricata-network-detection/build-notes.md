@@ -155,4 +155,44 @@ These checks did not establish traffic mirroring. They also do not conclusively 
 - Before restart, gateway pings from each respective source IP passed (4/4, 0% loss). Captured and uploaded [pre-reboot Windows evidence](evidence/module06-windows-victim-ip-pre-reboot.png).
 - Restarted Windows using `Restart-Computer`. Rechecked addresses, routes and connectivity: `10.10.30.10 → 10.10.30.1` returned 4/4 (0% loss, average 2 ms); `192.168.1.151 → 192.168.1.1` returned 4/4 (0% loss, average reported 0 ms). Captured and uploaded [post-reboot evidence](evidence/module06-windows-victim-post-reboot-validation.png).
 
-**Pending:** Kali attack-zone attachment/migration, revised firewall/isolation tests, any planned Ubuntu virtual NIC removal, full passive sensor coverage, and independent TrueNAS host bridge reboot-persistence testing. No final three-zone isolation claim is made here.
+**As of the Ubuntu/Windows checkpoint:** Kali attack-zone migration was still pending; it was completed and validated in the following 2026-10-18 section. Revised firewall/isolation tests, any planned Ubuntu virtual NIC removal, full passive sensor coverage, and independent TrueNAS host bridge reboot-persistence testing remain open. No final three-zone isolation claim is made here.
+
+## Kali Attack-Zone Migration — NIC Order Recovery and MAC Persistence (2026-10-18)
+
+### Initial state and staged change
+
+- Kali (TrueNAS VM `6`) initially had `eth0 192.168.1.91/24` management and `eth1 10.10.30.20/24` on `br30`. Route `0.0.0.0/0` via `192.168.1.1 dev eth0`; `10.10.30.0/24` directly attached via `eth1`.
+- Kali `eth1` initially reported MAC `00:a0:98:1d:59:aa`. TrueNAS `midclt call vm.device.query '[["vm","=",6],["dtype","=","NIC"]]'` showed management device `16` on `enp4s0` with MAC `00:a0:98:5b:5f:c8`; lab device `42` on `br30` with stored MAC `null`.
+- TrueNAS `br40` verified UP with `10.10.40.1/24`. Proposed `10.10.40.20` received no replies to four TrueNAS `ping -I br40` probes; this was only a preliminary no-responder check, not a guarantee of uniqueness.
+- On Kali, NetworkManager `cyberblue-lab` initially bound to `eth1`, with `10.10.30.20/24`, `ipv4.method=manual`, autoconnect enabled, no IPv4 gateway, and `ipv4.never-default=yes`. Management `eth0` gateway ping to `192.168.1.1` passed 4/4.
+- Staged `sudo nmcli connection modify "cyberblue-lab" ipv4.addresses "10.10.40.20/24"` **without activating** it, then verified the saved profile.
+- Powered off Kali. TrueNAS `vm.status 6` returned `STOPPED` / `SHUTOFF`. Changed **only** VM NIC device `42` from `br30` to `br40`; device `16` remained on `enp4s0`. TrueNAS `vm.device.query` verified both before starting Kali.
+
+### Fault: guest interface order changed and SSH failed
+
+- After restart, Kali showed `eth0` MAC `00:a0:98:76:2d:fd` physically attached to **Attack `br40`**, but NetworkManager had applied management profile `Wired connection 1` to `eth0`, giving it `192.168.1.91`. Kali `eth1` MAC `00:a0:98:5b:5f:c8` physically attached to **management `enp4s0`** but held `cyberblue-lab` and `10.10.40.20`.
+- SSH failed, and `ping -I eth0 -c 4 192.168.1.1` returned 0/4 with local `Destination Host Unreachable`. IPs existed but on the **wrong physical networks**; this is an observed **interface-name/profile-mapping fault**, not a failure of the TrueNAS bridge reassignment.
+- Recovered through Kali's TrueNAS SPICE console. Inspected `nmcli device status`; verified `Wired connection 1` contains static management `192.168.1.91/24`, gateway `192.168.1.1`.
+- Saved profile changes: `sudo nmcli con mod "Wired connection 1" connection.interface-name eth1` and `sudo nmcli con mod "cyberblue-lab" connection.interface-name eth0`. Both saved interface names verified with `nmcli -g connection.interface-name`.
+- Activated `sudo nmcli con up "Wired connection 1" ifname eth1`, then management ping `ping -I eth1 -c 4 192.168.1.1` passed 4/4 and PuTTY SSH access to `192.168.1.91` was restored.
+- Activated `sudo nmcli con up "cyberblue-lab" ifname eth0`. `ip -br addr` showed `eth0 10.10.40.20/24` and `eth1 192.168.1.91/24`; routes pointed `10.10.40.0/24` to `eth0` and default via management `eth1`. Both bridge-gateway pings passed 4/4. Uploaded [pre-reboot Kali evidence](evidence/module06-kali-attack-network-pre-reboot.png).
+
+### Persistent fix: explicitly configured NIC MAC addresses
+
+- Confirmed Kali management `eth1` MAC `00:a0:98:5b:5f:c8`; Attack `eth0` MAC `00:a0:98:76:2d:fd`. The management TrueNAS device `16` already had a static MAC; Attack device `42` still had `mac: null` and had previously appeared under a different MAC, so interface-name-only binding was unsuitable.
+- Changed saved Kali management profile to match stable MAC, removing its interface-name restriction:
+  `sudo nmcli con mod "Wired connection 1" connection.interface-name "" 802-3-ethernet.mac-address "00:a0:98:5b:5f:c8"`. Verified interface-name `--`, MAC `00:A0:98:5B:5F:C8`.
+- After Kali shutdown, `midclt call vm.status 6` confirmed `STOPPED`. TrueNAS `midclt call vm.device.query '[["dtype","=","NIC"]]'` showed no **explicitly configured** duplicate of proposed `00:a0:98:76:2d:fd`; entries with `mac: null` mean this was not a complete uniqueness guarantee.
+- Set permanent MAC `00:a0:98:76:2d:fd` on TrueNAS VM `6` NIC device `42`, keeping `br40` / VirtIO and leaving management device `16` unchanged. Queried TrueNAS again: device `16` `enp4s0` MAC `00:a0:98:5b:5f:c8`, device `42` `br40` MAC `00:a0:98:76:2d:fd`.
+- Started Kali and verified `eth0` was Attack MAC `00:a0:98:76:2d:fd`, `eth1` management MAC `00:a0:98:5b:5f:c8`. Changed saved Attack profile to match the stable MAC rather than an interface name:
+  `sudo nmcli con mod "cyberblue-lab" connection.interface-name "" 802-3-ethernet.mac-address "00:a0:98:76:2d:fd"`; verified name `--` and MAC `00:A0:98:76:2D:FD`.
+- Verified addresses `eth0 10.10.40.20/24`, `eth1 192.168.1.91/24`; default gateway `192.168.1.1 dev eth1`, direct `10.10.40.0/24 dev eth0`, no `10.10.30.0/24` connected route. Both gateways returned 4/4 replies.
+
+### Final guest reboot-persistence validation
+
+- Rebooted Kali via SSH; PuTTY reconnected after boot. `ip -br addr && ip -4 route` showed the same two addresses, management default route via `eth1`, Attack connected route via `eth0`, and no old Victim route.
+- Post-reboot `ping -I eth0 -c 4 10.10.40.1`: 4/4, 0% loss, average **0.280 ms**.
+- Post-reboot `ping -I eth1 -c 4 192.168.1.1`: 4/4, 0% loss, average **0.480 ms**.
+- Saved [post-reboot Kali evidence](evidence/module06-kali-attack-network-post-reboot.png), uploaded to GitHub and verified.
+
+**Result: PASS — Kali guest-network migration, permanent configured NIC MACs, MAC-bound NetworkManager profiles, restored SSH and guest reboot persistence.** Do not interpret this as a TrueNAS **host** reboot validation, complete security zone isolation, or Suricata coverage of arbitrary traffic. Prior `br30` ICMP mirroring records are historical because scoped `tc` filters were removed before the new topology.
