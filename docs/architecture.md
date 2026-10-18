@@ -312,3 +312,15 @@ Historical configurations, security limitations, and validation results are pres
 - Wazuh dashboard Threat Hunting screenshot verified **4 hits** matching DQL query `rule.id: 86601`, manager `siem-01`, agent `003` / `cyberblue-suricata`, at ~12:24 CDT on October 17. All four rows show level 3 and `Suricata: Alert - CYBERBLUE TEST - ICMP Echo Request`.
 - **Result: PASS** for tested Suricata -> Wazuh agent -> manager -> dashboard alert path after adding Linux Mint's SOC NIC. The earlier `agent.id: 002` dashboard filter had excluded the sensor; opening agent 003 and filtering by rule displayed the correct events.
 - Screenshot [09-wazuh-post-soc-migration-alerts.png](../projects/05-suricata-network-detection/evidence/09-wazuh-post-soc-migration-alerts.png) has been uploaded and verified in GitHub. Unrestricted cross-zone routing, final-state isolation, and comprehensive passive capture are not established.
+
+
+### Windows 11 Victim Bridge Onboarding — 2026-10-18
+
+- TrueNAS WIN11 VM ID `11` was cleanly shut down before modifying NICs. Its pre-existing VirtIO management NIC (device `36`, MAC `00:a0:98:0a:82:2b`, attached to `enp4s0`) was preserved.
+- Added second TrueNAS-managed VirtIO NIC (device `54`, MAC `00:a0:98:31:78:bd`, attached to `br30`). `vm.device.query` confirmed both attachments before the VM restarted.
+- Windows identified management as `Ethernet 3` (interface index `19`, address `192.168.1.151`, default gateway/DNS `192.168.1.1`) and the new Victim NIC as `Ethernet` (interface index `3`).
+- The new NIC initially received APIPA `169.254.133.82` without DHCP. TrueNAS `ping -I br30 -c 4 -W 1 10.10.30.11` returned no replies; this was a preliminary availability check, **not conclusive proof** no other device used the address. `arping` was not installed.
+- Configured Windows Victim NIC via elevated PowerShell `New-NetIPAddress -InterfaceAlias "Ethernet" -IPAddress 10.10.30.11 -PrefixLength 24` with no additional default gateway. Initial `Tentative`/ `Invalid` state in command output resolved; `Get-NetIPAddress` confirmed `10.10.30.11/24`, `Preferred`.
+- **Connectivity (all four replies, 0% loss):** Windows `10.10.30.11` → TrueNAS `br30` `10.10.30.1` (average RTT reported 0 ms); Windows `10.10.30.11` → Ubuntu `lab0` `10.10.30.10` (3 ms); Windows management `192.168.1.151` → home gateway `192.168.1.1` (0 ms).
+- **Status: PARTIAL / PASS for dual-NIC onboarding and tested traffic.** Windows currently uses **temporary Victim IP `10.10.30.11`**, **not** target `10.10.30.10`: Ubuntu still has that address on `br30`. Do not duplicate the IP or remove Ubuntu's NIC without a separate planned migration. Other guests and network paths remain; full isolation is unverified.
+
