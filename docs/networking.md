@@ -10,8 +10,8 @@ This shared networking reference combines the historical Project 02 baseline wit
 |---|---|---|---|---|
 | Home / Management LAN | `192.168.1.0/24` | `enp4s0` | TrueNAS management: `192.168.1.90` | Host and guest administration |
 | SOC bridge — Ubuntu and Mint connected | `10.10.20.0/24` | `br20` | `10.10.20.1/24` | Ubuntu `10.10.20.10/24` and Linux Mint `10.10.20.11/24`; VM-to-VM ping verified 2026-10-17 |
-| Victim bridge (migration partial) | `10.10.30.0/24` | `br30` | `10.10.30.1/24` | Windows `10.10.30.10/24` validated; Kali `10.10.30.20` last documented here pending move; Mint passive `ens5`; Ubuntu NIC present without IPv4 |
-| Attack-zone target (migration partial) | `10.10.40.0/24` | `br40` | `10.10.40.1/24` | Mint Suricata capture `10.10.40.10` validated previously; Kali not yet migrated |
+| Victim bridge | `10.10.30.0/24` | `br30` | `10.10.30.1/24` | Windows `10.10.30.10/24` validated; Mint passive `ens5`; Ubuntu NIC present without IPv4 |
+| Attack bridge | `10.10.40.0/24` | `br40` | `10.10.40.1/24` | Kali `10.10.40.20/24` validated after reboot; Mint Suricata capture `10.10.40.10` previously validated |
 
 The home/management LAN uses gateway `192.168.1.1`. The existing `br30` and `br40` lab bridges are documented as persistent TrueNAS-managed Linux bridges, not 802.1Q VLANs. The new `br20` has been saved and registered in TrueNAS; its post-reboot persistence remains to be tested.
 
@@ -153,7 +153,7 @@ The duplicate DHCP address was removed; gateway connectivity, DNS, and SSH were 
 - [Project 02 Build Notes](../projects/02-networking-segmentation/build-notes.md)
 - [Project 02 Validation](../projects/02-networking-segmentation/validation.md)
 
-**Documentation status:** This shared reference summarizes recorded Project 02 findings; it does not claim new tests or configuration changes.
+**Documentation status:** Project 02 implementation details are preserved as historical context. Project 05 Module 06 records the newer verified Ubuntu, Windows, and Kali guest network changes, with final security controls and host-reboot persistence still open.
 
 
 ### Windows 11 Victim Network Addition — 2026-10-18
@@ -172,8 +172,21 @@ The duplicate DHCP address was removed; gateway connectivity, DNS, and SSH were 
 | Ubuntu `cbubuntu01` | `mgmt0 192.168.1.243/24` | `ens4 10.10.20.10/24` on SOC `br20` | Old Victim `10.10.30.10/24` and route removed; previous `lab0` now `ens3` with no IPv4 after guest reboot |
 | Windows 11 | `Ethernet 3 192.168.1.151/24` | `Ethernet 10.10.30.10/24` on Victim `br30` | Temporary `10.10.30.11` removed; new address/route survived guest reboot |
 | Linux Mint | `ens3 192.168.1.92/24` (previously documented) | SOC `ens6 10.10.20.11/24`; Suricata `ens4 10.10.40.10/24`, passive `ens5` on `br30` (prior documentation) | Not re-tested during Module 06 |
-| Kali | Previously documented management `192.168.1.91/24` | Last documented `10.10.30.20/24` on `br30` | Move to `br40` is still pending; no fresh Module 06 Kali verification |
+| Kali | `eth1 192.168.1.91/24` | `eth0 10.10.40.20/24` on Attack `br40` | Moved from `br30`; TrueNAS NIC `42` now explicitly MAC-bound; both addresses/routes and SSH survived guest reboot |
 
-The Windows post-reboot Victim and management gateway pings each returned 4/4 replies, zero loss. Ubuntu maintained SSH after restart, with management and SOC routes present. This proves those specific guest addressing/routing behaviors—not final inter-zone firewall enforcement or full network isolation. TrueNAS `br20` **host** reboot persistence remains untested.
+Windows and Kali post-reboot Victim/Attack and management gateway pings each returned 4/4 replies, zero loss. Ubuntu maintained SSH after restart, with management and SOC routes present. This proves those specific guest addressing/routing behaviors—not final inter-zone firewall enforcement or full network isolation. TrueNAS `br20` **host** reboot persistence remains untested.
 
 [Project 05 Module 06 evidence](../projects/05-suricata-network-detection/evidence/README.md#module-06--network-migration-evidence-2026-10-18) · [Validation details](../projects/05-suricata-network-detection/validation.md#module-06--staged-network-migration-validation-2026-10-18)
+
+### Module 06 — Kali Attack NIC Migration and Reboot Validation (2026-10-18)
+
+| TrueNAS device | Bridge | Permanent MAC | Kali guest mapping after reboot |
+|---|---|---|---|
+| `16` | `enp4s0` (management) | `00:a0:98:5b:5f:c8` | `eth1` / `192.168.1.91/24`, default via `192.168.1.1` |
+| `42` | `br40` (Attack) | `00:a0:98:76:2d:fd` | `eth0` / `10.10.40.20/24`, no additional default gateway |
+
+After moving device `42` from `br30` to `br40`, Kali's interface names initially changed order. NetworkManager applied the IP profiles to the wrong physical connections, resulting in loss of SSH and management gateway connectivity. The operator recovered the configuration using TrueNAS SPICE and corrected the guest profiles. TrueNAS then assigned an explicit permanent MAC to device `42`; both guest profiles were set to match their respective MACs without interface-name restrictions.
+
+**Guest reboot verification:** Attack and management IPv4 addresses and routes persisted; PuTTY reconnected; post-reboot `10.10.40.20 → 10.10.40.1` and `192.168.1.91 → 192.168.1.1` pings each returned four replies and zero loss. No `10.10.30.0/24` connected route remained in Kali. This validates the guest migration but does not demonstrate inter-zone firewall isolation, an unrestricted traffic path, comprehensive passive IDS visibility, or TrueNAS host reboot persistence.
+
+[Pre-reboot evidence](../projects/05-suricata-network-detection/evidence/module06-kali-attack-network-pre-reboot.png) · [Post-reboot evidence](../projects/05-suricata-network-detection/evidence/module06-kali-attack-network-post-reboot.png) · [Project 05 validation](../projects/05-suricata-network-detection/validation.md#kali-attack-zone-migration-and-recovery--2026-10-18)
