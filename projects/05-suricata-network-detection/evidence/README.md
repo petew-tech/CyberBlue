@@ -26,3 +26,16 @@ Screenshots 01 and 02 are two views of the same detection, not two separate dete
 Both original dashboard screenshots have been uploaded to this GitHub folder and their filenames verified.
 
 See [Project validation record](../validation.md).
+
+---
+
+## Module 06 — Network Migration Evidence (2026-10-18)
+
+| Screenshot | What it proves | Status |
+|---|---|---|
+| [project06-netplan-routing-validated.png](project06-netplan-routing-validated.png) | Ubuntu IPv4 management/SOC retained; old `10.10.30.0/24` route absent after Netplan application | Uploaded and verified |
+| [project06-netplan-post-reboot-validation.png](project06-netplan-post-reboot-validation.png) | Ubuntu guest reboot kept management/SOC IPv4 and routes while old Victim IPv4 remained absent | Uploaded and verified |
+| [module06-windows-victim-ip-pre-reboot.png](module06-windows-victim-ip-pre-reboot.png) | Windows `10.10.30.10` Victim and `192.168.1.151` management addresses are Preferred before reboot | Uploaded and verified |
+| [module06-windows-victim-post-reboot-validation.png](module06-windows-victim-post-reboot-validation.png) | Windows retained intended two addresses and routes after guest reboot | Uploaded and verified |
+
+The two files named `project06-` are **Module 06 evidence within Project 05**; filenames were retained because they were already uploaded. Screenshots document specific guest addressing/routing states, not full zone isolation, TrueNAS host bridge persistence or comprehensive IDS visibility.
