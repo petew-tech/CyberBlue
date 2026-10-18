@@ -32,42 +32,36 @@ This repository records actual lab work, including successful tests, troubleshoo
 
 ## Network Architecture
 
-CyberBlue uses a management network and two dedicated virtual lab segments.
+**Current verified guest-network state (2026-10-18, Project 05 Module 06):** CyberBlue uses a home/management LAN and three TrueNAS-managed virtual lab bridges. The new zone layout is **partially implemented**, not yet a fully validated isolation boundary.
 
 ```text
-                 HOME / MANAGEMENT LAN
-                     192.168.1.0/24
-                            |
-                     TrueNAS SCALE
-                      KVM / QEMU
-                            |
-               +------------+------------+
-               |                         |
-              br30                      br40
-         SECURITY LAB               ISOLATED LAB
-         10.10.30.0/24              10.10.40.0/24
-               |                         |
-          +----+----+                    |
-          |         |                    |
-        Ubuntu     Kali              Linux Mint
-       .30.10     .30.20              .40.10
+               HOME / MANAGEMENT LAN
+                   192.168.1.0/24
+                          |
+                  TrueNAS SCALE
+                    KVM / QEMU
+                          |
+         +----------------+----------------+
+         |                |                |
+       br20             br30             br40
+      SOC ZONE        VICTIM ZONE    TARGET ATTACK ZONE
+   10.10.20.0/24     10.10.30.0/24     10.10.40.0/24
+         |                |                |
+   Ubuntu .20.10    Windows .30.10    Mint .40.10
+   Mint   .20.11    Kali    .30.20*  (Suricata capture)
 
-         Routed IPv4 forwarding between
-         br30 and br40 is blocked
-         by persistent firewall rules.
+   * Kali's move from br30 to br40 is still pending.
 ```
 
-The Linux VMs also retain separate management-network connectivity. Therefore, the lab bridge firewall controls cross-segment IPv4 forwarding but does not provide complete isolation across every possible network path.
+Ubuntu's former `br30` VirtIO NIC remains present without an IPv4 address (it appeared as `ens3` after guest reboot); Mint also has a passive capture NIC on `br30`. The Windows Victim NIC uses `10.10.30.10/24`, after Ubuntu released it. Separate management NICs remain in use; the dedicated Wazuh SIEM is still on the management LAN.
 
-Windows 11 currently uses the management network and has been used for endpoint telemetry validation.
+Historically verified TrueNAS firewall rules block routed IPv4 forwarding between `br30` and `br40`, but **their effectiveness in the changing three-zone topology, IPv6 isolation, and alternative management-LAN paths have not been fully revalidated**. Guest reboot tests do not establish TrueNAS host bridge reboot persistence.
 
-See [Project 02 — Network Segmentation](projects/02-networking-segmentation/README.md) for implementation details and limitations.
+### Approved Target Zones — Migration In Progress
 
-### Approved Future Network Layout (Not Yet Deployed)
+The planned end state is **`br20` for SOC (Ubuntu and Mint), `br30` for Windows Victim, and `br40` for Kali Attack**, while preserving required Mint sensor connections and management access. SOC connectivity and Windows addressing have been tested; Kali migration, final zone boundaries, and comprehensive passive monitoring remain open.
 
-CyberBlue will evolve toward a three-zone architecture using **TrueNAS-managed `br20` (SOC, `10.10.20.0/24`), `br30` (Victim, `10.10.30.0/24`), and `br40` (Attack, `10.10.40.0/24`)**. Intended placement is Ubuntu Server and Linux Mint for SOC functions, Windows 11 for victim exercises, and Kali Linux for controlled attack exercises. Existing management connectivity and the dedicated Wazuh SIEM will be preserved during staged migration. Network changes and monitoring coverage will only be treated as complete after validation and evidence. The diagram above remains the **current documented lab configuration**, not the future layout.
-
-See the [approved target design and staged-migration safeguards](docs/architecture.md#13-approved-target-architecture--soc--victim--attack-segmentation-2026-10-16).
+See the [approved target design and staged-migration safeguards](docs/architecture.md#13-approved-target-architecture--soc--victim--attack-segmentation-2026-10-16) and [Project 05 Module 06 results](projects/05-suricata-network-detection/README.md#module-06--staged-network-migration-2026-10-18).
 
 ---
 
@@ -79,7 +73,7 @@ See the [approved target design and staged-migration safeguards](docs/architectu
 | [02 — Virtual Networking & Segmentation](projects/02-networking-segmentation/README.md) | Persistent bridges, addressing, routing controls, and troubleshooting | **Validated** |
 | [03 — Endpoint Telemetry & Logging](projects/03-endpoint-telemetry/README.md) | Windows Event Logs, Sysmon, Linux auditd, visibility gaps, and recovery | **Validated — historical evidence limitation documented** |
 | [04 — Centralized Logging & SIEM Foundations](projects/04-centralized-logging/README.md) | Wazuh 4.14.8, Windows Sysmon alerting, Threat Hunting searches, and selected Windows 11 CIS hardening | **Complete — foundational SIEM deployment and Windows 11 telemetry validated** |
-| [05 — Suricata Network Detection & Wazuh Integration](projects/05-suricata-network-detection/README.md) | Linux Mint Suricata IDS, custom ICMP detection, Wazuh alert ingestion, and controlled service recovery | **Validated — bridge-wide visibility remains an open follow-up** |
+| [05 — Suricata Network Detection & Wazuh Integration](projects/05-suricata-network-detection/README.md) | Suricata/Wazuh validation and Module 06 staged SOC/Victim network migration | **Sensor validated; Module 06 guest migration validated; full zone isolation OPEN** |
 
 Additional projects will be added only as implementation and validation progress.
 
@@ -154,11 +148,13 @@ Additional endpoint onboarding, complete raw-event ingestion coverage, and outst
 
 ## Project 05 — Suricata Network Detection & Wazuh Integration
 
-**Status: Validated — Sensor Detection and Recovery**
+**Status: Sensor Detection Validated; Module 06 Guest Network Migration Validated (zone isolation still open)**
 
 Configured Suricata on Linux Mint to detect a controlled ICMP test, forward EVE JSON telemetry through the Wazuh agent, and generate a centralized Wazuh alert. A controlled Suricata process failure confirmed systemd automatic recovery; the sensor resumed detection and Wazuh continued receiving alerts. Point-in-time capture statistics reported zero kernel drops and zero capture errors.
 
 Visibility into traffic exchanged between other VMs on TrueNAS bridge `br40` has not been demonstrated and remains a separate follow-up.
+
+**Module 06 update (2026-10-18):** Ubuntu released `10.10.30.10` while retaining `192.168.1.243` management and `10.10.20.10` SOC addresses. Windows 11 moved from temporary `10.10.30.11` to `10.10.30.10` on `br30`, retaining management `192.168.1.151`. Guest reboot persistence and Windows gateway connectivity were verified with four evidence screenshots. Kali's zone migration and final isolation testing remain open. See [Module 06 evidence and validation](projects/05-suricata-network-detection/validation.md#module-06--staged-network-migration-validation-2026-10-18).
 
 [View Project 05 →](projects/05-suricata-network-detection/README.md)
 
