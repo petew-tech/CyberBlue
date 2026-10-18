@@ -290,3 +290,15 @@ Several design choices were intentional:
 - The existing management NICs were retained to reduce the risk of losing administrative access.
 - Persistent TrueNAS-managed VM XML was not manually edited.
 - The isolated network was kept separate from the normal management LAN.
+
+
+## Staged Windows 11 Victim Bridge Attachment — October 18, 2026
+
+- Shut down WIN11 VM ID `11` and retained original management NIC VirtIO device `36` attached `enp4s0`, MAC `00:a0:98:0a:82:2b`.
+- Added second TrueNAS-managed VirtIO NIC device `54`, MAC `00:a0:98:31:78:bd`, attached to `br30`. TrueNAS `midclt vm.device.query` verified both adapters before restart.
+- After Windows reboot, identified original management adapter as `Ethernet 3` (interface 19), `192.168.1.151`, gateway/DNS `192.168.1.1`. New NIC as `Ethernet` (interface 3), initially APIPA `169.254.133.82`.
+- Tested proposed `10.10.30.11` using TrueNAS `br30` ping (0 replies from four attempts); no conclusive free-address guarantee; `arping` was not present.
+- Administrator PowerShell configured new NIC with `New-NetIPAddress -InterfaceAlias "Ethernet" -IPAddress 10.10.30.11 -PrefixLength 24`. No second default gateway was configured. Follow-up output showed `AddressState Preferred` for `10.10.30.11/24`.
+- Confirmed four successful Windows ping replies in each test: `ping -S 10.10.30.11 -n 4 10.10.30.1` (TrueNAS `br30`), `ping -S 10.10.30.11 -n 4 10.10.30.10` (Ubuntu `lab0`), and `ping -S 192.168.1.151 -n 4 192.168.1.1` (home management gateway). Each showed zero packet loss.
+- **Result: PASS for Windows dual-NIC configuration and connectivity; target IP and full segmentation remain pending.** Ubuntu still holds `br30` `10.10.30.10`, so Windows uses temporary `10.10.30.11` until a carefully controlled change releases the target IP. Do not treat this as proof of complete Victim/Attack isolation.
+
