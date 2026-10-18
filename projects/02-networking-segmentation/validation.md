@@ -305,3 +305,20 @@ The Docker subsystem was running during inspection. No Docker service restart or
 - Review IPv6 firewall controls if IPv6 forwarding is enabled.
 
 These results apply to the inspected configuration and do not guarantee firewall behavior after future service or configuration changes.
+
+
+## Windows 11 Victim Onboarding Validation — October 18, 2026
+
+| Check | Observation | Result |
+|---|---|---|
+| NIC attachment | TrueNAS WIN11 VM ID 11: management VirtIO device 36 `enp4s0`, Victim VirtIO device 54 `br30`; both MAC addresses confirmed | PASS |
+| Windows NIC mapping | `Ethernet 3` = `192.168.1.151` management; `Ethernet` = `10.10.30.11/24` Victim | PASS |
+| Static IPv4 state | `Get-NetIPAddress` returned `Preferred` for `10.10.30.11/24` | PASS |
+| Victim bridge gateway reachability | Windows `ping -S 10.10.30.11 -n 4 10.10.30.1`: 4 transmitted, 4 received, 0% lost | PASS |
+| Inter-VM communication on `br30` | Windows `10.10.30.11` to Ubuntu `10.10.30.10`: 4/4, 0% loss | PASS |
+| Management connectivity after new NIC | Windows `ping -S 192.168.1.151 -n 4 192.168.1.1`: 4/4, 0% loss | PASS |
+| Windows final planned IP `10.10.30.10` | Ubuntu still holds this address on `br30`; Windows retains temporary `10.10.30.11` | OPEN |
+| Final Victim/Attack isolation | Not established by host/gateway or same-bridge ping tests; existing shared management NICs and other connections remain | OPEN |
+
+Address selection note: A TrueNAS ICMP test to `10.10.30.11` before configuration received no reply, which was not conclusive proof of no address conflict. Windows later reported the configured address as `Preferred`. Further routing/firewall and duplicate-IP checks should be performed as topology evolves.
+
