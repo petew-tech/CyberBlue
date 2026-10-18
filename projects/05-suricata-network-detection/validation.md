@@ -107,7 +107,7 @@ This section validates **guest address cleanup and migration only**, not full zo
 | V-35 | Windows Victim routing/connectivity | Direct `10.10.30.0/24` route on `Ethernet`; ping from `10.10.30.10` to `10.10.30.1` 4/4, 0% loss after removing old address | PASS |
 | V-36 | Windows management preserved | Default route via `192.168.1.1` on `Ethernet 3`; ping from `192.168.1.151` 4/4, 0% loss | PASS |
 | V-37 | Windows guest reboot persistence | Both desired IPs and routes persisted; post-reboot Victim and management gateway pings each 4/4, 0% loss | PASS |
-| V-38 | Three-zone isolation and host persistence | Kali attack-zone migration, updated firewall/inter-zone policy, full capture visibility and TrueNAS host reboot of `br20` not demonstrated | OPEN |
+| V-38 | Three-zone isolation and host persistence | Kali guest migration now separately validated in V-39–V-45; updated firewall/inter-zone policy, full capture visibility and TrueNAS host reboot of `br20` not demonstrated | OPEN |
 
 ### Module 06 evidence (files verified in GitHub)
 
@@ -117,3 +117,19 @@ This section validates **guest address cleanup and migration only**, not full zo
 - [Windows Victim/management IPs and routes after reboot](evidence/module06-windows-victim-post-reboot-validation.png)
 
 **Interpretation:** Ubuntu's old `br30` VirtIO link still exists without a guest IPv4 address. IP persistence is not proof of physical attachment removal, TrueNAS host persistence, passive packet-mirror coverage, or firewall-enforced separation.
+
+### Kali Attack-Zone Migration and Recovery — 2026-10-18
+
+| ID | Test | Observed evidence | Status |
+|---|---|---|---|
+| V-39 | Kali target bridge and NIC inventory | TrueNAS `br40 10.10.40.1/24` UP; after migration VM `6` device `42` attached to `br40`, management device `16` remained `enp4s0` | PASS |
+| V-40 | Fault diagnosis: NIC order/profile mismatch | Post-move `eth0` mapped to Attack MAC but held management IP; `eth1` mapped to management MAC but held Attack IP. Management gateway initially failed 0/4 and SSH was unavailable | OBSERVED FAULT |
+| V-41 | SSH and management recovery | Rebound NetworkManager profiles to correct interfaces, activated management via SPICE console; management gateway 4/4 and PuTTY SSH restored | PASS |
+| V-42 | Persistent NIC identification | TrueNAS stored management MAC `00:a0:98:5b:5f:c8` on device `16`; Attack MAC `00:a0:98:76:2d:fd` explicitly assigned to device `42`; each NetworkManager profile has matching MAC with no interface-name restriction | PASS |
+| V-43 | Attack and management IPv4 routes | `eth0 10.10.40.20/24` on `br40`; `eth1 192.168.1.91/24` management, default via `192.168.1.1 dev eth1`; old `10.10.30.0/24` route absent | PASS |
+| V-44 | Attack network reboot persistence | Kali rebooted; expected address and connected route persisted; `ping -I eth0 -c 4 10.10.40.1` returned 4/4, 0% loss, mean RTT 0.280 ms | PASS |
+| V-45 | Management network reboot persistence | PuTTY reconnected after reboot; `ping -I eth1 -c 4 192.168.1.1` returned 4/4, 0% loss, mean RTT 0.480 ms | PASS |
+
+**Evidence:** [Kali before final reboot](evidence/module06-kali-attack-network-pre-reboot.png) · [Kali after final reboot](evidence/module06-kali-attack-network-post-reboot.png).
+
+**Interpretation:** The guest-network migration and recovery tests passed. The earlier temporary TrueNAS `tc` bridge mirroring rules are not present as a validated persistent monitoring path. VM network addressing, gateway pings and saved MAC settings alone do not prove firewall isolation between `br20`, `br30` and `br40`, or eliminate alternate management-LAN paths. TrueNAS host bridge reboot persistence and comprehensive IDS capture coverage remain open.
