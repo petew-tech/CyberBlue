@@ -204,3 +204,21 @@ After moving device `42` from `br30` to `br40`, Kali's interface names initially
 - No new screenshots were uploaded as part of this test; values come from user-supplied terminal/PowerShell outputs.
 
 [Project 05 validation V-46–V-51](../projects/05-suricata-network-detection/validation.md#module-06--victim--attack-ipv4-isolation-tests-2026-10-19) · [Commands and cleanup](../projects/05-suricata-network-detection/build-notes.md#module-06--victim--attack-ipv4-firewall-test-procedure-2026-10-19)
+
+## Approved Default-Deny Inter-Zone Policy — Planning Stage (2026-10-19)
+
+**Approved intent — not yet fully implemented:** SOC `br20`, Victim `br30`, and Attack `br40` are distinct security zones. Deny unauthorized traffic in **both directions** between any two zones. Exceptions require a specific source, destination, direction, protocol/port, purpose, and test/rollback plan; never assume general inter-zone access.
+
+| Zone pair | Desired default | Current proof |
+|---|---|---|
+| SOC ↔ Victim | Deny | OPEN — no validated policy/test for `br20` ↔ `br30` |
+| SOC ↔ Attack | Deny | OPEN — no validated policy/test for `br20` ↔ `br40` |
+| Victim ↔ Attack | Deny | Scoped routed IPv4 ICMP blocks PASS both ways; broader proof OPEN |
+
+The reference Cyber Forge image uses Proxmox and labels the zone boundaries *isolated (no routing)*. CyberBlue is deployed on TrueNAS SCALE, with observed `net.ipv4.ip_forward=1` and `iptables` `FORWARD` default `ACCEPT`; **do not describe this lab as already enforcing an absence of routing**. The policy goal can be met by carefully scoped firewall rules if comprehensive path tests confirm enforcement.
+
+**Pre-change checklist:** Review `/mnt/Pool1/CyberBlue/cyberblue-firewall.sh` and its TrueNAS `POSTINIT` job; record `iptables`, `iptables-legacy`, Docker and Tailscale behavior; identify required management connectivity and Suricata/Wazuh data flows; plan controlled rollback. No changes to forwarding, bridge membership or persistent firewall rules are authorized solely by this design decision.
+
+**Boundaries that need separate treatment:** shared home/management `192.168.1.0/24` access, dual-/multi-homed guests (including Mint capture interfaces), same-bridge Layer-2 paths, TrueNAS host `INPUT`/`OUTPUT`, IPv6, and actual monitored traffic delivery to Suricata. Continue testing these instead of marking whole-zone isolation PASS.
+
+[Approved architecture decision](architecture.md#14-approved-default-deny-inter-zone-policy--design-decision-2026-10-19) · [Current Module 06 validation](../projects/05-suricata-network-detection/validation.md#module-06--victim--attack-ipv4-isolation-tests-2026-10-19)
