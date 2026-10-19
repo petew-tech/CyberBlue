@@ -147,13 +147,15 @@ Additional endpoint onboarding, complete raw-event ingestion coverage, and outst
 
 ## Project 05 — Suricata Network Detection & Wazuh Integration
 
-**Status: Sensor Detection Validated; Module 06 Guest Network Migration Validated; Victim ↔ Attack IPv4 ICMP firewall tests PASS (full zone isolation still open)**
+**Status: Sensor Detection Validated; Module 06 Guest Network Migration Validated; six of six directed, routed IPv4 ICMP firewall tests PASS in controlled windows (persistent three-zone isolation still OPEN)**
 
 Configured Suricata on Linux Mint to detect a controlled ICMP test, forward EVE JSON telemetry through the Wazuh agent, and generate a centralized Wazuh alert. A controlled Suricata process failure confirmed systemd automatic recovery; the sensor resumed detection and Wazuh continued receiving alerts. Point-in-time capture statistics reported zero kernel drops and zero capture errors.
 
 Visibility into traffic exchanged between other VMs on TrueNAS bridge `br40` has not been demonstrated and remains a separate follow-up.
 
 **Module 06 update (2026-10-18):** Ubuntu released `10.10.30.10` while retaining management `192.168.1.243` and SOC `10.10.20.10`. Windows moved from temporary `10.10.30.11` to Victim `10.10.30.10` on `br30`, retaining management `192.168.1.151`. Kali moved from `br30` / `10.10.30.20` to Attack `br40` / `10.10.40.20`, retaining management `192.168.1.91`. After an interface-order change interrupted Kali SSH, we recovered the VM using its SPICE console, set persistent NIC MAC addresses and MAC-bound NetworkManager profiles, and validated guest reboot persistence, SSH and both gateway connections. Six screenshots are recorded. **Inter-zone security controls, full IDS visibility and TrueNAS host bridge reboot persistence remain open.** See [Module 06 validation](projects/05-suricata-network-detection/validation.md#module-06--staged-network-migration-validation-2026-10-18).
+
+**Module 06 controlled firewall trial (2026-10-19):** All six directed, routed IPv4 ICMP paths among SOC `br20`, Victim `br30`, and Attack `br40` were blocked in scoped tests with matching TrueNAS `iptables` DROP counters. The four SOC-direction checks used a temporary six-rule candidate protected by automatic rollback timers. After the tests, temporary routes were removed, baseline firewall rules were restored, and all rollback timers were verified inactive. **Only the original Victim ↔ Attack rules remain active; persistent SOC default-deny is not deployed.** IPv6, additional protocols, management-LAN bypasses, TrueNAS host persistence, and full Suricata mirroring remain open. [Detailed validation](projects/05-suricata-network-detection/validation.md#module-06--three-zone-scoped-ipv4-icmp-firewall-trial-2026-10-19).
 
 [View Project 05 →](projects/05-suricata-network-detection/README.md)
 
