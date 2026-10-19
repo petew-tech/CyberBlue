@@ -101,3 +101,24 @@ See [build notes](build-notes.md#module-06--ubuntu-and-windows-ip-migration-2026
 - **Victim → Attack:** Windows `Find-NetRoute -RemoteIPAddress 10.10.40.20` initially selected management `Ethernet 3 192.168.1.151` via `192.168.1.1`. Elevated PowerShell added a **nonpersistent**, destination-specific `10.10.40.20/32` route via `10.10.30.1` on Victim `Ethernet`. `Find-NetRoute` verified source `10.10.30.10`, interface index `3`, and next hop `10.10.30.1`. A four-probe `ping -4 -S 10.10.30.10 -n 4 10.10.40.20` timed out; TrueNAS `br30 → br40` DROP count rose **4 → 8 packets, 336 → 576 bytes**, without further change to the other rule. The host route was removed and `Find-NetRoute` confirmed normal management routing returned (`Ethernet 3`, source `192.168.1.151`, next hop `192.168.1.1`).
 
 **Scope and limitations:** Exact paired four-packet increments corroborate firewall enforcement for the controlled IPv4 ICMP flows. Tests did not examine other protocols, SOC bridge `br20`, IPv6, other virtual bridge/management-LAN bypass paths, policy persistence across TrueNAS reboot, or complete Suricata observation. Raw CLI/PowerShell output was supplied during the guided validation; no new screenshots have been asserted as uploaded. See [V-46–V-51](validation.md#module-06--victim--attack-ipv4-isolation-tests-2026-10-19) and [test procedure](build-notes.md#module-06--victim--attack-ipv4-firewall-test-procedure-2026-10-19).
+
+## Module 06 — Three-Zone Routed IPv4 ICMP Trial and Baseline Restoration (2026-10-19)
+
+**Scoped result: PASS — six of six tested directional routed IPv4 ICMP paths blocked, corroborated by TrueNAS DROP counters.** This combines the earlier two Victim ↔ Attack tests on the existing baseline with four SOC-related directions tested under a **temporary** six-rule candidate.
+
+| Tested direction | DROP chain match | Current trial evidence |
+|---|---|---|
+| Attack → Victim | `br40 → br30` | PASS — earlier baseline test; +4 packets |
+| Victim → Attack | `br30 → br40` | PASS — earlier baseline test; +4 packets |
+| SOC → Victim | `br20 → br30` | PASS — 4 packets / 336 bytes |
+| SOC → Attack | `br20 → br40` | PASS — 4 packets / 336 bytes |
+| Attack → SOC | `br40 → br20` | PASS — 4 packets / 336 bytes |
+| Victim → SOC | `br30 → br20` | PASS — 4 packets / 240 bytes |
+
+Each test used an explicitly verified, destination-specific temporary guest route to ensure traffic traversed the relevant TrueNAS bridge pair rather than the shared management LAN. After each test the guest route was removed and normal management routing was verified restored.
+
+**Safety and current state:** Original POSTINIT firewall script backed up and left unchanged. Six-rule candidate was tested in three short windows, with automatic rollback timers, explicit manual rollback, `iptables` readback, and verification that each timer became inactive. **At completion, the active firewall reverted to the original two Victim ↔ Attack DROP rules; there are no active SOC DROP rules.** Do not mistake demonstrated candidate behavior for persistent enforcement.
+
+**Still OPEN (Module 06):** persistent three-zone default-deny deployment and authorized exceptions; TCP/UDP and other protocols; IPv6; dual-homed guests and management-LAN bypass paths; bridge Layer-2 and host traffic; TrueNAS `br20`/firewall host-reboot persistence; comprehensive Suricata packet capture/mirroring.
+
+[Complete V-52–V-60 validation](validation.md#module-06--three-zone-scoped-ipv4-icmp-firewall-trial-2026-10-19) · [Candidate, test and rollback procedure](build-notes.md#module-06--temporary-soc-default-deny-candidate-and-rollback-procedure-2026-10-19)
