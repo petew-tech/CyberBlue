@@ -107,7 +107,7 @@ This section validates **guest address cleanup and migration only**, not full zo
 | V-35 | Windows Victim routing/connectivity | Direct `10.10.30.0/24` route on `Ethernet`; ping from `10.10.30.10` to `10.10.30.1` 4/4, 0% loss after removing old address | PASS |
 | V-36 | Windows management preserved | Default route via `192.168.1.1` on `Ethernet 3`; ping from `192.168.1.151` 4/4, 0% loss | PASS |
 | V-37 | Windows guest reboot persistence | Both desired IPs and routes persisted; post-reboot Victim and management gateway pings each 4/4, 0% loss | PASS |
-| V-38 | Three-zone isolation and host persistence | Kali guest migration now separately validated in V-39–V-45; updated firewall/inter-zone policy, full capture visibility and TrueNAS host reboot of `br20` not demonstrated | OPEN |
+| V-38 | Three-zone isolation and host persistence | Kali migration V-39–V-45 and tested bidirectional `br30` ↔ `br40` IPv4 ICMP blocking V-46–V-51 validated; SOC/inter-zone protocol matrix, management and IPv6 paths, full capture visibility, and TrueNAS host reboot still not demonstrated | OPEN — partial isolation proven |
 
 ### Module 06 evidence (files verified in GitHub)
 
@@ -133,3 +133,18 @@ This section validates **guest address cleanup and migration only**, not full zo
 **Evidence:** [Kali before final reboot](evidence/module06-kali-attack-network-pre-reboot.png) · [Kali after final reboot](evidence/module06-kali-attack-network-post-reboot.png).
 
 **Interpretation:** The guest-network migration and recovery tests passed. The earlier temporary TrueNAS `tc` bridge mirroring rules are not present as a validated persistent monitoring path. VM network addressing, gateway pings and saved MAC settings alone do not prove firewall isolation between `br20`, `br30` and `br40`, or eliminate alternate management-LAN paths. TrueNAS host bridge reboot persistence and comprehensive IDS capture coverage remain open.
+
+### Module 06 — Victim ↔ Attack IPv4 Isolation Tests (2026-10-19)
+
+| ID | Test | Observed evidence | Status |
+|---|---|---|---|
+| V-46 | TrueNAS firewall and forwarding baseline | `sudo iptables -S FORWARD`: default policy ACCEPT; `br40 → br30 DROP`, `br30 → br40 DROP` present behind Docker chains. `/proc/sys/net/ipv4/ip_forward` = `1`. `iptables-legacy` showed separate Tailscale `ts-forward` chain, without explicit CyberBlue bridge rules | PASS — rules observed |
+| V-47 | Kali Attack-path selection | Default route lookup to Windows `10.10.30.10` selected management `eth1`. Temporary `10.10.30.10/32` route via `10.10.40.1 dev eth0`; lookup verified source `10.10.40.20`, `eth0` | PASS |
+| V-48 | Attack → Victim scoped IPv4 ICMP blocking | Kali `ping -I eth0 -c 4 10.10.30.10`: 4 sent, 0 received. TrueNAS `br40 → br30 DROP`: 4 packets / 336 B → 8 packets / 672 B, delta +4 / +336 B. Opposite DROP counter unchanged | PASS — tested traffic dropped |
+| V-49 | Kali route cleanup | Removed only temporary `10.10.30.10/32` route; `ip -4 route get 10.10.30.10` returned original management path `192.168.1.1 dev eth1 src 192.168.1.91` | PASS |
+| V-50 | Victim → Attack scoped IPv4 ICMP blocking | Windows `Find-NetRoute` first selected management. Temporary `10.10.40.20/32` via Victim `Ethernet` / `10.10.30.1` applied in `ActiveStore`; route lookup confirmed source `10.10.30.10`. Four-probe Windows ping timed out. TrueNAS `br30 → br40 DROP`: 4 / 336 B → 8 / 576 B, delta +4 / +240 B. Opposite DROP counter unchanged | PASS — tested traffic dropped |
+| V-51 | Windows route cleanup | Removed temporary `10.10.40.20/32` route. `Find-NetRoute` again selected management `Ethernet 3`, source `192.168.1.151`, default `0.0.0.0/0` next hop `192.168.1.1` | PASS |
+
+**Evidence source:** Operator-supplied TrueNAS, Kali and Windows command outputs during guided validation on October 19, 2026. No screenshots for these tests have yet been uploaded or verified in GitHub. The original counters of 4 / 336 B in both directions may include historical tests; the new **four-packet increments observed during the controlled tests** are the current evidence.
+
+**Interpretation:** Bidirectional **routed IPv4 ICMP** deny behavior for Kali Attack `10.10.40.20` ↔ Windows Victim `10.10.30.10` through TrueNAS `br40` and `br30` is confirmed. Results do not establish IPv6 policies, other protocols, SOC bridge isolation, a complete management-LAN bypass assessment, TrueNAS host reboot persistence, or comprehensive Suricata mirroring. **V-38 remains OPEN for full isolation.**
