@@ -107,7 +107,7 @@ This section validates **guest address cleanup and migration only**, not full zo
 | V-35 | Windows Victim routing/connectivity | Direct `10.10.30.0/24` route on `Ethernet`; ping from `10.10.30.10` to `10.10.30.1` 4/4, 0% loss after removing old address | PASS |
 | V-36 | Windows management preserved | Default route via `192.168.1.1` on `Ethernet 3`; ping from `192.168.1.151` 4/4, 0% loss | PASS |
 | V-37 | Windows guest reboot persistence | Both desired IPs and routes persisted; post-reboot Victim and management gateway pings each 4/4, 0% loss | PASS |
-| V-38 | Three-zone isolation and host persistence | Kali migration V-39–V-45 and tested bidirectional `br30` ↔ `br40` IPv4 ICMP blocking V-46–V-51 validated; SOC/inter-zone protocol matrix, management and IPv6 paths, full capture visibility, and TrueNAS host reboot still not demonstrated | OPEN — partial isolation proven |
+| V-38 | Three-zone isolation and host persistence | Kali migration V-39–V-45, Victim ↔ Attack IPv4 ICMP V-46–V-51, and four SOC-direction IPv4 ICMP checks V-52–V-60 validated in separate controlled windows; SOC policy was rolled back after testing, while the inter-zone protocol matrix, management and IPv6 paths, full capture visibility, and TrueNAS host reboot are still not demonstrated | OPEN — partial isolation proven |
 
 ### Module 06 evidence (files verified in GitHub)
 
@@ -148,3 +148,25 @@ This section validates **guest address cleanup and migration only**, not full zo
 **Evidence source:** Operator-supplied TrueNAS, Kali and Windows command outputs during guided validation on October 19, 2026. No screenshots for these tests have yet been uploaded or verified in GitHub. The original counters of 4 / 336 B in both directions may include historical tests; the new **four-packet increments observed during the controlled tests** are the current evidence.
 
 **Interpretation:** Bidirectional **routed IPv4 ICMP** deny behavior for Kali Attack `10.10.40.20` ↔ Windows Victim `10.10.30.10` through TrueNAS `br40` and `br30` is confirmed. Results do not establish IPv6 policies, other protocols, SOC bridge isolation, a complete management-LAN bypass assessment, TrueNAS host reboot persistence, or comprehensive Suricata mirroring. **V-38 remains OPEN for full isolation.**
+
+## Module 06 — Three-Zone Scoped IPv4 ICMP Firewall Trial (2026-10-19)
+
+**Status: PASS — six of six tested directional routed IPv4 ICMP paths were blocked. NOT a production/persistent three-zone isolation PASS.** Victim ↔ Attack checks V-48/V-50 used the existing baseline rules; the four SOC directions below used a temporary six-rule candidate. The candidate was rolled back after each test window. The persistent POSTINIT startup script remains the original two-rule version.
+
+| ID | Validation | Operator-supplied evidence | Status |
+|---|---|---|---|
+| V-52 | SOC firewall change safeguards | Original `/mnt/Pool1/CyberBlue/cyberblue-firewall.sh` copied to `cyberblue-firewall.sh.pre-br20-20261019.bak`; byte comparison verified. Candidate and rollback shell syntax checks passed. TrueNAS POSTINIT startup script was not changed. | PASS — safeguards verified |
+| V-53 | Temporary candidate rule order | `cyberblue-firewall-candidate.sh` applied during three rollback-protected windows. `iptables -L FORWARD -n -v --line-numbers` showed six directional inter-zone DROP entries in rules 1–6 ahead of Docker-related forwarding chains (with a separate `iptables-legacy` warning). | PASS — observed live in test windows |
+| V-54 | SOC → Victim ICMP | Ubuntu `10.10.20.10` temporary `10.10.30.10/32 via 10.10.20.1 dev ens4` route verified; 4 pings, 0 replies; TrueNAS `br20 → br30` DROP rule 6 recorded **4 packets / 336 B**. | PASS — tested flow dropped |
+| V-55 | Ubuntu SOC → Victim cleanup | Temporary destination-specific route removed; `ip -4 route get 10.10.30.10` again selected `192.168.1.1 dev mgmt0 src 192.168.1.243`. First manual SOC rollback restored the two-rule baseline; first rollback timer was confirmed inactive. | PASS |
+| V-56 | SOC → Attack ICMP | Ubuntu `10.10.40.20/32 via 10.10.20.1 dev ens4` selected source `10.10.20.10`; 4 pings, 0 replies; TrueNAS `br20 → br40` DROP rule 4 recorded **4 packets / 336 B**. Route removed; normal `mgmt0` path verified. | PASS — tested flow dropped |
+| V-57 | Attack → SOC ICMP | Kali `10.10.20.10/32 via 10.10.40.1 dev eth0` selected source `10.10.40.20`; 4 pings, 0 replies; TrueNAS `br40 → br20` DROP rule 3 recorded **4 packets / 336 B**. Route removed; normal management `eth1` next hop `192.168.1.1` verified. | PASS — tested flow dropped |
+| V-58 | Second rollback and timer cleanup | Manual rollback removed four SOC DROP entries while preserving Victim ↔ Attack rules and Docker chains. Second transient timer `cyberblue-br20-rollback2.timer` was stopped and verified `inactive`. | PASS |
+| V-59 | Victim → SOC ICMP | Windows `10.10.20.10/32` ActiveStore route via `10.10.30.1` on `Ethernet` verified with `Find-NetRoute` (source `10.10.30.10`); four `ping -4 -S 10.10.30.10` probes, zero replies. TrueNAS `br30 → br20` DROP rule 5 recorded **4 packets / 240 B**. | PASS — tested flow dropped |
+| V-60 | Final route and firewall cleanup | Windows test route removed; `Find-NetRoute` again chose management `Ethernet 3`, `192.168.1.151`, via `192.168.1.1`. Final manual rollback verified `iptables -S FORWARD` retained only the two baseline `br40 ↔ br30` DROP rules plus Docker chains; third timer `cyberblue-br20-rollback3.timer` stopped and verified `inactive`. | PASS — baseline restored |
+
+**Directional test coverage (all PASS for the specific ICMP probes):** Attack → Victim, Victim → Attack (V-48 and V-50), SOC → Victim (V-54), SOC → Attack (V-56), Attack → SOC (V-57), Victim → SOC (V-59). Counter measurements were taken in their respective test windows; rule counters restarted when the candidate script removed and reinserted rules. Do not add these readings together as one uninterrupted counter series.
+
+**Live end state at cleanup:** TrueNAS default `FORWARD ACCEPT`; only `br40 → br30 DROP` and `br30 → br40 DROP` retained ahead of existing Docker chains. All temporary SOC inter-zone rules removed, and all three transient rollback timers verified inactive. The **approved full three-zone default-deny policy is not yet persistently implemented**.
+
+**Open:** Full TCP/UDP and other protocol paths; IPv6; management-LAN alternative routes and dual-homed guest bypasses; bridge Layer-2 and TrueNAS host traffic; deliberate authorized exceptions; TrueNAS host reboot persistence of `br20` and firewall; and Suricata mirror coverage. V-38 stays **OPEN**. Evidence is the operator's shell/PowerShell output in the guided validation; no new screenshots are claimed.
