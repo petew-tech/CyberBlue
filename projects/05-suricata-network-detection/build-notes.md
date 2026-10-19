@@ -196,3 +196,65 @@ These checks did not establish traffic mirroring. They also do not conclusively 
 - Saved [post-reboot Kali evidence](evidence/module06-kali-attack-network-post-reboot.png), uploaded to GitHub and verified.
 
 **Result: PASS — Kali guest-network migration, permanent configured NIC MACs, MAC-bound NetworkManager profiles, restored SSH and guest reboot persistence.** Do not interpret this as a TrueNAS **host** reboot validation, complete security zone isolation, or Suricata coverage of arbitrary traffic. Prior `br30` ICMP mirroring records are historical because scoped `tc` filters were removed before the new topology.
+
+## Module 06 — Victim ↔ Attack IPv4 Firewall Test Procedure (2026-10-19)
+
+**Context:** After Ubuntu/Windows/Kali guest-network migration, TrueNAS `br30` is the Victim segment (`10.10.30.0/24`), and `br40` is the Attack segment (`10.10.40.0/24`). Both tested guests also have `192.168.1.0/24` management connections, so default route selection must be verified before firewall experiments.
+
+### Read-only TrueNAS baseline
+
+```bash
+sudo iptables -S FORWARD
+sudo iptables-legacy -S FORWARD
+sudo iptables-legacy -S ts-forward
+sudo iptables -L FORWARD -n -v --line-numbers
+cat /proc/sys/net/ipv4/ip_forward
+```
+
+- Active `iptables` FORWARD policy `ACCEPT`, Docker chains/rules first; then `br40 → br30 DROP` and `br30 → br40 DROP`. Initial counters: **4 packets / 336 bytes each**, from earlier tests.
+- A parallel `iptables-legacy` FORWARD chain had default `ACCEPT` and jumped to Tailscale `ts-forward`. That chain used Tailscale interface marks, an ACCEPT for marked packets, a DROP for certain `100.64.0.0/10` traffic exiting outside `tailscale0`, and an ACCEPT for `-o tailscale0`; no explicit CyberBlue bridge DROP rules there. The two backend rulesets need to be considered separately; the relevant counter increases were observed in `sudo iptables`.
+- Kernel IPv4 forwarding `/proc/sys/net/ipv4/ip_forward` was `1`. A `sysctl` command was unavailable in the TrueNAS user's shell; `cat` on `/proc` provided the read-only value.
+
+### Direction 1: Kali Attack → Windows Victim
+
+Kali's original `ip -4 route get 10.10.30.10` selected management `192.168.1.1 dev eth1 src 192.168.1.91`. To avoid a false-negative test through management, the operator added a temporary **single-destination host route**:
+
+```bash
+sudo ip route add 10.10.30.10/32 via 10.10.40.1 dev eth0
+ip -4 route get 10.10.30.10
+ping -I eth0 -c 4 10.10.30.10
+```
+
+Route lookup selected `via 10.10.40.1 dev eth0 src 10.10.40.20`. Result: 4 transmitted / 0 replies (100% loss). TrueNAS `br40 → br30 DROP` counter increased from **4 / 336 bytes** to **8 / 672 bytes**; opposite rule stayed at 4 / 336 bytes.
+
+Cleaned up and verified:
+
+```bash
+sudo ip route del 10.10.30.10/32 via 10.10.40.1 dev eth0
+ip -4 route get 10.10.30.10
+```
+
+Post-cleanup lookup again selected `via 192.168.1.1 dev eth1 src 192.168.1.91`.
+
+### Direction 2: Windows Victim → Kali Attack
+
+Windows originally selected management `Ethernet 3`, `192.168.1.151`, next hop `192.168.1.1` for destination `10.10.40.20`. In elevated PowerShell, created a nonpersistent host route and verified selection:
+
+```powershell
+New-NetRoute -DestinationPrefix "10.10.40.20/32" -InterfaceAlias "Ethernet" -NextHop "10.10.30.1" -PolicyStore ActiveStore
+Find-NetRoute -RemoteIPAddress 10.10.40.20
+ping -4 -S 10.10.30.10 -n 4 10.10.40.20
+```
+
+`Find-NetRoute` returned source `10.10.30.10`, `Ethernet` interface index `3`, destination host route `10.10.40.20/32`, and gateway `10.10.30.1`. Ping timed out. TrueNAS `br30 → br40 DROP` count increased from **4 / 336 bytes** to **8 / 576 bytes**; opposite rule stayed at 8 / 672 bytes.
+
+Cleaned up in elevated PowerShell:
+
+```powershell
+Remove-NetRoute -DestinationPrefix "10.10.40.20/32" -InterfaceAlias "Ethernet" -NextHop "10.10.30.1" -Confirm:$false
+Find-NetRoute -RemoteIPAddress 10.10.40.20
+```
+
+Final route lookup again chose management `Ethernet 3`, source `192.168.1.151`, default `0.0.0.0/0` via `192.168.1.1`.
+
+**Validated:** Firewall DROP counters increased by exactly four during each separately scoped ICMP test; routing configuration was restored after each test. No firewall modifications or reboot were required. **Open:** Full protocol matrix, SOC-to-other-zone boundary tests, IPv6, alternate management routing, TrueNAS host reboot and full IDS monitoring. Evidence here is operator-supplied CLI and PowerShell output, not newly uploaded screenshot files.
