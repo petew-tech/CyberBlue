@@ -97,7 +97,7 @@ iptables -I FORWARD 1 -i br40 -o br30 -j DROP
 
 The script removes existing copies of these rules before inserting them to avoid duplicates. A TrueNAS **POSTINIT** task runs the script at startup.
 
-**Scope:** The rules block routed **IPv4 forwarding between the two lab bridges**. They do **not** establish full guest isolation: the Linux VMs also share the management LAN, and IPv6 isolation has not been validated.
+**Scope:** These rules are intended to block routed **IPv4 forwarding between `br30` and `br40`**. Controlled IPv4 ICMP tests with current Kali/Windows placement on 2026-10-19 verified that both directions were dropped by these rules (see current results below). They do **not** establish full guest isolation: the Linux VMs also share the management LAN; SOC `br20`, IPv6, and other protocols have not been fully validated.
 
 ## Validation Recorded in Project 02
 
@@ -174,7 +174,7 @@ The duplicate DHCP address was removed; gateway connectivity, DNS, and SSH were 
 | Linux Mint | `ens3 192.168.1.92/24` (previously documented) | SOC `ens6 10.10.20.11/24`; Suricata `ens4 10.10.40.10/24`, passive `ens5` on `br30` (prior documentation) | Not re-tested during Module 06 |
 | Kali | `eth1 192.168.1.91/24` | `eth0 10.10.40.20/24` on Attack `br40` | Moved from `br30`; TrueNAS NIC `42` now explicitly MAC-bound; both addresses/routes and SSH survived guest reboot |
 
-Windows and Kali post-reboot Victim/Attack and management gateway pings each returned 4/4 replies, zero loss. Ubuntu maintained SSH after restart, with management and SOC routes present. This proves those specific guest addressing/routing behaviors—not final inter-zone firewall enforcement or full network isolation. TrueNAS `br20` **host** reboot persistence remains untested.
+Windows and Kali post-reboot Victim/Attack and management gateway pings each returned 4/4 replies, zero loss. Ubuntu maintained SSH after restart, with management and SOC routes present. This proves those specific guest addressing/routing behaviors. The later 2026-10-19 scoped IPv4 firewall validation is documented below, but full inter-zone firewall enforcement and full network isolation are not established. TrueNAS `br20` **host** reboot persistence remains untested.
 
 [Project 05 Module 06 evidence](../projects/05-suricata-network-detection/evidence/README.md#module-06--network-migration-evidence-2026-10-18) · [Validation details](../projects/05-suricata-network-detection/validation.md#module-06--staged-network-migration-validation-2026-10-18)
 
@@ -190,3 +190,17 @@ After moving device `42` from `br30` to `br40`, Kali's interface names initially
 **Guest reboot verification:** Attack and management IPv4 addresses and routes persisted; PuTTY reconnected; post-reboot `10.10.40.20 → 10.10.40.1` and `192.168.1.91 → 192.168.1.1` pings each returned four replies and zero loss. No `10.10.30.0/24` connected route remained in Kali. This validates the guest migration but does not demonstrate inter-zone firewall isolation, an unrestricted traffic path, comprehensive passive IDS visibility, or TrueNAS host reboot persistence.
 
 [Pre-reboot evidence](../projects/05-suricata-network-detection/evidence/module06-kali-attack-network-pre-reboot.png) · [Post-reboot evidence](../projects/05-suricata-network-detection/evidence/module06-kali-attack-network-post-reboot.png) · [Project 05 validation](../projects/05-suricata-network-detection/validation.md#kali-attack-zone-migration-and-recovery--2026-10-18)
+
+### Module 06 — Current Victim ↔ Attack Firewall Test Results (2026-10-19)
+
+| Path | Controlled route during test | ICMP result | TrueNAS DROP counter | Outcome |
+|---|---|---|---|---|
+| Kali Attack `10.10.40.20` → Windows Victim `10.10.30.10` | Kali `10.10.30.10/32 via 10.10.40.1 dev eth0` | 4 sent, 0 replies | `br40 → br30` 4 → 8 packets (336 → 672 B) | PASS — packets dropped |
+| Windows Victim `10.10.30.10` → Kali Attack `10.10.40.20` | Windows `10.10.40.20/32 via 10.10.30.1`, `Ethernet` | Four-probe ping timed out | `br30 → br40` 4 → 8 packets (336 → 576 B) | PASS — packets dropped |
+
+- TrueNAS `cat /proc/sys/net/ipv4/ip_forward` returned `1`; `sudo iptables -S FORWARD` displayed the two DROP rules after Docker forwarding rules; `iptables-legacy` showed separate Tailscale `ts-forward` rules.
+- Both default guest routes initially used management networks, which would **not** test the requested bridge-to-bridge policy. Each test used a **single-destination temporary route**, verified before probing; each route was then removed and the original management route reverified.
+- **Current scope:** Both directed `br30` ↔ `br40` IPv4 ICMP tests PASS for the two tested guests. Other protocols, SOC `br20`, IPv6, management-LAN bypass paths, firewall persistence through TrueNAS host reboot, and complete sensor visibility remain OPEN.
+- No new screenshots were uploaded as part of this test; values come from user-supplied terminal/PowerShell outputs.
+
+[Project 05 validation V-46–V-51](../projects/05-suricata-network-detection/validation.md#module-06--victim--attack-ipv4-isolation-tests-2026-10-19) · [Commands and cleanup](../projects/05-suricata-network-detection/build-notes.md#module-06--victim--attack-ipv4-firewall-test-procedure-2026-10-19)
