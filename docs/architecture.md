@@ -227,7 +227,7 @@ Historical configurations, security limitations, and validation results are pres
 
 ## 13. Approved Target Architecture — SOC / Victim / Attack Segmentation (2026-10-16)
 
-**Status: GUEST NETWORK PLACEMENT VALIDATED — SOC ON `br20`, WINDOWS VICTIM ON `br30`, KALI ATTACK ON `br40`; FINAL ISOLATION AND MONITORING COVERAGE REMAIN OPEN.** Project 02 documents the historical baseline. The newest observed guest changes, troubleshooting, and reboot checks are recorded in [Project 05 Module 06](../projects/05-suricata-network-detection/README.md#module-06--staged-network-migration-2026-10-18).
+**Status: GUEST NETWORK PLACEMENT VALIDATED — SOC ON `br20`, WINDOWS VICTIM ON `br30`, KALI ATTACK ON `br40`; TESTED VICTIM ↔ ATTACK IPv4 ICMP FORWARDING DENIED; FINAL ISOLATION AND MONITORING COVERAGE REMAIN OPEN.** Project 02 documents the historical baseline. The newest observed guest changes, troubleshooting, and reboot checks are recorded in [Project 05 Module 06](../projects/05-suricata-network-detection/README.md#module-06--staged-network-migration-2026-10-18).
 
 | Zone | Planned TrueNAS bridge | Planned subnet | Intended systems and role |
 |---|---|---|---|
@@ -343,3 +343,15 @@ Four screenshots were uploaded to [Project 05 evidence](../projects/05-suricata-
 - **Scope:** Kali guest NIC persistence, IPs, routing, gateway reachability and SSH **PASS**. This is not an inter-zone firewall test, a TrueNAS **host** reboot test, or a demonstration of bridge-wide Suricata visibility.
 
 [Pre-reboot Kali evidence](../projects/05-suricata-network-detection/evidence/module06-kali-attack-network-pre-reboot.png) · [Post-reboot Kali evidence](../projects/05-suricata-network-detection/evidence/module06-kali-attack-network-post-reboot.png) · [Detailed validation](../projects/05-suricata-network-detection/validation.md#kali-attack-zone-migration-and-recovery--2026-10-18)
+
+### Module 06 — Controlled Victim ↔ Attack IPv4 Firewall Tests (2026-10-19)
+
+The deployed TrueNAS `iptables` FORWARD rules include `-i br40 -o br30 -j DROP` and `-i br30 -o br40 -j DROP`. `iptables-legacy` also carries a separate Tailscale `ts-forward` chain; inspection found no explicit CyberBlue bridge rules in that legacy chain. TrueNAS kernel IPv4 forwarding is enabled (`ip_forward=1`).
+
+**Attack → Victim:** Kali's normal route to Windows used the management LAN; an explicitly scoped temporary host route directed only `10.10.30.10/32` through `eth0 10.10.40.20` and `br40 10.10.40.1`. Four ICMP probes received no reply. TrueNAS `br40 → br30` DROP counter increased 4 → 8 (+4; 336 → 672 B). Removed route and verified original management route was restored.
+
+**Victim → Attack:** Windows likewise preferred management routing. A temporary, nonpersistent route for `10.10.40.20/32` through Victim `Ethernet 10.10.30.10` and `br30 10.10.30.1` was verified with `Find-NetRoute`. Four ICMP probes timed out, while TrueNAS `br30 → br40` DROP counter increased 4 → 8 (+4; 336 → 576 B). Removed route and verified Windows resumed normal management routing via `Ethernet 3 192.168.1.151` and `192.168.1.1`.
+
+**Validation result: PASS — specific bidirectional routed IPv4 ICMP blocking between the Attack and Victim guests.** The SOC bridge `br20`, other IP protocols, IPv6, shared management access, TrueNAS host reboot persistence, and broad Suricata packet visibility have **not** been validated by these tests. No new evidence screenshot is represented as uploaded.
+
+[Project 05 validation V-46–V-51](../projects/05-suricata-network-detection/validation.md#module-06--victim--attack-ipv4-isolation-tests-2026-10-19) · [Repeatable test and rollback notes](../projects/05-suricata-network-detection/build-notes.md#module-06--victim--attack-ipv4-firewall-test-procedure-2026-10-19)
