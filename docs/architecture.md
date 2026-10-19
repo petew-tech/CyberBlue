@@ -355,3 +355,23 @@ The deployed TrueNAS `iptables` FORWARD rules include `-i br40 -o br30 -j DROP` 
 **Validation result: PASS — specific bidirectional routed IPv4 ICMP blocking between the Attack and Victim guests.** The SOC bridge `br20`, other IP protocols, IPv6, shared management access, TrueNAS host reboot persistence, and broad Suricata packet visibility have **not** been validated by these tests. No new evidence screenshot is represented as uploaded.
 
 [Project 05 validation V-46–V-51](../projects/05-suricata-network-detection/validation.md#module-06--victim--attack-ipv4-isolation-tests-2026-10-19) · [Repeatable test and rollback notes](../projects/05-suricata-network-detection/build-notes.md#module-06--victim--attack-ipv4-firewall-test-procedure-2026-10-19)
+
+## 14. Approved Default-Deny Inter-Zone Policy — Design Decision (2026-10-19)
+
+**Decision: APPROVED DESIGN; IMPLEMENTATION AND VALIDATION INCOMPLETE.** Adopt the logical intent of the partner's Cyber Forge zone drawing for CyberBlue's **TrueNAS SCALE** environment. The reference drawing depicts Proxmox and absence of routing; this lab instead uses TrueNAS-managed `br20`, `br30`, and `br40` and currently has kernel IPv4 forwarding enabled. Match the **security outcome**, not its hypervisor-specific implementation.
+
+**Required default policy:** Deny unauthorized inter-zone communication in both directions among SOC (`br20` / `10.10.20.0/24`), Victim (`br30` / `10.10.30.0/24`), and Attack (`br40` / `10.10.40.0/24`). Permit only narrowly scoped, documented exceptions needed for monitoring, administration, or controlled lab exercises. Time-bound test allowances must be reversible and revalidated after cleanup.
+
+| Directed inter-zone path | Approved baseline |
+|---|---|
+| SOC `br20` ↔ Victim `br30` | DENY unless explicitly authorized |
+| SOC `br20` ↔ Attack `br40` | DENY unless explicitly authorized |
+| Victim `br30` ↔ Attack `br40` | DENY unless explicitly authorized |
+
+**Before firewall changes:** Inspect the current TrueNAS firewall script `/mnt/Pool1/CyberBlue/cyberblue-firewall.sh`, its installed `POSTINIT` startup behavior, Docker and Tailscale forwarding chains, and paths required for existing TrueNAS management, guest SSH/PuTTY/SPICE recovery, Suricata capture, Wazuh agent-to-SIEM delivery, and authorized administration. An exact exception list has **not yet been approved**. Preserve access and establish a rollback procedure before changing effective policy.
+
+**Security scope:** The current guests have management-LAN NICs, and Mint has monitoring NICs on both Attack and Victim bridges. `FORWARD` rules cannot by themselves prohibit same-bridge Layer-2 traffic or TrueNAS-host `INPUT`/`OUTPUT` access; alternate management and IPv6 paths must be assessed independently. Passive packet capture also requires a separately validated mirror/capture delivery mechanism. No broad blanket routing exceptions should be assumed.
+
+**As-tested state:** On 2026-10-19, scoped routed IPv4 ICMP between Kali and Windows was dropped in both directions by the existing `br40` ↔ `br30` rules, with matching counter increments. Neither `br20` isolation nor comprehensive default-deny enforcement has passed. This section records policy intent, **not a new configuration change, test result, or completion claim**.
+
+[Networking implementation reference](networking.md) · [Project 05 scoped firewall validation](../projects/05-suricata-network-detection/validation.md#module-06--victim--attack-ipv4-isolation-tests-2026-10-19)
