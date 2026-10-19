@@ -393,3 +393,24 @@ The operator used specific temporary /32 guest routes and verified the intended 
 **Module 06 remains OPEN** for explicit exceptions, more than ICMP, IPv6, management and dual-homed guest bypasses, host/Layer-2 access, TrueNAS host-reboot persistence and Suricata mirror validation. Scoped ICMP DROP results must not be described as six-way *complete* isolation.
 
 [Detailed trial validation](../projects/05-suricata-network-detection/validation.md#module-06--three-zone-scoped-ipv4-icmp-firewall-trial-2026-10-19) · [Rollback and build procedure](../projects/05-suricata-network-detection/build-notes.md#module-06--temporary-soc-default-deny-candidate-and-rollback-procedure-2026-10-19)
+
+## 16. Approved Management-LAN SSH Exception (2026-10-19)
+
+**Decision: KEEP PERMITTED — documented management access, not an inter-zone forwarding exception.** The operator approved continued Windows 11 Victim management-IP access to Kali's management-IP SSH service for lab administration. This narrow authorization does **not** change the approved default-deny posture for the separate `br20`, `br30`, and `br40` networks.
+
+| Field | Approved scope |
+|---|---|
+| Source host / address | Windows 11 Victim management NIC, `192.168.1.151` (`Ethernet 3`) |
+| Destination host / address | Kali management NIC, `192.168.1.91` |
+| Protocol and port | TCP destination `22` (SSH) |
+| Direction | Windows → Kali |
+| Network path | Shared management LAN `192.168.1.0/24`, **not** Victim `br30` → Attack `br40` |
+| Purpose | Intentionally retained lab administrative SSH connectivity |
+| Approval | User confirmed on 2026-10-19 |
+| Change action | Documentation only; no new firewall/ACL rule and no authentication test |
+
+**Observed evidence:** Windows `Test-NetConnection -ComputerName 192.168.1.91 -Port 22` reported `SourceAddress 192.168.1.151`, `InterfaceAlias Ethernet 3`, and `TcpTestSucceeded True`. This proves a TCP connection was established, **not** that SSH login or application-layer authorization succeeded.
+
+**Security boundary:** This is a deliberate reachable management path between guests in different lab roles. The six zone-to-zone TrueNAS `FORWARD` DROP rules do not cover same-subnet management-LAN communication. If later management-network ACLs or endpoint firewalls are introduced, preserve only the named TCP/22 flow (if still required), avoid general guest-to-guest management access, and retest. Reevaluate the exception if Windows becomes an intentionally compromised Victim host. Current `iptables` baseline remains the two existing Victim ↔ Attack DROP rules; permanent SOC-zone policy remains open.
+
+[Validation record](../projects/05-suricata-network-detection/validation.md#module-06--approved-management-lan-ssh-access-2026-10-19)
