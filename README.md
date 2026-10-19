@@ -58,7 +58,7 @@ On **2026-10-19**, controlled Kali Attack ↔ Windows Victim **IPv4 ICMP forward
 
 ### Approved Target Zones — Migration In Progress
 
-The intended **guest placement** is now validated: `br20` for SOC (Ubuntu and Mint), `br30` for Windows Victim, and `br40` for Kali Attack, with Mint sensor connections and management access preserved in the recorded layout. **Final security boundaries, TrueNAS host reboot persistence, and comprehensive passive monitoring remain open**.
+The intended **guest placement** is now validated: `br20` for SOC (Ubuntu and Mint), `br30` for Windows Victim, and `br40` for Kali Attack, with Mint sensor connections and management access preserved in the recorded layout. **Default-deny inter-zone communication with narrowly authorized exceptions is the approved security design as of 2026-10-19; it is not yet fully implemented or validated.** [See the approved policy](docs/architecture.md#14-approved-default-deny-inter-zone-policy--design-decision-2026-10-19). TrueNAS host reboot persistence and comprehensive passive monitoring also remain open.
 
 See the [approved target design and staged-migration safeguards](docs/architecture.md#13-approved-target-architecture--soc--victim--attack-segmentation-2026-10-16) and [Project 05 Module 06 results](projects/05-suricata-network-detection/README.md#module-06--staged-network-migration-2026-10-18).
 
