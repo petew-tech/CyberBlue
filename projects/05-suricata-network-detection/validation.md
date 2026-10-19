@@ -170,3 +170,16 @@ This section validates **guest address cleanup and migration only**, not full zo
 **Live end state at cleanup:** TrueNAS default `FORWARD ACCEPT`; only `br40 → br30 DROP` and `br30 → br40 DROP` retained ahead of existing Docker chains. All temporary SOC inter-zone rules removed, and all three transient rollback timers verified inactive. The **approved full three-zone default-deny policy is not yet persistently implemented**.
 
 **Open:** Full TCP/UDP and other protocol paths; IPv6; management-LAN alternative routes and dual-homed guest bypasses; bridge Layer-2 and TrueNAS host traffic; deliberate authorized exceptions; TrueNAS host reboot persistence of `br20` and firewall; and Suricata mirror coverage. V-38 stays **OPEN**. Evidence is the operator's shell/PowerShell output in the guided validation; no new screenshots are claimed.
+
+## Module 06 — Approved Management-LAN SSH Access (2026-10-19)
+
+**Policy decision:** User explicitly approved keeping Windows 11 Victim → Kali TCP/22 connectivity over the shared management LAN. This is an *administrative management path*, not a blanket Victim `br30` → Attack `br40` exception.
+
+| ID | Check | Observed evidence | Status |
+|---|---|---|---|
+| V-61 | Windows management reachability to Kali SSH | Windows `Test-NetConnection -ComputerName 192.168.1.91 -Port 22` returned `SourceAddress 192.168.1.151`, `InterfaceAlias Ethernet 3`, `RemotePort 22`, `TcpTestSucceeded True`. | PASS — TCP connection only |
+| V-62 | Management exception authorization | Operator chose to **keep** Windows `192.168.1.151` → Kali `192.168.1.91:22/tcp` permitted for lab administration; no firewall change requested or made. | APPROVED — documented scope |
+
+**Limits:** No SSH authentication/login was attempted. No claim is made that all management traffic is safe or restricted to this flow. The existing same-LAN TCP path is not filtered by the TrueNAS `br30` ↔ `br40` `FORWARD` rules; a future management ACL should explicitly account for this approved flow without broadly granting host-to-host access. Other guest-management paths and full zone isolation remain OPEN.
+
+[Architecture decision](../../docs/architecture.md#16-approved-management-lan-ssh-exception-2026-10-19)
