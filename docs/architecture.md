@@ -372,6 +372,24 @@ The deployed TrueNAS `iptables` FORWARD rules include `-i br40 -o br30 -j DROP` 
 
 **Security scope:** The current guests have management-LAN NICs, and Mint has monitoring NICs on both Attack and Victim bridges. `FORWARD` rules cannot by themselves prohibit same-bridge Layer-2 traffic or TrueNAS-host `INPUT`/`OUTPUT` access; alternate management and IPv6 paths must be assessed independently. Passive packet capture also requires a separately validated mirror/capture delivery mechanism. No broad blanket routing exceptions should be assumed.
 
-**As-tested state:** On 2026-10-19, scoped routed IPv4 ICMP between Kali and Windows was dropped in both directions by the existing `br40` ↔ `br30` rules, with matching counter increments. Neither `br20` isolation nor comprehensive default-deny enforcement has passed. This section records policy intent, **not a new configuration change, test result, or completion claim**.
+**State at design approval:** Scoped routed IPv4 ICMP between Kali and Windows had been dropped in both directions by existing `br40` ↔ `br30` rules. SOC-zone ICMP tests had not yet been completed when this decision was recorded. A subsequent reversible candidate trial is documented in Section 15 below; comprehensive or persistent default-deny enforcement remains unproven. This Section 14 records policy intent, **not an authorization to deploy permanent rules**.
 
 [Networking implementation reference](networking.md) · [Project 05 scoped firewall validation](../projects/05-suricata-network-detection/validation.md#module-06--victim--attack-ipv4-isolation-tests-2026-10-19)
+
+## 15. Module 06 — Controlled Three-Zone IPv4 ICMP Trial and Restore (2026-10-19)
+
+**Validated in temporary test windows:** All six directional, routed IPv4 **ICMP** flows between the current SOC Ubuntu (`10.10.20.10`), Victim Windows (`10.10.30.10`) and Attack Kali (`10.10.40.20`) were blocked by TrueNAS `FORWARD` rules. The existing Victim ↔ Attack two-rule baseline passed both ways; the four paths involving SOC were tested using a reversible six-rule candidate.
+
+| Tested pair | Directed checks | Observed proof |
+|---|---|---|
+| Victim ↔ Attack | Both directions | Four-packet DROP-counter increments on baseline rules |
+| SOC ↔ Victim | Both directions | `br20 → br30`: 4 / 336 B; `br30 → br20`: 4 / 240 B |
+| SOC ↔ Attack | Both directions | `br20 → br40`: 4 / 336 B; `br40 → br20`: 4 / 336 B |
+
+The operator used specific temporary /32 guest routes and verified the intended interface/source before each ping. All guest routes were deleted afterward, and original management routing was rechecked. Three independent rollback-protected candidate sessions concluded with successful manual rollbacks, live TrueNAS `iptables -S FORWARD` verification, and each rollback timer stopped and confirmed inactive.
+
+**Deployed end state is not the candidate:** The startup script `/mnt/Pool1/CyberBlue/cyberblue-firewall.sh` was backed up but never replaced. After validation, only the two original Victim ↔ Attack IPv4 DROP rules remained active; all four SOC rules were removed. There is **no demonstrated persistent SOC default-deny enforcement** yet.
+
+**Module 06 remains OPEN** for explicit exceptions, more than ICMP, IPv6, management and dual-homed guest bypasses, host/Layer-2 access, TrueNAS host-reboot persistence and Suricata mirror validation. Scoped ICMP DROP results must not be described as six-way *complete* isolation.
+
+[Detailed trial validation](../projects/05-suricata-network-detection/validation.md#module-06--three-zone-scoped-ipv4-icmp-firewall-trial-2026-10-19) · [Rollback and build procedure](../projects/05-suricata-network-detection/build-notes.md#module-06--temporary-soc-default-deny-candidate-and-rollback-procedure-2026-10-19)
