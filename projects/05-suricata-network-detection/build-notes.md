@@ -258,3 +258,47 @@ Find-NetRoute -RemoteIPAddress 10.10.40.20
 Final route lookup again chose management `Ethernet 3`, source `192.168.1.151`, default `0.0.0.0/0` via `192.168.1.1`.
 
 **Validated:** Firewall DROP counters increased by exactly four during each separately scoped ICMP test; routing configuration was restored after each test. No firewall modifications or reboot were required. **Open:** Full protocol matrix, SOC-to-other-zone boundary tests, IPv6, alternate management routing, TrueNAS host reboot and full IDS monitoring. Evidence here is operator-supplied CLI and PowerShell output, not newly uploaded screenshot files.
+
+## Module 06 — Temporary SOC Default-Deny Candidate and Rollback Procedure (2026-10-19)
+
+**Scope:** Controlled validation of routed IPv4 ICMP isolation between SOC (`br20`), Victim (`br30`) and Attack (`br40`). These tests supplement the separately documented Victim ↔ Attack baseline checks. **Temporary candidate only:** no change was made to the registered POSTINIT startup script, `/mnt/Pool1/CyberBlue/cyberblue-firewall.sh`.
+
+### Change preparation and safeguards
+
+- TrueNAS current startup job `initshutdownscript.query` identified an enabled POSTINIT script at `/mnt/Pool1/CyberBlue/cyberblue-firewall.sh`, containing the original two directional `br30` ↔ `br40` DROP rules. Original script backed up to `cyberblue-firewall.sh.pre-br20-20261019.bak` and byte-for-byte comparison passed.
+- Prepared `/mnt/Pool1/CyberBlue/cyberblue-firewall-candidate.sh`, using `/usr/sbin/iptables` to remove duplicate CyberBlue DROP rules for the six ordered pairs, then insert all six DROP rules at the front of `FORWARD`. Prepared `/mnt/Pool1/CyberBlue/cyberblue-rollback-br20.sh`, which removes **only** the four SOC-related `br20` ↔ `br30` and `br20` ↔ `br40` DROP rules. Both shell scripts passed `sh -n` checks.
+- The candidate intentionally placed all six inter-zone DROP rules **before** Docker-related forwarding rules. Existing `iptables-legacy` tables and Tailscale chains were observed separately; the tested packet counter changes were in the default `iptables` backend.
+- Three independent 15-minute transient systemd rollback timers were created (units `cyberblue-br20-rollback.timer`, `cyberblue-br20-rollback2.timer`, and `cyberblue-br20-rollback3.timer`) using `systemd-run --on-active=15m /bin/sh /mnt/Pool1/CyberBlue/cyberblue-rollback-br20.sh`. Each timer was checked `active (waiting)` before its corresponding candidate deployment.
+- For each window, executed `sudo /bin/sh /mnt/Pool1/CyberBlue/cyberblue-firewall-candidate.sh`. TrueNAS printed `CANDIDATE APPLIED`; a fresh `sudo iptables -L FORWARD -n -v --line-numbers` showed six DROP rules 1–6 followed by Docker chains, with counters initially zero. Only then were ICMP probes sent.
+
+### Four SOC-related directed probes and cleanup
+
+| Direction | Temporary destination-specific guest route | Ping result | TrueNAS DROP match |
+|---|---|---|---|
+| Ubuntu SOC `10.10.20.10` → Windows Victim `10.10.30.10` | Ubuntu `10.10.30.10/32 via 10.10.20.1 dev ens4` | 4 sent, 0 replies | `br20 → br30` rule 6: 4 packets / 336 B |
+| Ubuntu SOC `10.10.20.10` → Kali Attack `10.10.40.20` | Ubuntu `10.10.40.20/32 via 10.10.20.1 dev ens4` | 4 sent, 0 replies | `br20 → br40` rule 4: 4 packets / 336 B |
+| Kali Attack `10.10.40.20` → Ubuntu SOC `10.10.20.10` | Kali `10.10.20.10/32 via 10.10.40.1 dev eth0` | 4 sent, 0 replies | `br40 → br20` rule 3: 4 packets / 336 B |
+| Windows Victim `10.10.30.10` → Ubuntu SOC `10.10.20.10` | PowerShell ActiveStore `10.10.20.10/32` on `Ethernet`, next hop `10.10.30.1` | 4 sent, 0 replies | `br30 → br20` rule 5: 4 packets / 240 B |
+
+Linux guest route lookup was checked with `ip -4 route get <destination>` before testing. Windows used `Find-NetRoute -RemoteIPAddress 10.10.20.10`, verifying Victim source `10.10.30.10`, interface index `3`, gateway `10.10.30.1`. Ubuntu used `ping -I ens4 -c 4 -W 1`, Kali used `ping -I eth0 -c 4 -W 1`, and Windows used `ping -4 -S 10.10.30.10 -n 4 10.10.20.10`.
+
+One attempted `ping -I ens4` was issued at the TrueNAS prompt and returned `SO_BINDTODEVICE ens4: No such device` (twice); it sent no relevant test traffic. The proper Ubuntu guest ping was subsequently executed successfully as a **blocked** test, and the TrueNAS `br20 → br40` counter corroborated it.
+
+After each directed test, removed the **single-host** guest route and read back management route selection:
+- Ubuntu → Victim or Attack returned via `192.168.1.1 dev mgmt0 src 192.168.1.243`.
+- Kali → SOC returned via `192.168.1.1 dev eth1 src 192.168.1.91`.
+- Windows → SOC returned to `Ethernet 3`, source `192.168.1.151`, default `0.0.0.0/0` next hop `192.168.1.1`.
+
+### Controlled rollback and end state
+
+After the relevant tests in each window, executed:
+```bash
+sudo /bin/sh /mnt/Pool1/CyberBlue/cyberblue-rollback-br20.sh && echo "SOC ROLLBACK EXECUTED"
+sudo iptables -S FORWARD
+```
+
+All three manual rollbacks reported success; every readback showed the original `-P FORWARD ACCEPT`, the two `br40` ↔ `br30` DROP rules and unchanged Docker-related entries, **without any `br20` DROP rules**. Each corresponding scheduled timer was stopped and `systemctl is-active` confirmed `inactive`. The original persistent startup script was not replaced.
+
+**Result:** Four temporary SOC-direction IPv4 ICMP tests PASS; with the two earlier baseline Victim ↔ Attack ICMP tests, **six of six** tested directed routed IPv4 ICMP paths PASS. **Current enforced baseline is only Victim ↔ Attack IPv4**, not the approved three-zone policy. Do not report complete isolation, IPv6 or management-bypass coverage, TCP/UDP filtering, TrueNAS host restart survival, or full Suricata visibility as validated.
+
+[Detailed V-52–V-60 evidence](validation.md#module-06--three-zone-scoped-ipv4-icmp-firewall-trial-2026-10-19).
