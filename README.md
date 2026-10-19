@@ -54,7 +54,7 @@ This repository records actual lab work, including successful tests, troubleshoo
 
 Ubuntu's former `br30` VirtIO NIC remains present without an IPv4 address (it appeared as `ens3` after guest reboot); Mint also has a passive capture NIC on `br30`. Windows Victim uses `10.10.30.10/24` after Ubuntu released it. Kali Attack uses `10.10.40.20/24` on `br40` after its validated migration and recovery. Separate management NICs remain in use; the dedicated Wazuh SIEM is still on the management LAN.
 
-Historically verified TrueNAS firewall rules block routed IPv4 forwarding between `br30` and `br40`, but **their effectiveness in the changing three-zone topology, IPv6 isolation, and alternative management-LAN paths have not been fully revalidated**. Guest reboot tests do not establish TrueNAS host bridge reboot persistence.
+On **2026-10-19**, controlled Kali Attack ↔ Windows Victim **IPv4 ICMP forwarding** tests showed four unanswered probes in each direction and a matching **+4 packet increase** in each TrueNAS bridge-to-bridge DROP counter. This validates the tested `br40` ↔ `br30` paths, **not** other protocols, SOC `br20` isolation, IPv6, alternate management-LAN paths, or TrueNAS host reboot persistence.
 
 ### Approved Target Zones — Migration In Progress
 
@@ -147,7 +147,7 @@ Additional endpoint onboarding, complete raw-event ingestion coverage, and outst
 
 ## Project 05 — Suricata Network Detection & Wazuh Integration
 
-**Status: Sensor Detection Validated; Module 06 Guest Network Migration Validated (zone isolation still open)**
+**Status: Sensor Detection Validated; Module 06 Guest Network Migration Validated; Victim ↔ Attack IPv4 ICMP firewall tests PASS (full zone isolation still open)**
 
 Configured Suricata on Linux Mint to detect a controlled ICMP test, forward EVE JSON telemetry through the Wazuh agent, and generate a centralized Wazuh alert. A controlled Suricata process failure confirmed systemd automatic recovery; the sensor resumed detection and Wazuh continued receiving alerts. Point-in-time capture statistics reported zero kernel drops and zero capture errors.
 
