@@ -508,3 +508,9 @@ Operator navigated to Wazuh Threat Hunting, applied filter `rule.id:86601` for O
 **R3 backup timer actually executed.** On TrueNAS, `journalctl -u cyberblue-br30-mirror-rollback-r3.service --since "2026-10-20 11:32:00" --no-pager` returned the following at **11:32:57 PDT, October 20**: (1) service started for `/bin/sh /mnt/Pool1/CyberBlue/cyberblue-br30-mirror-rollback.sh`; (2) script printed `CYBERBLUE BR30 MIRROR ROLLBACK COMPLETE`; (3) systemd reported `Deactivated successfully`. The manual rollback and independently confirmed `tc qdisc show dev vnet13` `noqueue` state were performed earlier. This proves the timer fired and the idempotent script exited successfully; it does not yet constitute a fresh post-timer qdisc readback. No persistent network mirroring was configured.
 
 [Validation V-117](validation.md#project-05--r3-scheduled-rollback-execution-2026-10-20).
+
+## Project 05 — Post-R3 Rollback Qdisc Verification (2026-10-20)
+
+After confirmed R3 systemd timer execution at **11:32:57 PDT, October 20**, operator independently ran `sudo tc qdisc show dev vnet13` on TrueNAS. Output: `qdisc noqueue 8023: root refcnt 2`. The **absence of `clsact`** verifies the test-only ingress mirror attachment remains removed following the automatic safety rollback. This completes the R3 recovery chain: manual script invocation and clean qdisc state earlier, scheduled idempotent cleanup at 11:32:57 PDT, and an additional clean qdisc readback afterward. It does not establish any persistent packet-monitoring deployment.
+
+[Validation V-117–V-118](validation.md#project-05--post-r3-timer-qdisc-state-confirmed-2026-10-20).
