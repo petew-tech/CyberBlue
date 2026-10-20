@@ -470,3 +470,23 @@ After verified manual mirror removal, a **read-only** Mint EVE JSON query matche
 **Outcome:** PASS for Suricata AF_PACKET ingestion and EVE **flow logging** of the specific mirrored Windows unicast requests. The lack of client reply packets is expected from a request-direction-only flower filter and should not be interpreted as packet loss on Windows (Windows pings replied 4/4). No `event_type:"alert"` or Wazuh forwarding is established by this evidence; verify those separately. Mirror already removed; no new `tc` changes required for the read-only alert query.
 
 [Validation V-111](validation.md#project-05--suricata-eve-flow-ingestion-of-mirrored-victim-traffic-2026-10-20).
+
+## Project 05 — Victim Suricata SID 1000002 and Wazuh Detection (2026-10-20)
+
+**Why the previous Victim ping did not alert:** The only local custom rule was SID `1000001` targeting **Attack** source `10.10.40.10` → gateway `10.10.40.1`, ICMP echo type 8. It could not match the Windows Victim `10.10.30.10` → `10.10.30.1` flow. A search for any other rule referring to the specific Windows/gateway addresses found no match in the checked rule files; this alone does not prove absence of all other generic rules.
+
+**Safe rule change:** Verified `suricata.yaml` loads `suricata.rules` and `/etc/suricata/rules/local.rules`; searched for SID `1000002` (none found). Made and compared backup `/etc/suricata/rules/local.rules.cyberblue-pre-victim-20261020-125610.bak` then appended (did not alter SID 1000001):
+
+```suricata
+alert icmp 10.10.30.10 any -> 10.10.30.1 any (msg:"CYBERBLUE TEST - Victim ICMP Echo Request"; itype:8; sid:1000002; rev:1;)
+```
+
+A first `suricata -T` was interrupted; the subsequent bounded `sudo timeout 120 suricata -T -c /etc/suricata/suricata.yaml` completed normally with exit status **0** and successful configuration load. `systemctl show` verified reload support, `suricatasc -c reload-rules` returned `done/OK`, and `ruleset-stats` returned **53,145 loaded, 0 failed, 0 skipped** (up from earlier 53,144). `command-list` confirmed no individual loaded-rule listing, so actual detection verifies SID live.
+
+**Scoped R3 live trial:** Initially TrueNAS Windows host `vnet13` qdisc was `noqueue` only. R3 20-minute `systemd-run` safeguard verified `active (waiting)`, trigger **11:32:55 PDT**. Operator attached `clsact` and a narrow ingress `flower` ICMP-only mirror from `vnet13` to Mint's host-side `vnet11`, matching source `10.10.30.10` and destination `10.10.30.1`; readback verified the filter. Windows ping returned **4/4** replies with zero loss. Mint Suricata EVE JSON then contained **four** `event_type:"alert"` records at 13:16:07–13:16:10 -0500, `in_iface:"ens5"`, `proto:"ICMP"`, `icmp_type:8`, SID **1000002**, severity **3**, action `allowed`, and flow request counts rising 1–4.
+
+**Wazuh manager corroboration:** On `siem-01`, the `/var/ossec/logs/alerts/alerts.json` query matched four Suricata detections with manager rule **86601**, alert level **3**, group `ids/suricata`, agent **003** / `cyberblue-suricata` / `192.168.1.92`, data SID 1000002 and Victim flow addresses. Wazuh timestamps in UTC were 18:16:07–18:16:11, correlating to Suricata 13:16:07–13:16:10 with -0500 offset. The fifth raw grep result was not a Suricata event: it was an unrelated Wazuh `sudo` rule 5402 logging the grep command itself.
+
+**Safety and proof limits:** User manually ran `/mnt/Pool1/CyberBlue/cyberblue-br30-mirror-rollback.sh` and independently verified `tc qdisc show dev vnet13` showed only `noqueue`. The temporary mirror is **off**; R3 timer had been verified but its subsequent execution was not inspected. This proves a reversible end-to-end IDS→Wazuh alert path for this specific direction, not a continuous network sensor or a dashboard presentation. No dashboard screenshot provided yet.
+
+[Validation V-112–V-115](validation.md#project-05--victim-sid-1000002-end-to-end-suricata-and-wazuh-alert-2026-10-20).
