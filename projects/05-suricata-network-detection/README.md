@@ -240,3 +240,9 @@ During a coordinated test, Windows `10.10.30.10` successfully pinged the Victim 
 **Evidence present:** [`evidence/05-victim-suricata-wazuh-detection.png`](evidence/05-victim-suricata-wazuh-detection.png) was uploaded by the operator and the file's existence verified in GitHub. It is a saved Wazuh-manager terminal screenshot associated with the four alert summaries for Suricata SID `1000002`, Wazuh rule `86601`, agent `003` (V-115). The independently pasted CLI results validate the alert fields; the screenshot pixels have not been independently reviewed. This is **not** a Wazuh dashboard screenshot, and the temporary mirror remains rolled back.
 
 [Evidence index](evidence/README.md#captured-screenshot--2026-10-20-victim-suricata-to-wazuh) · [Validation record](validation.md#project-05--uploaded-evidence-for-v-115-2026-10-20).
+
+## Project 05 — Wazuh Threat Hunting Victim Dashboard Evidence (2026-10-20)
+
+**Dashboard verification: PASS for at least one matching alert.** The operator observed Wazuh `rule.id:86601` in Threat Hunting for the October 20 Victim test and confirmed the expanded event's `data.alert.signature_id` equals **`1000002`**. For a readable GitHub portfolio, the operator uploaded separate [alert overview](evidence/10-wazuh-victim-alert-overview.png) and [alert details](evidence/11-wazuh-victim-alert-details.png) screenshot files; both exist in the repository. Image contents were not independently inspected. The **four-event** Wazuh count is separately verified by the manager CLI evidence under V-115, not by these screenshot uploads. Scoped temporary ICMP mirroring was removed, so continuous Victim network detection has not been demonstrated.
+
+[Validation V-116](validation.md#project-05--wazuh-victim-alert-dashboard-and-screenshot-evidence-2026-10-20) · [Evidence index](evidence/README.md#wazuh-victim-alert-dashboard--2026-10-20).
