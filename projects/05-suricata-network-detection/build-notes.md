@@ -2,17 +2,19 @@
 
 ## Sensor and Network Configuration
 
-Linux Mint initially used two interfaces; a third passive capture NIC was added on 2026-10-16 for dual-bridge monitoring:
+Linux Mint initially used two interfaces. A third passive capture NIC (`ens5`) was added on 2026-10-16 for dual-bridge monitoring, followed by a fourth NIC (`ens6`) for the SOC network on 2026-10-17. The verified October 20 interface inventory is:
 
 | Interface | Address | Purpose |
 |---|---|---|
 | `ens3` | `192.168.1.92/24` | Management and Wazuh communication |
 | `ens4` | `10.10.40.10/24` | Isolated-network Suricata capture (`br40`) |
-| `ens5` | No IPv4; IPv6 link-local observed | New capture interface connected to `br30` |
+| `ens5` | No IPv4; IPv6 link-local observed | Passive Victim-network (`br30`) Suricata capture; direct VM-to-gateway unicast required temporary scoped mirroring during validation |
+| `ens6` | `10.10.20.11/24` | SOC-network (`br20`) interface; static IPv4, no default gateway; added October 17 |
 
 Observed routes:
 
 - `10.10.40.0/24` is directly connected through `ens4`.
+- `10.10.20.0/24` is directly connected through `ens6`; no default route is installed through this SOC interface.
 - Wazuh manager `192.168.1.213` is reached through `ens3`.
 - Default route is via `192.168.1.1` on `ens3`.
 
