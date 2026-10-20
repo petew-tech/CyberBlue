@@ -463,7 +463,7 @@ The next meaningful Suricata work is to verify sensor/Wazuh agent health on **Li
 
 **Cleanup:** User executed the script manually before R2 timer expiry, saw `CYBERBLUE BR30 MIRROR ROLLBACK COMPLETE`, then independently checked `tc qdisc show dev vnet13` returned just `qdisc noqueue 8023: root refcnt 2`; mirror no longer installed. Scheduled R2 execution has not been checked. Original TrueNAS firewall rules and VM/network configurations were not changed during this test.
 
-**Next Project 05 objective:** On Mint, search Suricata EVE JSON read-only for `ens5` records representing the captured Windows-to-gateway ICMP requests. Existing historical Suricata SID `1000001` / Wazuh `86601` evidence is distinct and does not constitute proof that this Victim flow was detected.
+**V-105–V-110 checkpoint and completed follow-up:** The next planned step at this point was a read-only Linux Mint EVE JSON search for `ens5` records of the mirrored Windows-to-gateway ICMP requests. **V-111 subsequently completed that search — PASS**, finding three `event_type:"flow"` records for the earlier controlled R2 mirror rounds. These flows **were not Suricata alerts** and did not themselves establish Wazuh detection. A **separate later R3 test**, after adding Victim-specific SID `1000002`, generated four Suricata alerts and four matching Wazuh manager alerts (**V-112–V-115**), with a matching Threat Hunting event confirmed in **V-116**. The temporary mirror was removed; **persistent Victim-network monitoring remains OPEN**.
 
 [Validation V-105–V-110](validation.md#project-05--scoped-tc-mirror-proof-packet-capture-and-recovery-2026-10-20).
 
