@@ -149,3 +149,15 @@ During a fresh 15-minute rollback-protected window, V2 attached `CYBERBLUE_ZONES
 Independent post-test route reads confirmed Ubuntu and Kali's temporary /32 host routes absent and normal management route selection restored (V-70); the detached chain retained its six rules for inspection (V-71). The original TrueNAS POSTINIT startup script remains unchanged. **Persistent full three-zone isolation, reboot/restart ordering, exception enforcement outside the bridge rules, other protocols, IPv6 and full Suricata monitoring remain OPEN.**
 
 [Detailed V2 validation V-72–V-76](validation.md#module-06--hardened-persistent-startup-v2-controlled-trial-2026-10-20) · [V2 build notes](build-notes.md#module-06--hardened-persistent-v2-reversible-test-2026-10-20)
+
+## Module 06 — Docker-Compatible Firewall Trial (2026-10-20)
+
+**Temporary structure and manual rollback PASS; persistent enforcement and fresh packet validation remain OPEN.** TrueNAS POSTINIT (enabled original two-rule script, 30-second timeout) completed before Docker initialization on the observed October 9 boot. Docker's existing service override sets IPv4/IPv6 `FORWARD` default policy ACCEPT at service startup. Docker's `DOCKER-USER` chain had just `RETURN`, providing a candidate insertion point before that rule without flushing Docker or Tailscale settings.
+
+A separate `cyberblue-docker-user-candidate.sh` was syntax/content reviewed and run only with a verified active 15-minute automatic rollback timer. It inserted `DOCKER-USER → CYBERBLUE_ZONES` before `RETURN`; independent `FORWARD` readback confirmed the original Victim ↔ Attack drops and Docker rules remained. **No new guest traffic was probed**; inspected three nonzero DROP counters were **historical** from the prior dedicated-chain test and must not be reported as new proof.
+
+The operator manually executed `cyberblue-docker-user-rollback.sh`; readback restored `DOCKER-USER` to just `RETURN`, and the scheduled timer was stopped and verified `not-found/inactive/dead`. The V2 candidate was also backed up and edited to use 12 bounded `iptables -w 2` calls (syntax and occurrence check PASS), but **was not** registered or deployed at POSTINIT. Global and bridge-specific IPv6 routing flags were observed off; IPv6 `FORWARD` policy remained ACCEPT, so IPv6 protection is **not** established. Existing Tailscale legacy rules were inspected and left unchanged.
+
+**Actual state:** Only original Victim ↔ Attack direct IPv4 DROP rules are the deployed CyberBlue policy. Full three-zone persistence after TrueNAS/Docker restarts, new packet-block verification through `DOCKER-USER`, IPv6, management-LAN and dual-homed paths, Layer-2/host traffic and full Suricata mirror coverage remain **OPEN**. The separately approved Windows management IP → Kali management IP TCP/22 path remains unchanged.
+
+[Validation V-77–V-85](validation.md#module-06--docker-compatible-docker-user-trial-2026-10-20) · [Build notes](build-notes.md#module-06--docker-startup-dependency-review-and-docker-user-trial-2026-10-20).
