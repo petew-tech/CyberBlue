@@ -345,3 +345,11 @@ This section validates **guest address cleanup and migration only**, not full zo
 **Qualification:** Four exact SID 1000002 Wazuh manager alerts are separately established in **V-115**. V-116 only establishes at least **one** matching dashboard alert; the operator did not count all four in the dashboard. Upload presence and names are checked; screenshot pixels are not verified. Earlier one-way temporary TrueNAS mirror remains removed after independently verified manual rollback. This does not certify ongoing collection of unicast Victim traffic.
 
 [Evidence index](evidence/README.md#wazuh-victim-alert-dashboard--2026-10-20).
+
+## Project 05 — R3 Scheduled Rollback Execution (2026-10-20)
+
+| ID | Verification | Evidence / scope | Result |
+|---|---|---|---|
+| V-117 | Timed backup rollback R3 executes after earlier manual restoration | On TrueNAS the operator ran `sudo journalctl -u cyberblue-br30-mirror-rollback-r3.service --since "2026-10-20 11:32:00" --no-pager`. Journal shows at **Oct 20 11:32:57 PDT**: systemd **Started** `cyberblue-br30-mirror-rollback-r3.service`, script printed `CYBERBLUE BR30 MIRROR ROLLBACK COMPLETE`, and systemd recorded `Deactivated successfully`. Manual script rollback and the independent `noqueue`/no-`clsact` verification had already been completed around 11:18 PDT. Timer execution is therefore demonstrated as a redundant cleanup, not evidence of a second active mirror removal. No separate **post-timer** `tc` qdisc readback is included in this checkpoint. | **PASS — scheduled rollback script ran and service exited successfully** |
+
+[Build notes](build-notes.md#project-05--r3-scheduled-rollback-journal-verification-2026-10-20).
