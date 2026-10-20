@@ -505,4 +505,14 @@ The rules were previously verified after a TrueNAS reboot.
 
 No Docker restart or firewall modification was required during this review.
 
+## Open Follow-Up — Permanent Three-Zone Firewall Lifecycle (2026-10-20)
 
+**Status: DEFERRED to Project 02 — NOT DEPLOYED.** During Project 05 Module 06 the lab temporarily validated six directed routed IPv4 ICMP paths across SOC (`br20`), Victim (`br30`) and Attack (`br40`). Each fresh direction produced four dropped probes and a corresponding four-packet increase in an observed rule counter. The four SOC-related directions matched temporary `DOCKER-USER → CYBERBLUE_ZONES` drops; both Victim↔Attack directions matched the original direct `FORWARD` DROP rules. This was **not** a permanent six-direction deployment or general TCP/UDP/IPv6/L2/management-path isolation demonstration.
+
+After the controlled test, the temporary `DOCKER-USER` jump was independently verified removed, its chain restored to `RETURN` only, automatic rollback timer verified inactive, and `FORWARD` independently verified containing just the original two direct Victim↔Attack drops ahead of existing Docker rules. Approved Windows management `192.168.1.151` → Kali management `192.168.1.91:22/tcp` connectivity remained successful.
+
+Three lifecycle candidates were prepared but **none permanently activated**. V3 (`/mnt/Pool1/CyberBlue/cyberblue-firewall-lifecycle-v3.sh`) passed `sh -n` and read-only `--check`, returning `CYBERBLUE V3 PREFLIGHT PASS - CHAIN DETACHED`. A confirmed six-rule `CYBERBLUE_ZONES` chain remains detached. TrueNAS `ix-postinit.service` has `After=multi-user.target` but no explicit ordering after Docker. Docker is active with an active socket, `Restart=always`, and an existing post-start override setting both FORWARD policies to ACCEPT. Ordering/re-application after Docker restarts, safe automatic recovery, reboot behavior, and non-ICMP boundary tests remain **OPEN**.
+
+**Follow-up when resuming Project 02:** Design and validate a managed, restart-aware firewall reconciliation mechanism and rollback plan; retain the original TrueNAS startup script and Docker override until operator-approved changes; verify management access and Docker/Tailscale compatibility. Do not treat a simple `After=docker.service` service dependency as sufficient evidence of re-application on every Docker restart.
+
+[Project 05 test evidence](../05-suricata-network-detection/validation.md#module-06--fresh-six-direction-ipv4-icmp-test-via-docker-user-2026-10-20) · [Lifecycle discovery](../05-suricata-network-detection/validation.md#module-06--docker-lifecycle-read-only-discovery-and-v3-preflight-2026-10-20).
