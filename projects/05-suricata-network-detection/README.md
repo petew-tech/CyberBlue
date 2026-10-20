@@ -224,3 +224,13 @@ During a coordinated test, Windows `10.10.30.10` successfully pinged the Victim 
 **PASS — packet capture AND Suricata EVE flow ingestion for the scoped mirrored ICMP tests.** Following the successful timed test and verified manual `tc` cleanup, Linux Mint's `/var/log/suricata/eve.json` contained three `ens5` `event_type:"flow"` records for Windows `10.10.30.10 →` gateway `10.10.30.1` ICMP echo requests. Each recorded four request-direction packets; the final flow's 12:40:08–12:40:11 (-0500) window correlated with the Mint tcpdump capturing four requests, sequences 224–227. No client-direction packets were recorded in the one-way mirror flows. **This proves EVE flow telemetry, not a Suricata detection alert or Wazuh correlation.** The mirror is no longer active; persistent full-network visibility remains OPEN.
 
 [Validation V-111](validation.md#project-05--suricata-eve-flow-ingestion-of-mirrored-victim-traffic-2026-10-20) · [Build notes](build-notes.md#project-05--mirrored-windows-icmp-suricata-eve-flow-evidence-2026-10-20).
+
+## Project 05 — End-to-End Victim Detection to Wazuh (2026-10-20)
+
+**PASS — controlled Windows Victim ICMP → TrueNAS scoped mirror → Linux Mint Suricata → Wazuh manager.** Preserved existing Attack local rule SID `1000001`, verified and backed up `local.rules`, and added a distinct Victim ICMP echo rule SID **1000002** for Windows `10.10.30.10` → gateway `10.10.30.1`. `suricata -T` completed with exit 0; live ruleset reloaded with **53,145 rules loaded, 0 failed/skipped**. Under verified 20-minute TrueNAS rollback protection, narrow `vnet13`→`vnet11` request-direction mirroring enabled and Windows ping returned **4/4** replies.
+
+**Detection evidence:** Suricata `/var/log/suricata/eve.json` logged **four** `event_type:"alert"` records, `in_iface:"ens5"`, `alert.signature_id:1000002`, timestamps 2026-10-20 13:16:07–13:16:10 -0500. Wazuh `siem-01` `alerts.json` showed **four matching alerts** under Wazuh rule **86601**, level **3**, from agent **003** (`cyberblue-suricata`). One additional grep match was a separate sudo log entry referring to the query text, not a fifth Suricata alert.
+
+**Recovery:** User ran the mirror rollback script and independently verified TrueNAS `vnet13` returned to `noqueue` with **no `clsact`**. The temporary mirror was **removed** and no persistent traffic monitoring path is claimed. This is a validated proof for one ICMP flow, not full Victim network visibility, continuous mirroring, or dashboard evidence.
+
+[Validation V-112–V-115](validation.md#project-05--victim-sid-1000002-end-to-end-suricata-and-wazuh-alert-2026-10-20) · [Build notes](build-notes.md#project-05--victim-suricata-sid-1000002-and-wazuh-detection-2026-10-20).
