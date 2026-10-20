@@ -414,3 +414,25 @@ The operator used specific temporary /32 guest routes and verified the intended 
 **Security boundary:** This is a deliberate reachable management path between guests in different lab roles. The six zone-to-zone TrueNAS `FORWARD` DROP rules do not cover same-subnet management-LAN communication. If later management-network ACLs or endpoint firewalls are introduced, preserve only the named TCP/22 flow (if still required), avoid general guest-to-guest management access, and retest. Reevaluate the exception if Windows becomes an intentionally compromised Victim host. Current `iptables` baseline remains the two existing Victim ↔ Attack DROP rules; permanent SOC-zone policy remains open.
 
 [Validation record](../projects/05-suricata-network-detection/validation.md#module-06--approved-management-lan-ssh-access-2026-10-19)
+
+## 17. Module 06 — Dedicated Firewall Chain Trial and Rollback (2026-10-20)
+
+**Temporary implementation validated; persistent three-zone enforcement remains OPEN.** To avoid removing the existing baseline DROP rules while preparing six-direction IPv4 protection, the operator prepared a separate `iptables-nft`-managed `CYBERBLUE_ZONES` chain and rollback script. Both scripts passed syntax and saved-content review.
+
+The candidate first prepared all six directional `br20` ↔ `br30`, `br20` ↔ `br40`, and `br30` ↔ `br40` DROP rules inside the unattached chain, then inserted one `FORWARD` jump at rule 1. Readback confirmed the original Victim ↔ Attack DROP rules still at positions 2–3 and Docker forwarding rules following. A separate 15-minute transient systemd rollback timer was armed and confirmed `active (waiting)` before activation.
+
+**Traffic validation under this dedicated-chain configuration (each: four routed IPv4 ICMP probes, zero replies, matching four-packet DROP counter):**
+
+| Verified direction | Matching chain counter |
+|---|---|
+| Attack Kali `10.10.40.20` → SOC Ubuntu `10.10.20.10` | `br40→br20`: 4 packets / 336 B |
+| SOC Ubuntu `10.10.20.10` → Attack Kali `10.10.40.20` | `br20→br40`: 4 packets / 336 B |
+| SOC Ubuntu `10.10.20.10` → Victim Windows `10.10.30.10` | `br20→br30`: 4 packets / 336 B |
+
+The other three directional rules were present but not re-probed using this dedicated chain; they had been examined in earlier independent baseline and direct-rule candidate trials. Guest host routes in this session included `EXIT` cleanup traps; separate route-table verification after each probe was not recorded.
+
+**Verified cleanup:** Manual rollback removed the `CYBERBLUE_ZONES` jump from `FORWARD`. Subsequent `iptables -S FORWARD` retained only the original two Victim ↔ Attack DROP rules plus Docker entries. The transient rollback timer reported `LoadState=not-found`, `ActiveState=inactive`, `SubState=dead`. The dedicated chain may remain **detached**; the original POSTINIT firewall startup script remains unchanged.
+
+**Not established:** Persistent SOC default deny, TCP/UDP or IPv6 isolation, management-LAN or dual-homed bypass restrictions, Layer-2/host traffic control, TrueNAS host reboot survival, comprehensive Suricata traffic delivery. The management-LAN Windows→Kali SSH access approved in Section 16 is not a `br30`→`br40` forwarding exception.
+
+[Validation V-63–V-69](../projects/05-suricata-network-detection/validation.md#module-06--dedicated-cyberblue_zones-chain-test-2026-10-20) · [Build and rollback notes](../projects/05-suricata-network-detection/build-notes.md#module-06--dedicated-chain-candidate-and-safe-rollback-2026-10-20)
