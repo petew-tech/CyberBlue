@@ -41,3 +41,11 @@ See [Project validation record](../validation.md).
 | [module06-kali-attack-network-post-reboot.png](module06-kali-attack-network-post-reboot.png) | Kali retained the intended two IPv4 addresses and routes after final reboot | Uploaded and verified |
 
 The two files named `project06-` are **Module 06 evidence within Project 05**; filenames were retained because they were already uploaded. Screenshots document specific guest addressing/routing states, not full zone isolation, TrueNAS host bridge persistence or comprehensive IDS visibility.
+
+## Captured Screenshot — 2026-10-20: Victim Suricata to Wazuh
+
+| Screenshot | Evidence supported | Status |
+|---|---|---|
+| [05-victim-suricata-wazuh-detection.png](05-victim-suricata-wazuh-detection.png) | Operator saved screenshot of Wazuh manager CLI summary showing `MATCHING ALERTS: 4` for Suricata SID `1000002`, agent `003`, Wazuh rule `86601` and UTC timestamps around 18:16:07–18:16:11. Console output was supplied separately and validated as [V-115](../validation.md#project-05--victim-sid-1000002-end-to-end-suricata-and-wazuh-alert-2026-10-20). | File **uploaded and existence verified** in GitHub on 2026-10-20; screenshot visual content not independently inspected |
+
+This is a **terminal evidence screenshot**, not a Wazuh dashboard screenshot. It supports the bounded Windows ICMP / temporary TrueNAS packet-mirroring / Suricata / Wazuh test, **not** continuous network-wide detection. Filename begins `05-` but refers to a different October 20 artifact than the earlier `05-br30-traffic-visibility-gap.PNG`.
