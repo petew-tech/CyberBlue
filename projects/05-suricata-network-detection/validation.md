@@ -306,3 +306,13 @@ This section validates **guest address cleanup and migration only**, not full zo
 **Evidence and limitation:** Controlled, filtered Windows-to-gateway unicast traffic was observable on `vnet11` and on Linux Mint `ens5` **only with the temporary, reversible mirror installed**. A full-network, bi-directional or persistent sensor tap is **not** established. Suricata EVE event ingestion for these exact ICMP requests and any Wazuh alert remain **NOT TESTED** in this checkpoint. No permanent host/bridge/firewall configuration was changed.
 
 [Build notes](build-notes.md#project-05--scoped-br30-unicast-mirror-and-restoration-2026-10-20).
+
+## Project 05 — Suricata EVE Flow Ingestion of Mirrored Victim Traffic (2026-10-20)
+
+| ID | Verification | Evidence / qualification | Status |
+|---|---|---|---|
+| V-111 | Suricata EVE records of scoped Victim unicast mirror | On Linux Mint, operator searched `/var/log/suricata/eve.json` for `"in_iface":"ens5"`, `"src_ip":"10.10.30.10"`, `"dest_ip":"10.10.30.1"`. Three EVE JSON **`event_type:"flow"`** records matched at `2026-10-20T12:33:57.419972-0500`, `12:37:56.742489-0500`, and `12:40:46.215950-0500`. All reported `proto:"ICMP"`, `icmp_type:8`, `icmp_code:0`, `flow.pkts_toserver:4`, `flow.pkts_toclient:0`, `flow.bytes_toserver:296`. Last flow started `12:40:08.451863-0500` and ended `12:40:11.487714-0500`, correlating to Mint `ens5` tcpdump's four echo requests in the same interval (sequences 224–227). | **PASS — Suricata logged mirrored Victim unicast as flow telemetry; detection `alert` and Wazuh ingestion not proven** |
+
+**Qualification:** These are three distinct 4-request flow events across three controlled ping rounds, not a single 12-packet flow. No echo replies were observed by these `ens5` flow records (`pkts_toclient:0`), consistent with a one-way mirror filter matching requests. The temporary mirror was independently removed before the EVE inspection. Historical Wazuh rule 86601 alert evidence relates to earlier tests, not to these flow records. A new EVE `event_type:alert` and Wazuh detection require separate verification.
+
+[Build notes](build-notes.md#project-05--mirrored-windows-icmp-suricata-eve-flow-evidence-2026-10-20).
