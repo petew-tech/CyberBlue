@@ -218,3 +218,9 @@ During a coordinated test, Windows `10.10.30.10` successfully pinged the Victim 
 **Still open:** No claim of full-network visibility, persistent mirroring, Suricata EVE processing of the tested ICMP requests, or Wazuh detection from this experiment. Next: read-only EVE search on Mint, then scoped alert validation as warranted.
 
 [Validation V-105–V-110](validation.md#project-05--scoped-tc-mirror-proof-packet-capture-and-recovery-2026-10-20) · [Build notes](build-notes.md#project-05--scoped-br30-unicast-mirror-and-restoration-2026-10-20).
+
+## Project 05 — Suricata EVE Victim Flow Confirmation (2026-10-20)
+
+**PASS — packet capture AND Suricata EVE flow ingestion for the scoped mirrored ICMP tests.** Following the successful timed test and verified manual `tc` cleanup, Linux Mint's `/var/log/suricata/eve.json` contained three `ens5` `event_type:"flow"` records for Windows `10.10.30.10 →` gateway `10.10.30.1` ICMP echo requests. Each recorded four request-direction packets; the final flow's 12:40:08–12:40:11 (-0500) window correlated with the Mint tcpdump capturing four requests, sequences 224–227. No client-direction packets were recorded in the one-way mirror flows. **This proves EVE flow telemetry, not a Suricata detection alert or Wazuh correlation.** The mirror is no longer active; persistent full-network visibility remains OPEN.
+
+[Validation V-111](validation.md#project-05--suricata-eve-flow-ingestion-of-mirrored-victim-traffic-2026-10-20) · [Build notes](build-notes.md#project-05--mirrored-windows-icmp-suricata-eve-flow-evidence-2026-10-20).
