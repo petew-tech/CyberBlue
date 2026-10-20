@@ -302,3 +302,41 @@ All three manual rollbacks reported success; every readback showed the original 
 **Result:** Four temporary SOC-direction IPv4 ICMP tests PASS; with the two earlier baseline Victim ↔ Attack ICMP tests, **six of six** tested directed routed IPv4 ICMP paths PASS. **Current enforced baseline is only Victim ↔ Attack IPv4**, not the approved three-zone policy. Do not report complete isolation, IPv6 or management-bypass coverage, TCP/UDP filtering, TrueNAS host restart survival, or full Suricata visibility as validated.
 
 [Detailed V-52–V-60 evidence](validation.md#module-06--three-zone-scoped-ipv4-icmp-firewall-trial-2026-10-19).
+
+## Module 06 — Dedicated Chain Candidate and Safe Rollback (2026-10-20)
+
+**Purpose:** Replace the earlier six-direct-rule test approach with a prepared, dedicated `CYBERBLUE_ZONES` chain, attaching it only after its six IPv4 DROP entries have been populated. This was a **temporary controlled trial**, not a modification of the registered TrueNAS POSTINIT firewall script.
+
+**Saved TrueNAS scripts:**
+
+- `/mnt/Pool1/CyberBlue/cyberblue-firewall-chain-candidate.sh` — uses `/usr/sbin/iptables -w`, refuses to rebuild a chain already attached to `FORWARD`, creates `CYBERBLUE_ZONES` if absent, flushes its **detached** contents, appends six directional bridge-pair DROP rules, then inserts a single `FORWARD` jump at position 1.
+- `/mnt/Pool1/CyberBlue/cyberblue-firewall-chain-rollback.sh` — removes matching `FORWARD -j CYBERBLUE_ZONES` jumps with `iptables -w -D`; leaves the original Victim ↔ Attack rules and the now-inactive dedicated chain intact.
+- Both files passed `sudo /bin/sh -n` and the operator pasted their full saved contents for review. The rollback script was later run successfully, not merely syntax-checked.
+
+**Preflight:** `iptables -V` returned `iptables v1.8.9 (nf_tables)`; `nft -a list chain ip filter FORWARD` displayed the existing two bridge DROPs before Docker chains and warned the table was managed by `iptables-nft`. An initial direct chain query through `iptables` returned an ambiguous compatibility error; subsequent `nft` and `iptables-save -t filter` reads showed no pre-existing `CYBERBLUE_ZONES` chain or jump. No direct `nft` changes were made.
+
+**Timed trial, October 20:** Created a transient 15-minute `cyberblue-chain-rollback-20261020.timer`, confirmed `active (waiting)` with scheduled trigger **02:51:23 PDT**, and then executed:
+
+```bash
+sudo /bin/sh /mnt/Pool1/CyberBlue/cyberblue-firewall-chain-candidate.sh
+sudo iptables -L FORWARD -n -v --line-numbers
+sudo iptables -L CYBERBLUE_ZONES -n -v --line-numbers
+```
+
+Candidate returned `CANDIDATE APPLIED`. `FORWARD` position 1 jumped to `CYBERBLUE_ZONES`; original `br40→br30` and `br30→br40` DROPs remained at positions 2–3, ahead of Docker rules 4–9. The dedicated chain contained six rules, initially with zero DROP hits. The `FORWARD` jump counter alone is **not** evidence of drops.
+
+**Three probes run in the dedicated-chain window:**
+
+| Direction | Temporary /32 route via lab gateway | ICMP sent/replies | Matching dedicated-chain DROP |
+|---|---|---|---|
+| Kali Attack `10.10.40.20` → Ubuntu SOC `10.10.20.10` | Kali via `10.10.40.1 dev eth0` | 4 / 0 | Rule 4, `br40→br20`: 4 packets / 336 B |
+| Ubuntu SOC `10.10.20.10` → Kali Attack `10.10.40.20` | Ubuntu via `10.10.20.1 dev ens4` | 4 / 0 | Rule 3, `br20→br40`: 4 packets / 336 B |
+| Ubuntu SOC `10.10.20.10` → Windows Victim `10.10.30.10` | Ubuntu via `10.10.20.1 dev ens4` | 4 / 0 | Rule 1, `br20→br30`: 4 packets / 336 B |
+
+Guest commands used an `EXIT` trap intended to delete each temporary host route. An independent route-table readback after these three commands was not recorded; confirm no residual /32 routes before a future test. The other chain directions were installed but **not re-probed** in this particular session.
+
+**Cleanup:** The operator manually ran `sudo /bin/sh /mnt/Pool1/CyberBlue/cyberblue-firewall-chain-rollback.sh` and received `CYBERBLUE CHAIN ROLLBACK COMPLETE`. Read-back `sudo iptables -S FORWARD` showed the old two bridge DROPs and all Docker entries but **no dedicated-chain jump**. The transient timer was no longer loaded: `LoadState=not-found`, `ActiveState=inactive`, `SubState=dead`. The candidate remains a saved file, and the detached chain may remain defined in the kernel. **The original persistent firewall startup script was not changed.**
+
+**Remaining work:** Repeat untested directions under dedicated-chain protection if required, check guest route cleanup and management connectivity, consider safe ongoing chain-update/persistence behavior, then seek explicit approval before permanent deployment. IPv6, TCP/UDP, management bypass, TrueNAS reboot persistence and Suricata mirror coverage remain open.
+
+[Detailed validation V-63–V-69](validation.md#module-06--dedicated-cyberblue_zones-chain-test-2026-10-20).
