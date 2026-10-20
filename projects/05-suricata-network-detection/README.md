@@ -246,3 +246,9 @@ During a coordinated test, Windows `10.10.30.10` successfully pinged the Victim 
 **Dashboard verification: PASS for at least one matching alert.** The operator observed Wazuh `rule.id:86601` in Threat Hunting for the October 20 Victim test and confirmed the expanded event's `data.alert.signature_id` equals **`1000002`**. For a readable GitHub portfolio, the operator uploaded separate [alert overview](evidence/10-wazuh-victim-alert-overview.png) and [alert details](evidence/11-wazuh-victim-alert-details.png) screenshot files; both exist in the repository. Image contents were not independently inspected. The **four-event** Wazuh count is separately verified by the manager CLI evidence under V-115, not by these screenshot uploads. Scoped temporary ICMP mirroring was removed, so continuous Victim network detection has not been demonstrated.
 
 [Validation V-116](validation.md#project-05--wazuh-victim-alert-dashboard-and-screenshot-evidence-2026-10-20) · [Evidence index](evidence/README.md#wazuh-victim-alert-dashboard--2026-10-20).
+
+## Project 05 — R3 Backup Rollback Confirmed (2026-10-20)
+
+**R3 scheduled safety rollback: PASS.** After earlier successful manual mirror removal and independent `vnet13` `noqueue` check, TrueNAS `journalctl` showed `cyberblue-br30-mirror-rollback-r3.service` started at **11:32:57 PDT** on October 20, printed `CYBERBLUE BR30 MIRROR ROLLBACK COMPLETE`, and deactivated successfully. This confirms the timed cleanup script also ran; a separate post-timer qdisc state check remains pending. No permanent mirror is claimed.
+
+[Validation V-117](validation.md#project-05--r3-scheduled-rollback-execution-2026-10-20).
