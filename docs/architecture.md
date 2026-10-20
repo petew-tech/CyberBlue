@@ -436,3 +436,15 @@ The other three directional rules were present but not re-probed using this dedi
 **Not established:** Persistent SOC default deny, TCP/UDP or IPv6 isolation, management-LAN or dual-homed bypass restrictions, Layer-2/host traffic control, TrueNAS host reboot survival, comprehensive Suricata traffic delivery. The management-LAN Windows→Kali SSH access approved in Section 16 is not a `br30`→`br40` forwarding exception.
 
 [Validation V-63–V-69](../projects/05-suricata-network-detection/validation.md#module-06--dedicated-cyberblue_zones-chain-test-2026-10-20) · [Build and rollback notes](../projects/05-suricata-network-detection/build-notes.md#module-06--dedicated-chain-candidate-and-safe-rollback-2026-10-20)
+
+## 18. Module 06 — Hardened V2 Firewall Startup Candidate Trial (2026-10-20)
+
+**Controlled V2 test PASS; full three-zone default-deny startup implementation remains OPEN.** The TrueNAS operator prepared and reviewed `/mnt/Pool1/CyberBlue/cyberblue-firewall-persistent-v2.sh` as a possible replacement for the original two-rule POSTINIT script. After the initial candidate and a V2 draft were syntax-checked, the V2 file was backed up and hardened: it compares exact expected `CYBERBLUE_ZONES` contents, rejects unexpected chain references and active-order failures, and reuses an already-correct detached chain instead of flushing populated rules.
+
+With a 15-minute automatic rollback timer confirmed `active (waiting)` (trigger **03:36:47 PDT**), a temporary V2 execution attached one `CYBERBLUE_ZONES` jump at the beginning of the IPv4 `FORWARD` chain. The original Victim ↔ Attack DROP rules and Docker entries were preserved. Repeating the script returned `CYBERBLUE CHAIN ALREADY ACTIVE AND VERIFIED`; readback again showed **exactly one** jump. The user ran the rollback script, verified the original two direct DROP rules and Docker rules with **no dedicated-chain jump**, and verified the timer `not-found/inactive/dead`.
+
+This tested script repeatability and rollback, **not** an additional guest-traffic packet test. Separate October 20 tests previously demonstrated three directed routed IPv4 ICMP drops (Section 17); independent subsequent route checks confirmed the named Ubuntu/Kali /32 test routes were removed and normal management route selection restored. The existing Windows `192.168.1.151` → Kali `192.168.1.91:22/tcp` management-LAN authorization in Section 16 remains unchanged and is not filtered by the bridge-to-bridge `FORWARD` rules.
+
+**Actual deployed state after V2 test:** original two Victim ↔ Attack DROP rules only, `FORWARD ACCEPT`, original registered POSTINIT startup script unmodified. Future work includes failure-path evaluation and reboot/startup ordering, checking Docker/Tailscale changes, TCP/UDP and IPv6 policies, management-LAN/dual-homed bypasses, host/Layer-2 traffic, and Suricata mirror coverage.
+
+[Validation V-72–V-76](../projects/05-suricata-network-detection/validation.md#module-06--hardened-persistent-startup-v2-controlled-trial-2026-10-20) · [V2 build procedure](../projects/05-suricata-network-detection/build-notes.md#module-06--hardened-persistent-v2-reversible-test-2026-10-20)
