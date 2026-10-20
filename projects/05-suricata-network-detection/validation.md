@@ -329,3 +329,9 @@ This section validates **guest address cleanup and migration only**, not full zo
 **Boundary:** End-to-end detection is validated **only** for the time-bounded, one-direction Windows-to-gateway ICMP test while the temporary `tc` mirror was installed. Current `vnet13` qdisc has no `clsact`; there is no persistent bridge-wide packet mirroring or full bidirectional coverage. Wazuh manager file ingestion is proven; dashboard screenshot/evidence is not yet claimed. Previous V-111 flow-only evidence remains historically accurate for its earlier test.
 
 [Build notes](build-notes.md#project-05--victim-suricata-sid-1000002-and-wazuh-detection-2026-10-20).
+
+## Project 05 — Uploaded Evidence for V-115 (2026-10-20)
+
+**Evidence file verified in repository:** [`evidence/05-victim-suricata-wazuh-detection.png`](evidence/05-victim-suricata-wazuh-detection.png), uploaded by operator and confirmed present in the GitHub Project 05 `evidence/` directory. Operator stated the screenshot of the Wazuh manager terminal four-alert summary was saved and uploaded. The actual text results independently furnished in this validation session were `MATCHING ALERTS: 4` with agent `003`, Wazuh rule `86601`, and Suricata SID `1000002`. **Upload existence verified; pixel/content review not performed.** This is terminal evidence, not a Wazuh Threat Hunting dashboard screenshot.
+
+[Evidence index](evidence/README.md#captured-screenshot--2026-10-20-victim-suricata-to-wazuh).
