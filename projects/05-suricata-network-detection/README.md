@@ -15,7 +15,9 @@ This project validates network intrusion-detection telemetry from Suricata on Li
 | Suricata Victim capture interface | `ens5`, no guest IPv4 address, `br30` (passive monitoring; unicast only when explicitly mirrored in tests) |
 | Linux Mint management interface | `ens3`, `192.168.1.92/24` |
 | Linux Mint SOC network interface | `ens6`, `10.10.20.11/24`, TrueNAS `br20`; no default gateway (added October 17) |
-| Isolated lab bridge | TrueNAS `br40`, `10.10.40.1/24` |
+| TrueNAS SOC bridge | `br20`, `10.10.20.1/24` — SOC network |
+| TrueNAS Victim bridge | `br30`, `10.10.30.1/24` — Windows Victim and passive Suricata capture NIC |
+| TrueNAS Attack bridge | `br40`, `10.10.40.1/24` — Kali Attack and Suricata `ens4` |
 | Wazuh manager | `siem-01`, `192.168.1.213` |
 | Wazuh agent | `cyberblue-suricata`, agent ID `003` |
 | Attack ICMP rule | SID `1000001`: `10.10.40.10 → 10.10.40.1` |
