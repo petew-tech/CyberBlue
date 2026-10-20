@@ -222,7 +222,7 @@ During a coordinated test, Windows `10.10.30.10` successfully pinged the Victim 
 
 **Recovery PASS:** A 15-minute TrueNAS `systemd-run` rollback first executed and was verified independently. During the successful second test, the user manually executed the saved rollback script and confirmed `vnet13` returned to `noqueue` with **no `clsact`**. This removed the temporary mirror; no permanent traffic-mirroring policy was deployed.
 
-**Still open:** No claim of full-network visibility, persistent mirroring, Suricata EVE processing of the tested ICMP requests, or Wazuh detection from this experiment. Next: read-only EVE search on Mint, then scoped alert validation as warranted.
+**Status at the V-105–V-110 packet-capture checkpoint:** Those captures alone did **not yet** prove Suricata EVE ingestion or Wazuh detection. Subsequent **V-111** read-only EVE inspection established three `event_type:"flow"` records from the earlier, temporary mirrored Windows ICMP rounds; these are **flow telemetry, not alerts**. A **separate R3 mirrored ping after adding SID `1000002`** then generated four Suricata EVE `event_type:"alert"` records and four matching Wazuh alerts (**V-112–V-115**), with at least one matching event confirmed in Threat Hunting (**V-116**). **Still OPEN:** persistent mirroring and full-network/bidirectional traffic visibility. The temporary mirror was removed and its post-timer absence verified (**V-117–V-118**).
 
 [Validation V-105–V-110](validation.md#project-05--scoped-tc-mirror-proof-packet-capture-and-recovery-2026-10-20) · [Build notes](build-notes.md#project-05--scoped-br30-unicast-mirror-and-restoration-2026-10-20).
 
