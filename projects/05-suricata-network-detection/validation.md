@@ -353,3 +353,13 @@ This section validates **guest address cleanup and migration only**, not full zo
 | V-117 | Timed backup rollback R3 executes after earlier manual restoration | On TrueNAS the operator ran `sudo journalctl -u cyberblue-br30-mirror-rollback-r3.service --since "2026-10-20 11:32:00" --no-pager`. Journal shows at **Oct 20 11:32:57 PDT**: systemd **Started** `cyberblue-br30-mirror-rollback-r3.service`, script printed `CYBERBLUE BR30 MIRROR ROLLBACK COMPLETE`, and systemd recorded `Deactivated successfully`. Manual script rollback and the independent `noqueue`/no-`clsact` verification had already been completed around 11:18 PDT. Timer execution is therefore demonstrated as a redundant cleanup, not evidence of a second active mirror removal. No separate **post-timer** `tc` qdisc readback is included in this checkpoint. | **PASS — scheduled rollback script ran and service exited successfully** |
 
 [Build notes](build-notes.md#project-05--r3-scheduled-rollback-journal-verification-2026-10-20).
+
+## Project 05 — Post-R3-Timer Qdisc State Confirmed (2026-10-20)
+
+| ID | Verification | Evidence / scope | Result |
+|---|---|---|---|
+| V-118 | Independent TrueNAS `vnet13` qdisc readback **after** scheduled R3 automatic rollback | After `cyberblue-br30-mirror-rollback-r3.service` executed at 2026-10-20 **11:32:57 PDT** (V-117), operator ran `sudo tc qdisc show dev vnet13`. Output: `qdisc noqueue 8023: root refcnt 2`, with **no `clsact`**. This directly confirms the temporary mirroring qdisc remains absent after the redundant scheduled rollback. Historical manual rollback and pre-timer clean qdisc verification are separately documented in V-114. | **PASS — clean post-timer network qdisc state** |
+
+**Boundary:** `tc qdisc` validates this host VM interface's qdisc state; it does not prove absence of unrelated packet capture settings on other devices or ongoing full-network IDS coverage. The narrowly scoped Victim ICMP mirror was a temporary test and is off.
+
+[Build notes](build-notes.md#project-05--post-r3-rollback-qdisc-verification-2026-10-20).
