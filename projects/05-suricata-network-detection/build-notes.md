@@ -340,3 +340,26 @@ Guest commands used an `EXIT` trap intended to delete each temporary host route.
 **Remaining work:** Repeat untested directions under dedicated-chain protection if required, finish other service connectivity checks, consider safe ongoing chain-update/persistence behavior, then seek explicit approval before permanent deployment. IPv6, TCP/UDP, management bypass, TrueNAS reboot persistence and Suricata mirror coverage remain open.
 
 [Detailed validation V-63–V-69](validation.md#module-06--dedicated-cyberblue_zones-chain-test-2026-10-20).
+
+## Module 06 — Hardened Persistent V2 Reversible Test (2026-10-20)
+
+**Status:** Controlled activation, exact-chain verification, repeat execution and rollback **PASS** for the tested `iptables-nft` environment. **Not registered as a TrueNAS POSTINIT startup script; not yet persistent.** This follows the earlier dedicated-chain packet-drop trial rather than replacing its evidence.
+
+### Preparation and saved files
+
+- The new `/mnt/Pool1/CyberBlue/cyberblue-firewall-persistent-candidate.sh` passed shell syntax and full-content review. A stricter `cyberblue-firewall-persistent-v2.sh` added exact expected chain-rule comparison, single-jump checking, and verification that the jump is the first `FORWARD` rule.
+- An interrupted heredoc paste initially left V2 syntactically incomplete. The operator corrected the saved script; later `sudo /bin/sh -n` returned `V2 SYNTAX PASS`, and the complete contents were reviewed.
+- Saved `cyberblue-firewall-persistent-v2.pre-hardening.bak` using `cp -p`. A targeted edit changed the detached-chain path to **reuse an exact already-populated chain**, populate only an empty chain, and **refuse to flush** unexpected contents. Shell syntax returned `V2 HARDENED SYNTAX PASS`; readback of numbered lines 1–83 confirmed the intended safety checks.
+- `sudo iptables -S CYBERBLUE_ZONES` returned a chain declaration and exactly six directional `br20`/`br30`/`br40` DROP rules, matching V2's `EXPECTED` content. This was a read-only baseline check.
+
+### Timed activation, repeat run, and cleanup
+
+1. Created a 15-minute transient safety timer `cyberblue-v2-rollback-20261020.timer`, invoking `/bin/sh /mnt/Pool1/CyberBlue/cyberblue-firewall-chain-rollback.sh`. `systemctl status` confirmed `active (waiting)`, scheduled for **2026-10-20 03:36:47 PDT**.
+2. Executed the V2 script **only after checking that the timer was active**. Output: `CYBERBLUE CHAIN ACTIVATED`. `sudo iptables -S FORWARD` verified exactly one `-A FORWARD -j CYBERBLUE_ZONES` first, followed by the original two Victim ↔ Attack DROP rules and Docker chains/rules; policy `ACCEPT`.
+3. Re-executed V2 with the same timer-active guard. Output: `CYBERBLUE CHAIN ALREADY ACTIVE AND VERIFIED`; an immediate second `iptables -S FORWARD` readback confirmed still one chain jump and unchanged original DROP/Docker rule ordering. No duplicate jump was added in this tested repeat-execution scenario.
+4. Performed manual rollback: `sudo /bin/sh /mnt/Pool1/CyberBlue/cyberblue-firewall-chain-rollback.sh` printed `CYBERBLUE CHAIN ROLLBACK COMPLETE`. `sudo iptables -S FORWARD` then showed **no** `CYBERBLUE_ZONES` jump, while retaining the original `br40→br30` and `br30→br40` DROP rules and Docker entries.
+5. Stopped the transient timer; `systemctl show cyberblue-v2-rollback-20261020.timer -p LoadState -p ActiveState -p SubState --no-pager` showed `LoadState=not-found`, `ActiveState=inactive`, `SubState=dead`.
+
+**Limits:** This V2 window was a script-behavior trial only, with **no additional Kali/Ubuntu/Windows probe test**. It demonstrates neither full protocol/IPv6 enforcement nor persistence following host reboot or Docker/Tailscale changes. Exact-rule checks intentionally fail if unexpected live configuration is detected and **do not repair** out-of-order rules. Additional startup-order and failure-path review is necessary before replacing the registered POSTINIT firewall script. The approved management-LAN Windows→Kali TCP/22 exception is separate and unchanged.
+
+[Validation V-72–V-76](validation.md#module-06--hardened-persistent-startup-v2-controlled-trial-2026-10-20).
