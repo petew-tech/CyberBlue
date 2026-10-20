@@ -82,7 +82,7 @@ Wazuh recorded the custom detection with:
 | V-28 | Management network preserved | Mint ens3, 192.168.1.92, reached 192.168.1.1: 4/4 replies, zero loss, average RTT 0.711 ms | PASS |
 | V-29 | Scoped mirrored-traffic POC cleanup | Temporary TrueNAS clsact mirroring qdisc removed from vnet5 and absence confirmed before Mint restart | PASS |
 
-**Remaining gaps:** The post-migration alerts have not yet been checked in the Wazuh dashboard. The temporary br30 ICMP mirroring proof of concept has been removed and is not an active monitoring capability. Full inter-zone separation, TrueNAS br20 reboot persistence, and full network visibility remain unverified.
+**Remaining gaps at the V-23–V-29 checkpoint (2026-10-17):** Wazuh dashboard verification of the post-migration alerts was **pending at this point**; it was subsequently completed the same day under **V-30 — PASS** with [dashboard evidence](evidence/09-wazuh-post-soc-migration-alerts.png). The temporary `br30` ICMP mirroring proof of concept had been removed and was not an active monitoring capability. Broader inter-zone isolation, TrueNAS `br20` host-reboot persistence, and full network visibility were not established by these tests; later scoped Project 05 detection results do not establish continuous packet mirroring.
 
 ## Threat Hunting Dashboard Confirmation — 2026-10-17
 
