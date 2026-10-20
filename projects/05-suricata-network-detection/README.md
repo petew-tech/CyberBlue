@@ -11,23 +11,25 @@ This project validates network intrusion-detection telemetry from Suricata on Li
 | TrueNAS SCALE 24.10.1 | Virtualization host |
 | Linux Mint 22.3 | Suricata sensor and Wazuh agent |
 | Suricata | Version 7.0.3 |
-| Suricata capture interface | `ens4`, `10.10.40.10/24` |
+| Suricata Attack capture interface | `ens4`, `10.10.40.10/24`, `br40` |
+| Suricata Victim capture interface | `ens5`, no guest IPv4 address, `br30` (passive monitoring; unicast only when explicitly mirrored in tests) |
 | Linux Mint management interface | `ens3`, `192.168.1.92/24` |
 | Isolated lab bridge | TrueNAS `br40`, `10.10.40.1/24` |
 | Wazuh manager | `siem-01`, `192.168.1.213` |
 | Wazuh agent | `cyberblue-suricata`, agent ID `003` |
-| Custom Suricata rule | SID `1000001` |
+| Attack ICMP rule | SID `1000001`: `10.10.40.10 → 10.10.40.1` |
+| Victim ICMP rule | SID `1000002`: `10.10.30.10 → 10.10.30.1` (added and validated October 20) |
 | Wazuh Suricata alert rule | Rule ID `86601`, level 3 |
 
 ## Implementation Summary
 
-- Configured Suricata to capture on Linux Mint's isolated-network interface, `ens4`.
+- Initially configured Suricata capture on Linux Mint `ens4`; later enabled dual AF_PACKET monitoring on `ens4` (Attack) and `ens5` (Victim).
 - Corrected the capture-interface configuration from the unavailable `eth0` name to `ens4`.
-- Loaded the Suricata rule set and added a local ICMP echo-request detection rule for traffic from `10.10.40.10` to `10.10.40.1`.
-- Confirmed Suricata generated EVE JSON alert records for custom SID `1000001`.
+- Loaded the Suricata rule set and added local ICMP echo-request SID `1000001` for `10.10.40.10 → 10.10.40.1`; on October 20 added SID `1000002` for `10.10.30.10 → 10.10.30.1` after backing up the local rule file.
+- Confirmed Suricata generated EVE JSON alerts for SID `1000001` on `ens4` and, with a time-bounded TrueNAS test mirror, four SID `1000002` alerts on `ens5`.
 - Installed and configured the Wazuh agent on Linux Mint and confirmed connection to the manager at `192.168.1.213:1514/tcp`.
 - Configured Wazuh log collection for `/var/log/suricata/eve.json`.
-- Verified the Suricata alert in Wazuh alerts and the Threat Hunting dashboard.
+- Verified both custom Suricata signatures in Wazuh manager alerts and operator-confirmed matching events in Threat Hunting; the October 20 SID `1000002` test produced four exact matching Wazuh manager alerts.
 - Tested automatic Suricata recovery by terminating the main process with SIGKILL. Systemd restarted the service and Suricata resumed generating alerts.
 - Inspected TrueNAS `br40` and recorded the remaining network-visibility limitation: traffic delivered to the sensor is validated, but visibility into traffic between other VMs on the bridge is not established.
 
@@ -37,9 +39,11 @@ This project validates network intrusion-detection telemetry from Suricata on Li
 |---|---|---|
 | Suricata service startup configuration | `enabled` | PASS |
 | Suricata service state | `active` | PASS |
-| Detection rule loading after recovery | 53,144 rules loaded; 0 failed | PASS |
+| Detection rule loading after earlier service recovery | 53,144 rules loaded; 0 failed (historical checkpoint) | PASS |
+| Live ruleset after SID `1000002` addition | 53,145 rules loaded; 0 failed; Suricata test exited 0 | PASS |
 | ICMP test connectivity | 4 sent, 4 received, 0% loss | PASS |
-| Custom Suricata detection | SID `1000001` generated an ICMP alert | PASS |
+| Attack custom detection | SID `1000001` generated an ICMP alert | PASS |
+| Victim custom detection | SID `1000002` generated four ICMP alerts on `ens5` under temporary mirroring | PASS |
 | Wazuh agent connectivity | Connected to `192.168.1.213:1514/tcp` | PASS |
 | Wazuh centralized alert | Rule `86601`, agent `003`, source `/var/log/suricata/eve.json` | PASS |
 | Automatic service recovery | Main PID changed from `3502` to `13422`; restart count became `1` | PASS |
@@ -49,7 +53,7 @@ This project validates network intrusion-detection telemetry from Suricata on Li
 
 ## Scope and Limitations
 
-The validated pipeline is: test traffic delivered to Linux Mint `ens4` → Suricata custom rule → EVE JSON → Wazuh agent → Wazuh manager and dashboard.
+The validated baseline pipeline is: test traffic delivered to Linux Mint `ens4` → Suricata SID `1000001` → EVE JSON → Wazuh agent → Wazuh manager and dashboard. A separate October 20 test validated Windows Victim ICMP traffic mirrored **temporarily** to Mint `ens5` → Suricata SID `1000002` → EVE alert → Wazuh agent/manager → operator-confirmed dashboard matching alert. The TrueNAS test mirror was rolled back and independently checked, so continuous Victim unicast visibility is **not** established.
 
 The TrueNAS bridge inspection showed `br40` UP at `10.10.40.1/24`, with one attached host-side virtual interface (`vnet4`) during the check. No ingress `tc` filters were reported on `vnet4` or `br40`. These observations do not prove that no other mirroring mechanism exists, but they do mean that mirroring and visibility into traffic between other VMs have not been demonstrated. A separate follow-up will assess the appropriate method for broader bridge visibility.
 
