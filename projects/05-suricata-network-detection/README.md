@@ -200,3 +200,11 @@ Docker is active with `Restart=always` and `docker.socket` currently active and 
 **Return to Project 05 objectives:** Verify the Suricata/Wazuh sensor health, confirm current dual-bridge capture interfaces `ens4` (Attack) and `ens5` (Victim), then plan safe and scoped traffic-visibility testing on the finalized VM topology. Previous `tc` mirroring was explicitly removed during the SOC migration on October 17, and full inter-VM visibility is **not proven**. Existing custom SID `1000001` and Wazuh rule `86601` alert validations remain historical PASS evidence, not claims of current mirror coverage.
 
 [Project 02 open firewall follow-up](../02-networking-segmentation/README.md#open-follow-up--permanent-three-zone-firewall-lifecycle-2026-10-20).
+
+## Project 05 — Current Suricata Visibility Check (2026-10-20)
+
+**Sensor runtime validated; passive Victim unicast visibility remains OPEN.** Linux Mint Suricata and Wazuh services are active. Suricata PID 1056 is running AF_PACKET with two worker threads each on `ens4` (Attack, cluster 99) and `ens5` (Victim, cluster 100). Recent EVE JSON includes both interfaces and Windows multicast/broadcast activity.
+
+During a coordinated test, Windows `10.10.30.10` successfully pinged the Victim gateway `10.10.30.1` **4/4**, but a simultaneously reported Mint `ens5` tcpdump filtered for those echo requests recorded **0 matching packets**, **0 kernel drops**. This is **a scoped observation gap**, not evidence of complete sensor failure. Previous temporary `tc` mirroring was removed on October 17. Next: inspect current bridge membership and design a reversible, minimally scoped monitoring visibility test. No new firewall, mirror, or service changes were made.
+
+[Validation V-103–V-104](validation.md#project-05--sensor-runtime-and-windows-unicast-visibility-2026-10-20) · [Build notes](build-notes.md#project-05--coordinated-victim-unicast-visibility-test-2026-10-20).
