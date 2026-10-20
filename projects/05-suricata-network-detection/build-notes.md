@@ -426,3 +426,9 @@ Guest commands used an `EXIT` trap intended to delete each temporary host route.
 **Proposed next architecture, not implemented:** Keep the original TrueNAS startup baseline; design a separate CyberBlue service or reconciliation mechanism triggered after Docker initialization *and* after restarts, with careful dependency semantics, reentrant validation, autonomous rollback/alerting, and an explicit operator approval gate before enabling any permanent rule attachment. A mere `After=docker.service` directive does not prove it would rerun on every daemon restart. V3 timer-guarded activation also cannot be used unattended without redesign. Preserve the approved Windows management `192.168.1.151` → Kali management `192.168.1.91:22/tcp` path.
 
 [Validation V-98–V-102](validation.md#module-06--docker-lifecycle-read-only-discovery-and-v3-preflight-2026-10-20).
+
+## Project 05 Scope Reset — Resume Suricata Visibility (2026-10-20)
+
+Operator chose to stop developing the permanent Docker/TrueNAS firewall lifecycle under Project 05 and track it as an open infrastructure follow-up in Project 02. No persistent firewall service, startup modification or V3 activation was performed. The prior temporary CyberBlue chain attachment has been rolled back and independently verified absent; original Victim↔Attack direct rules preserved.
+
+The next meaningful Suricata work is to verify sensor/Wazuh agent health on **Linux Mint**, then reassess capture on `ens4` (`br40`) and `ens5` (`br30`) with no assumption of complete inter-VM visibility. The October 16 `tc` proof-of-concept mirrors were removed October 17. Existing SID `1000001` and Wazuh rule `86601` detections are documented historical results. Prefer read-only sensor verification before new capture or mirroring changes. [Project 02 follow-up](../02-networking-segmentation/README.md#open-follow-up--permanent-three-zone-firewall-lifecycle-2026-10-20).
