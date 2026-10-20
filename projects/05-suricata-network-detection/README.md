@@ -161,3 +161,22 @@ The operator manually executed `cyberblue-docker-user-rollback.sh`; readback res
 **Actual state:** Only original Victim ↔ Attack direct IPv4 DROP rules are the deployed CyberBlue policy. Full three-zone persistence after TrueNAS/Docker restarts, new packet-block verification through `DOCKER-USER`, IPv6, management-LAN and dual-homed paths, Layer-2/host traffic and full Suricata mirror coverage remain **OPEN**. The separately approved Windows management IP → Kali management IP TCP/22 path remains unchanged.
 
 [Validation V-77–V-85](validation.md#module-06--docker-compatible-docker-user-trial-2026-10-20) · [Build notes](build-notes.md#module-06--docker-startup-dependency-review-and-docker-user-trial-2026-10-20).
+
+## Module 06 — Six-Direction Docker-Compatible IPv4 ICMP Validation (2026-10-20)
+
+**Controlled test PASS: six of six routed IPv4 ICMP directions blocked with matching fresh +4 packet DROP-counter increments.** A *second* 30-minute rollback-protected window attached `CYBERBLUE_ZONES` to `DOCKER-USER` ahead of `RETURN`; its transient timer was confirmed active before candidate activation, with rollback due **04:49:27 PDT**.
+
+| Direction | New DROP count | Matching active rule |
+|---|---:|---|
+| SOC → Attack | +4 (336 bytes) | `CYBERBLUE_ZONES br20→br40` |
+| Attack → SOC | +4 (336 bytes) | `CYBERBLUE_ZONES br40→br20` |
+| SOC → Victim | +4 (336 bytes) | `CYBERBLUE_ZONES br20→br30` |
+| Victim → SOC | +4 (240 bytes) | `CYBERBLUE_ZONES br30→br20` |
+| Attack → Victim | +4 (336 bytes) | **Original direct `FORWARD br40→br30`** |
+| Victim → Attack | +4 (240 bytes) | **Original direct `FORWARD br30→br40`** |
+
+Each test used a temporary guest /32 route explicitly via the respective lab interface and four ICMP probes (zero replies). Independent queries confirmed all named test routes absent afterward. **The two Victim ↔ Attack directions do not validate dedicated-chain matching:** the original direct DROP rules take precedence.
+
+**Post-test:** The operator manually removed the `DOCKER-USER` jump, independently read back its original `RETURN`-only configuration, stopped the timed rollback, and verified the timer `not-found/inactive/dead`. Original two-rule TrueNAS POSTINIT startup script **unchanged**; full permanent three-zone isolation **not deployed**. IPv6, TCP/UDP and other protocols, management-LAN bypass, Layer-2/host forwarding, Docker/TrueNAS restart persistence, and comprehensive Suricata mirroring remain OPEN.
+
+[Validation V-86–V-95](validation.md#module-06--fresh-six-direction-ipv4-icmp-test-via-docker-user-2026-10-20) · [Build notes](build-notes.md#module-06--fresh-six-direction-ipv4-icmp-validation-and-rollback-2026-10-20).
