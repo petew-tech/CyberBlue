@@ -192,3 +192,11 @@ Each test used a temporary guest /32 route explicitly via the respective lab int
 Docker is active with `Restart=always` and `docker.socket` currently active and listening, though both unit files report `disabled`. The existing Docker `ExecStartPost` sets `FORWARD` defaults to ACCEPT. TrueNAS `ix-postinit.service` is `Type=oneshot`, `After=multi-user.target` without `After=docker.service`; earlier boot logs showed POSTINIT finished before Docker initialization. This does **not** provide automatic re-application on Docker restart.
 
 **Next phase:** Design separately managed, Docker-lifecycle-aware CyberBlue enforcement with rollback and operator approval. No POSTINIT registration, Docker override, or active firewall rules have been changed in this discovery phase. [Validation V-98–V-102](validation.md#module-06--docker-lifecycle-read-only-discovery-and-v3-preflight-2026-10-20).
+
+## Project Scope Reset — Suricata Detection Work (2026-10-20)
+
+**Firewall lifecycle engineering deferred to Project 02.** Module 06's temporary routed IPv4 ICMP isolation experiment, rollback and read-only V3 preflight are retained as supporting network evidence, but the systemd/Docker persistence project is **not** a prerequisite to continuing this Suricata build. The original two-rule TrueNAS firewall baseline remains unchanged; `CYBERBLUE_ZONES` is detached, and no new persistent service has been installed.
+
+**Return to Project 05 objectives:** Verify the Suricata/Wazuh sensor health, confirm current dual-bridge capture interfaces `ens4` (Attack) and `ens5` (Victim), then plan safe and scoped traffic-visibility testing on the finalized VM topology. Previous `tc` mirroring was explicitly removed during the SOC migration on October 17, and full inter-VM visibility is **not proven**. Existing custom SID `1000001` and Wazuh rule `86601` alert validations remain historical PASS evidence, not claims of current mirror coverage.
+
+[Project 02 open firewall follow-up](../02-networking-segmentation/README.md#open-follow-up--permanent-three-zone-firewall-lifecycle-2026-10-20).
