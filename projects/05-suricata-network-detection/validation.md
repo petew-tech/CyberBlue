@@ -1,6 +1,6 @@
 # Project 05 — Validation Record
 
-**Validation date:** 2026-10-16  
+**Validation period:** 2026-10-16 through 2026-10-20  
 **Sensor:** Linux Mint 22.3, `cyberblue-suricata`  
 **SIEM:** Wazuh manager `siem-01` (`192.168.1.213`)
 
