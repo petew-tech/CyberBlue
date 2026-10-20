@@ -124,3 +124,18 @@ Each test used an explicitly verified, destination-specific temporary guest rout
 [Complete V-52–V-60 validation](validation.md#module-06--three-zone-scoped-ipv4-icmp-firewall-trial-2026-10-19) · [Candidate, test and rollback procedure](build-notes.md#module-06--temporary-soc-default-deny-candidate-and-rollback-procedure-2026-10-19)
 
 **Approved management-LAN access (2026-10-19):** The operator elected to retain Windows `192.168.1.151` → Kali `192.168.1.91` TCP/22 SSH reachability on the separate management subnet. Windows `Test-NetConnection` verified TCP connectivity via `Ethernet 3`; no SSH authentication was tested. This is **not** permission for arbitrary Victim `br30` → Attack `br40` traffic, and **no live firewall configuration was changed**. Future management access controls must explicitly account for this limited approved path. [Validation V-61–V-62](validation.md#module-06--approved-management-lan-ssh-access-2026-10-19).
+
+## Module 06 — Dedicated CYBERBLUE_ZONES Chain Trial (2026-10-20)
+
+**Temporary test: PASS — three of three exercised routed IPv4 ICMP directions were dropped by a dedicated, rollback-protected firewall chain.** This extends the earlier six-direction candidate evidence; it does **not** mean the full three-zone policy is permanently deployed.
+
+- `iptables-nft` chain `CYBERBLUE_ZONES` was populated with all six directional `br20`/`br30`/`br40` DROP rules before inserting the jump at `FORWARD` rule 1. Original Victim ↔ Attack DROP rules remained at positions 2 and 3, with Docker entries following.
+- **Attack → SOC:** Kali `10.10.40.20` to Ubuntu `10.10.20.10`: 4 ICMP packets sent, 0 received; `br40→br20` DROP counter **4 packets / 336 B**.
+- **SOC → Attack:** Ubuntu `10.10.20.10` to Kali `10.10.40.20`: 4 sent, 0 received; `br20→br40` DROP counter **4 packets / 336 B**.
+- **SOC → Victim:** Ubuntu `10.10.20.10` to Windows `10.10.30.10`: 4 sent, 0 received; `br20→br30` DROP counter **4 packets / 336 B**.
+- Each probe used a temporary destination-specific guest route with a shell exit-cleanup trap; independent route readback was not recorded during this window. The remaining three directional chain rules were installed but not retested under this implementation.
+- A verified 15-minute transient systemd rollback safeguard was armed. The operator manually removed the `FORWARD` jump after testing; readback showed only the original two Victim ↔ Attack DROP rules and unchanged Docker entries. The timer was verified **not loaded / inactive / dead**.
+
+**Current deployed state:** The original two-rule TrueNAS POSTINIT script was not changed, and the six-rule chain is **not attached**. Full persistent three-zone default deny, cross-protocol/IPv6 protection, management-LAN restrictions, Layer-2/host paths, TrueNAS host reboot and full Suricata mirror coverage remain **OPEN**. The previously approved Windows management IP `192.168.1.151` → Kali management IP `192.168.1.91:22/tcp` exception is separate from these lab-bridge rules.
+
+[Validation V-63–V-69](validation.md#module-06--dedicated-cyberblue_zones-chain-test-2026-10-20) · [Procedure and rollback evidence](build-notes.md#module-06--dedicated-chain-candidate-and-safe-rollback-2026-10-20)
