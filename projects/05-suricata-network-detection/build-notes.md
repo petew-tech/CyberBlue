@@ -502,3 +502,9 @@ Operator ran a filtered Wazuh manager `alerts.json` summary for Suricata SID `10
 Operator navigated to Wazuh Threat Hunting, applied filter `rule.id:86601` for October 20 around 13:16 CDT, and reported viewing an event with `data.alert.signature_id=1000002`. Since the expanded record did not fit into one screen, operator saved two separate cropped screenshot files: overview `10-wazuh-victim-alert-overview.png` and detail `11-wazuh-victim-alert-details.png`. Both files were confirmed present in GitHub under Project 05 `evidence/`; pixel review was not performed. The separately supplied Wazuh manager CLI check remains the proof that **four** exact events were received; dashboard proof is bounded to a user-confirmed matching signature in at least one alert.
 
 [Validation V-116](validation.md#project-05--wazuh-victim-alert-dashboard-and-screenshot-evidence-2026-10-20) · [Evidence index](evidence/README.md#wazuh-victim-alert-dashboard--2026-10-20).
+
+## Project 05 — R3 Scheduled Rollback Journal Verification (2026-10-20)
+
+**R3 backup timer actually executed.** On TrueNAS, `journalctl -u cyberblue-br30-mirror-rollback-r3.service --since "2026-10-20 11:32:00" --no-pager` returned the following at **11:32:57 PDT, October 20**: (1) service started for `/bin/sh /mnt/Pool1/CyberBlue/cyberblue-br30-mirror-rollback.sh`; (2) script printed `CYBERBLUE BR30 MIRROR ROLLBACK COMPLETE`; (3) systemd reported `Deactivated successfully`. The manual rollback and independently confirmed `tc qdisc show dev vnet13` `noqueue` state were performed earlier. This proves the timer fired and the idempotent script exited successfully; it does not yet constitute a fresh post-timer qdisc readback. No persistent network mirroring was configured.
+
+[Validation V-117](validation.md#project-05--r3-scheduled-rollback-execution-2026-10-20).
