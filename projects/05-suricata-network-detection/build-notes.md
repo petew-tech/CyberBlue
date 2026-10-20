@@ -496,3 +496,9 @@ A first `suricata -T` was interrupted; the subsequent bounded `sudo timeout 120 
 Operator ran a filtered Wazuh manager `alerts.json` summary for Suricata SID `1000002` and reported `MATCHING ALERTS: 4` with four UTC event timestamps, Wazuh rule `86601` and agent `003`. Operator saved and uploaded [`evidence/05-victim-suricata-wazuh-detection.png`](evidence/05-victim-suricata-wazuh-detection.png); the image **file's existence** was independently confirmed in GitHub. Visual content of the binary screenshot was not independently inspected. This evidence corresponds to V-115 and does not establish persistent mirror operation or full sensor coverage.
 
 [Evidence index](evidence/README.md#captured-screenshot--2026-10-20-victim-suricata-to-wazuh).
+
+## Project 05 — Wazuh Threat Hunting Screenshot Evidence (2026-10-20)
+
+Operator navigated to Wazuh Threat Hunting, applied filter `rule.id:86601` for October 20 around 13:16 CDT, and reported viewing an event with `data.alert.signature_id=1000002`. Since the expanded record did not fit into one screen, operator saved two separate cropped screenshot files: overview `10-wazuh-victim-alert-overview.png` and detail `11-wazuh-victim-alert-details.png`. Both files were confirmed present in GitHub under Project 05 `evidence/`; pixel review was not performed. The separately supplied Wazuh manager CLI check remains the proof that **four** exact events were received; dashboard proof is bounded to a user-confirmed matching signature in at least one alert.
+
+[Validation V-116](validation.md#project-05--wazuh-victim-alert-dashboard-and-screenshot-evidence-2026-10-20) · [Evidence index](evidence/README.md#wazuh-victim-alert-dashboard--2026-10-20).
