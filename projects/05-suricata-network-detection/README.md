@@ -234,3 +234,9 @@ During a coordinated test, Windows `10.10.30.10` successfully pinged the Victim 
 **Recovery:** User ran the mirror rollback script and independently verified TrueNAS `vnet13` returned to `noqueue` with **no `clsact`**. The temporary mirror was **removed** and no persistent traffic monitoring path is claimed. This is a validated proof for one ICMP flow, not full Victim network visibility, continuous mirroring, or dashboard evidence.
 
 [Validation V-112–V-115](validation.md#project-05--victim-sid-1000002-end-to-end-suricata-and-wazuh-alert-2026-10-20) · [Build notes](build-notes.md#project-05--victim-suricata-sid-1000002-and-wazuh-detection-2026-10-20).
+
+## Project 05 — Victim Detection Evidence Uploaded (2026-10-20)
+
+**Evidence present:** [`evidence/05-victim-suricata-wazuh-detection.png`](evidence/05-victim-suricata-wazuh-detection.png) was uploaded by the operator and the file's existence verified in GitHub. It is a saved Wazuh-manager terminal screenshot associated with the four alert summaries for Suricata SID `1000002`, Wazuh rule `86601`, agent `003` (V-115). The independently pasted CLI results validate the alert fields; the screenshot pixels have not been independently reviewed. This is **not** a Wazuh dashboard screenshot, and the temporary mirror remains rolled back.
+
+[Evidence index](evidence/README.md#captured-screenshot--2026-10-20-victim-suricata-to-wazuh) · [Validation record](validation.md#project-05--uploaded-evidence-for-v-115-2026-10-20).
