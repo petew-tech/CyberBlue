@@ -444,3 +444,21 @@ The next meaningful Suricata work is to verify sensor/Wazuh agent health on **Li
 **Assessment:** A scoped Windows-to-gateway unicast visibility gap was observed on Mint's passive `ens5` capture interface, consistent with temporary `tc` mirroring being removed October 17. This is not an all-traffic absence or general IDS service failure. Next: read-only inventory of current TrueNAS `br30` membership and guest virtual NIC identity, then plan a safe, limited mirror proof-of-concept with explicit cleanup if needed. Do not invent a persistent mirror or mark complete Victim/Attack coverage as PASS.
 
 [Validation V-103–V-104](validation.md#project-05--sensor-runtime-and-windows-unicast-visibility-2026-10-20).
+
+## Project 05 — Scoped br30 Unicast Mirror and Restoration (2026-10-20)
+
+**VM identity:** TrueNAS `br30` currently has `vnet8` (VM 8 Ubuntu, MAC `00:a0:98:11:81:0a`), `vnet11` (VM 7 Linux Mint, MAC `00:a0:98:0c:44:23`), and `vnet13` (VM 11 Windows, MAC `00:a0:98:31:78:bd`). Mapping confirmed by MAC suffix agreement between host `vnet` NICs and `midclt call vm.device.query` guest-side NIC attributes. Initial `vnet13` qdisc was `noqueue`; ingress/egress filter listings empty; `vnet11` qdisc also `noqueue`.
+
+**Rollback safeguard:** Saved and read back `/mnt/Pool1/CyberBlue/cyberblue-br30-mirror-rollback.sh` and checked `/bin/sh -n` syntax PASS. It checks `tc qdisc show dev vnet13` for `clsact` and conditionally executes `tc qdisc del dev vnet13 clsact`. Because this deletes the whole `clsact`, it is appropriate only when the test exclusively owns that qdisc. The first timed `systemd-run --on-active=15m` rollback actually ran at **10:22:58 PDT**, logged `CYBERBLUE BR30 MIRROR ROLLBACK COMPLETE` and a successful service completion; host qdisc returned to `noqueue`. The R2 timer `cyberblue-br30-mirror-rollback-r2.timer` was then created, independently checked `active (waiting)` with **10:44:09 PDT** scheduled trigger.
+
+**Tested filter:** Under R2, on TrueNAS `vnet13` the user ran `sudo tc qdisc add dev vnet13 clsact`, then `sudo tc filter add dev vnet13 ingress protocol ip pref 100 flower ip_proto icmp src_ip 10.10.30.10 dst_ip 10.10.30.1 action mirred egress mirror dev vnet11`. `tc -s filter show dev vnet13 ingress` verified fields and egress mirror action. After a Windows four-request ping, the action counter reported `Sent 240 bytes 4 pkt (dropped 0)`; that counter alone does not demonstrate NIC delivery. A previous first round saw 0 on Mint even though the host-side mirror action counter incremented; its cause was not established, so do not claim perfect reliability.
+
+**Positive host-side capture:** TrueNAS `tcpdump -ni vnet11` observed four Windows `10.10.30.10 → 10.10.30.1` echo requests (sequences 220–223), `4 captured / 4 received by filter / 0 dropped by kernel`. Windows received four replies.
+
+**Positive guest-side capture:** In a later Windows ping round, Mint `tcpdump -ni ens5` observed all four matching echo requests (sequences 224–227), again `4 captured / 4 received by filter / 0 dropped by kernel`; Windows again received four replies. This validates only the scoped ICMP mirror path, not generalized or durable bridge monitoring.
+
+**Cleanup:** User executed the script manually before R2 timer expiry, saw `CYBERBLUE BR30 MIRROR ROLLBACK COMPLETE`, then independently checked `tc qdisc show dev vnet13` returned just `qdisc noqueue 8023: root refcnt 2`; mirror no longer installed. Scheduled R2 execution has not been checked. Original TrueNAS firewall rules and VM/network configurations were not changed during this test.
+
+**Next Project 05 objective:** On Mint, search Suricata EVE JSON read-only for `ens5` records representing the captured Windows-to-gateway ICMP requests. Existing historical Suricata SID `1000001` / Wazuh `86601` evidence is distinct and does not constitute proof that this Victim flow was detected.
+
+[Validation V-105–V-110](validation.md#project-05--scoped-tc-mirror-proof-packet-capture-and-recovery-2026-10-20).
