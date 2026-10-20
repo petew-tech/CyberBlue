@@ -385,3 +385,26 @@ Guest commands used an `EXIT` trap intended to delete each temporary host route.
 **Remaining:** Before permanent enforcement, test fresh traffic through the `DOCKER-USER` path with timer/rollback protections, address Docker post-start/restart ordering and failures, verify startup-time behavior, retest preservation of Docker/Tailscale/management access, and obtain operator approval to modify the persistent TrueNAS startup path. IPv6, management-LAN/dual-homed bypass, bridged Layer-2, host traffic and full IDS mirroring remain out of scope of this IPv4 forwarding test. The operator-approved Windows `192.168.1.151` → Kali `192.168.1.91:22/tcp` management path is still separate.
 
 [Validation V-77–V-85](validation.md#module-06--docker-compatible-docker-user-trial-2026-10-20).
+
+## Module 06 — Fresh Six-Direction IPv4 ICMP Validation and Rollback (2026-10-20)
+
+**Outcome:** All six test directions produced four ICMP probes, zero responses and matching +4 IPv4 DROP-counter increments. **Four SOC-related paths matched the dedicated chain under `DOCKER-USER`; the two Victim ↔ Attack paths were stopped earlier by the original direct `FORWARD` DROP rules.** This was a distinct test window following the earlier structure-only Docker trial.
+
+**Setup / safety:** A new transient 30-minute `cyberblue-docker-traffic-rollback-20261020.timer` was created, independently checked `active (waiting)`, due **04:49:27 PDT**. The candidate was only executed after a positive timer-active guard and printed `CYBERBLUE DOCKER-USER CHAIN ACTIVATED`. `iptables -S DOCKER-USER` confirmed the `CYBERBLUE_ZONES` jump at the top before `RETURN`. Baseline `CYBERBLUE_ZONES` counters were 4/336 B for SOC→Victim, SOC→Attack and Attack→SOC, and zero in the other three directions.
+
+| Path | Guest-side temporary routing and probe | TrueNAS DROP evidence | Enforcement location |
+|---|---|---|---|
+| SOC Ubuntu `10.10.20.10` → Attack Kali `10.10.40.20` | Ubuntu `ens4`, /32 via `10.10.20.1`; ping -4 sourced from `10.10.20.10`: 4 sent, 0 received | `br20→br40` 4→8 packets, 336→672 B | `CYBERBLUE_ZONES` via `DOCKER-USER` |
+| Attack Kali `10.10.40.20` → SOC Ubuntu `10.10.20.10` | Kali `eth0`, /32 via `10.10.40.1`; ping sourced from `10.10.40.20`: 4 sent, 0 received | `br40→br20` 4→8 packets, 336→672 B | `CYBERBLUE_ZONES` via `DOCKER-USER` |
+| SOC Ubuntu `10.10.20.10` → Victim Windows `10.10.30.10` | Ubuntu `ens4`, /32 via `10.10.20.1`; 4 sent, 0 received | `br20→br30` 4→8 packets, 336→672 B | `CYBERBLUE_ZONES` via `DOCKER-USER` |
+| Victim Windows `10.10.30.10` → SOC Ubuntu `10.10.20.10` | Windows `Ethernet` index 3, ActiveStore /32 via `10.10.30.1`; `ping.exe -S 10.10.30.10 -n 4`, 4 sent, 0 received | `br30→br20` 0→4 packets, 0→240 B | `CYBERBLUE_ZONES` via `DOCKER-USER` |
+| Attack Kali `10.10.40.20` → Victim Windows `10.10.30.10` | Kali `eth0`, /32 via `10.10.40.1`; 4 sent, 0 received | `br40→br30` 0→4 packets, 0→336 B | **Original direct `FORWARD` DROP** |
+| Victim Windows `10.10.30.10` → Attack Kali `10.10.40.20` | Windows `Ethernet` index 3, ActiveStore /32 via `10.10.30.1`; 4 sent, 0 received | `br30→br40` 0→4 packets, 0→240 B | **Original direct `FORWARD` DROP** |
+
+**Route hygiene:** Linux probes used `EXIT` traps to delete test /32 routes; read-only exact-route queries afterward returned no entries for Ubuntu destinations `10.10.40.20/32` and `10.10.30.10/32` and Kali destinations `10.10.20.10/32` and `10.10.30.10/32`. Windows PowerShell tests used `try/finally` with `New-NetRoute -PolicyStore ActiveStore` and `Remove-NetRoute`, displaying `TEMP ROUTE REMOVED`. Read-only `Get-NetRoute` queries confirmed both named Windows /32 destinations absent after testing. One initial command accidentally entered on the TrueNAS host failed with `Cannot find device "ens4"` before the intended packet probes, after which the SOC guest interface was positively verified.
+
+**Restoration:** Before the 04:49:27 PDT deadline, manually executed `cyberblue-docker-user-rollback.sh` and received completion output. Independent `iptables -S DOCKER-USER` showed only `-N DOCKER-USER` and `-A DOCKER-USER -j RETURN`. Stopped the 30-minute timer; `systemctl show` returned `LoadState=not-found`, `ActiveState=inactive`, `SubState=dead`. Exact final Windows `10.10.40.20/32` route query returned no output. Original TrueNAS POSTINIT startup script was **not modified**.
+
+**Not established:** These are scoped **IPv4 ICMP routing** tests, not full protocol coverage, not a TrueNAS/Docker restart or reboot persistence test, and not proof of full L2/IPv6/management network isolation. The original direct `FORWARD` DROP rules protect Victim ↔ Attack in these tests; four SOC directions use `DOCKER-USER`. A read-only final `FORWARD` chain check after this rollback is still outstanding. Next work: verify baseline, design service-lifecycle-safe persistence, retest Docker/Tailscale and approved Windows management `192.168.1.151` → Kali management `192.168.1.91:22/tcp`, obtain explicit operator approval before enabling a permanent implementation.
+
+[Validation V-86–V-95](validation.md#module-06--fresh-six-direction-ipv4-icmp-test-via-docker-user-2026-10-20).
