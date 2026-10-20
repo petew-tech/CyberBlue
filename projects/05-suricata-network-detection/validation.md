@@ -335,3 +335,13 @@ This section validates **guest address cleanup and migration only**, not full zo
 **Evidence file verified in repository:** [`evidence/05-victim-suricata-wazuh-detection.png`](evidence/05-victim-suricata-wazuh-detection.png), uploaded by operator and confirmed present in the GitHub Project 05 `evidence/` directory. Operator stated the screenshot of the Wazuh manager terminal four-alert summary was saved and uploaded. The actual text results independently furnished in this validation session were `MATCHING ALERTS: 4` with agent `003`, Wazuh rule `86601`, and Suricata SID `1000002`. **Upload existence verified; pixel/content review not performed.** This is terminal evidence, not a Wazuh Threat Hunting dashboard screenshot.
 
 [Evidence index](evidence/README.md#captured-screenshot--2026-10-20-victim-suricata-to-wazuh).
+
+## Project 05 — Wazuh Victim Alert Dashboard and Screenshot Evidence (2026-10-20)
+
+| ID | Verification | Evidence / scope | Result |
+|---|---|---|---|
+| V-116 | Wazuh Threat Hunting shows Victim detection | Operator opened **Threat Hunting**, filtered for Wazuh `rule.id:86601` around October 20, 2026, 13:16 CDT, and confirmed that an expanded alert's `data.alert.signature_id` was **`1000002`**. Because the expanded event did not fit into one screenshot, operator separately captured an overview and an alert-details view. GitHub evidence directory was independently inspected and contains both [`10-wazuh-victim-alert-overview.png`](evidence/10-wazuh-victim-alert-overview.png) and [`11-wazuh-victim-alert-details.png`](evidence/11-wazuh-victim-alert-details.png). The binary screenshots' contents have **not** been independently visually reviewed; the individual signature confirmation rests on operator's dashboard readback. | **PASS — operator-confirmed matching SID in Threat Hunting; both evidence files uploaded and present** |
+
+**Qualification:** Four exact SID 1000002 Wazuh manager alerts are separately established in **V-115**. V-116 only establishes at least **one** matching dashboard alert; the operator did not count all four in the dashboard. Upload presence and names are checked; screenshot pixels are not verified. Earlier one-way temporary TrueNAS mirror remains removed after independently verified manual rollback. This does not certify ongoing collection of unicast Victim traffic.
+
+[Evidence index](evidence/README.md#wazuh-victim-alert-dashboard--2026-10-20).
