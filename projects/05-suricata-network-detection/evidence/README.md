@@ -49,3 +49,14 @@ The two files named `project06-` are **Module 06 evidence within Project 05**; f
 | [05-victim-suricata-wazuh-detection.png](05-victim-suricata-wazuh-detection.png) | Operator saved screenshot of Wazuh manager CLI summary showing `MATCHING ALERTS: 4` for Suricata SID `1000002`, agent `003`, Wazuh rule `86601` and UTC timestamps around 18:16:07–18:16:11. Console output was supplied separately and validated as [V-115](../validation.md#project-05--victim-sid-1000002-end-to-end-suricata-and-wazuh-alert-2026-10-20). | File **uploaded and existence verified** in GitHub on 2026-10-20; screenshot visual content not independently inspected |
 
 This is a **terminal evidence screenshot**, not a Wazuh dashboard screenshot. It supports the bounded Windows ICMP / temporary TrueNAS packet-mirroring / Suricata / Wazuh test, **not** continuous network-wide detection. Filename begins `05-` but refers to a different October 20 artifact than the earlier `05-br30-traffic-visibility-gap.PNG`.
+
+## Wazuh Victim Alert Dashboard — 2026-10-20
+
+| Screenshot | Operator's intended view | Verification |
+|---|---|---|
+| [10-wazuh-victim-alert-overview.png](10-wazuh-victim-alert-overview.png) | Wazuh Threat Hunting overview of the Victim alert, including timestamp, Wazuh rule `86601`, and Suricata agent information | **File uploaded and presence verified** in the GitHub evidence directory; image pixels not independently inspected |
+| [11-wazuh-victim-alert-details.png](11-wazuh-victim-alert-details.png) | Expanded detection fields for Suricata signature `1000002` and Windows Victim source/destination | **File uploaded and presence verified** in GitHub; image pixels not independently inspected |
+
+The operator separately confirmed in Wazuh Threat Hunting that `data.alert.signature_id` was `1000002` for an October 20 alert returned under Wazuh `rule.id:86601`. Earlier read-only manager `alerts.json` queries verified **four** matching SID 1000002 events from agent `003`; dashboard screenshot upload verification by itself does **not** establish that all four are visible in the same dashboard view. No persistent packet mirroring is claimed.
+
+[Validation V-116](../validation.md#project-05--wazuh-victim-alert-dashboard-and-screenshot-evidence-2026-10-20).
