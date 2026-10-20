@@ -208,3 +208,13 @@ Docker is active with `Restart=always` and `docker.socket` currently active and 
 During a coordinated test, Windows `10.10.30.10` successfully pinged the Victim gateway `10.10.30.1` **4/4**, but a simultaneously reported Mint `ens5` tcpdump filtered for those echo requests recorded **0 matching packets**, **0 kernel drops**. This is **a scoped observation gap**, not evidence of complete sensor failure. Previous temporary `tc` mirroring was removed on October 17. Next: inspect current bridge membership and design a reversible, minimally scoped monitoring visibility test. No new firewall, mirror, or service changes were made.
 
 [Validation V-103–V-104](validation.md#project-05--sensor-runtime-and-windows-unicast-visibility-2026-10-20) · [Build notes](build-notes.md#project-05--coordinated-victim-unicast-visibility-test-2026-10-20).
+
+## Project 05 — Scoped Victim Mirror Validation (2026-10-20)
+
+**PASS — temporary Windows unicast mirror into Mint sensor, with verified cleanup.** TrueNAS confirmed Windows VM 11 on `vnet13` and Linux Mint VM 7 on `vnet11` under Victim bridge `br30`. A narrow `tc` ingress flower rule mirrored IPv4 ICMP echo requests `10.10.30.10 → 10.10.30.1` from `vnet13` toward `vnet11`. The mirror action recorded four packets; separate, coordinated Windows ping rounds yielded **4/4 packets** on the host-side `vnet11` capture (sequences 220–223) and **4/4 packets** on the guest-side Mint `ens5` capture (sequences 224–227), with **zero kernel drops** in each capture. Both Windows ping rounds received 4/4 gateway replies.
+
+**Recovery PASS:** A 15-minute TrueNAS `systemd-run` rollback first executed and was verified independently. During the successful second test, the user manually executed the saved rollback script and confirmed `vnet13` returned to `noqueue` with **no `clsact`**. This removed the temporary mirror; no permanent traffic-mirroring policy was deployed.
+
+**Still open:** No claim of full-network visibility, persistent mirroring, Suricata EVE processing of the tested ICMP requests, or Wazuh detection from this experiment. Next: read-only EVE search on Mint, then scoped alert validation as warranted.
+
+[Validation V-105–V-110](validation.md#project-05--scoped-tc-mirror-proof-packet-capture-and-recovery-2026-10-20) · [Build notes](build-notes.md#project-05--scoped-br30-unicast-mirror-and-restoration-2026-10-20).
