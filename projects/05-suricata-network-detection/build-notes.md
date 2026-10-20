@@ -490,3 +490,9 @@ A first `suricata -T` was interrupted; the subsequent bounded `sudo timeout 120 
 **Safety and proof limits:** User manually ran `/mnt/Pool1/CyberBlue/cyberblue-br30-mirror-rollback.sh` and independently verified `tc qdisc show dev vnet13` showed only `noqueue`. The temporary mirror is **off**; R3 timer had been verified but its subsequent execution was not inspected. This proves a reversible end-to-end IDS→Wazuh alert path for this specific direction, not a continuous network sensor or a dashboard presentation. No dashboard screenshot provided yet.
 
 [Validation V-112–V-115](validation.md#project-05--victim-sid-1000002-end-to-end-suricata-and-wazuh-alert-2026-10-20).
+
+## Project 05 — Wazuh Detection Screenshot Upload (2026-10-20)
+
+Operator ran a filtered Wazuh manager `alerts.json` summary for Suricata SID `1000002` and reported `MATCHING ALERTS: 4` with four UTC event timestamps, Wazuh rule `86601` and agent `003`. Operator saved and uploaded [`evidence/05-victim-suricata-wazuh-detection.png`](evidence/05-victim-suricata-wazuh-detection.png); the image **file's existence** was independently confirmed in GitHub. Visual content of the binary screenshot was not independently inspected. This evidence corresponds to V-115 and does not establish persistent mirror operation or full sensor coverage.
+
+[Evidence index](evidence/README.md#captured-screenshot--2026-10-20-victim-suricata-to-wazuh).
