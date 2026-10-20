@@ -20,16 +20,18 @@ Observed routes:
 
 TrueNAS bridge `br40` was observed UP with address `10.10.40.1/24`. The bridge inspection listed host-side interface `vnet4` as its attached interface at that time.
 
-## Suricata Configuration and Rule
+## Suricata Configuration and Custom Rules
 
 - Suricata version: 7.0.3.
 - Capture backend: AF_PACKET.
 - Initial capture interface: `ens4` on `br40`; later configured AF_PACKET capture on both `ens4` (cluster ID `99`) and `ens5` (cluster ID `100`).
-- Custom rule SID: `1000001`.
-- Signature: `CYBERBLUE TEST - ICMP Echo Request`.
+- Attack-network custom rule: SID `1000001`, signature `CYBERBLUE TEST - ICMP Echo Request`, matching ICMP echo requests from `10.10.40.10` to `10.10.40.1`; validated in the original October 16 tests.
+- Victim-network custom rule: SID `1000002`, signature `CYBERBLUE TEST - Victim ICMP Echo Request`, matching ICMP echo requests from `10.10.30.10` to `10.10.30.1`; added and validated October 20 after a backup of `/etc/suricata/rules/local.rules`.
 - EVE JSON output: `/var/log/suricata/eve.json`.
 
-The custom rule detected ICMP echo requests from `10.10.40.10` to `10.10.40.1`. Suricata logged the alert with `event_type: alert`, protocol `ICMP`, and `icmp_type: 8`.
+The October 16 SID `1000001` test produced a Suricata EVE `event_type:"alert"` record for ICMP type 8 on `ens4`. On October 20, four SID `1000002` EVE alert records were observed on `ens5` **while a temporary TrueNAS ICMP mirror was active**; all four were subsequently verified in Wazuh manager `alerts.json` under Wazuh rule `86601`. The temporary mirror was removed and independently verified absent after scheduled cleanup; the Victim rule's presence does **not** establish continuous Victim-network unicast visibility.
+
+[October 20 rule change and Wazuh proof](#project-05--victim-suricata-sid-1000002-and-wazuh-detection-2026-10-20).
 
 ## Wazuh Agent Integration
 
