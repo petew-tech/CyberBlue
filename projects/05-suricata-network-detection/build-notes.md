@@ -462,3 +462,11 @@ The next meaningful Suricata work is to verify sensor/Wazuh agent health on **Li
 **Next Project 05 objective:** On Mint, search Suricata EVE JSON read-only for `ens5` records representing the captured Windows-to-gateway ICMP requests. Existing historical Suricata SID `1000001` / Wazuh `86601` evidence is distinct and does not constitute proof that this Victim flow was detected.
 
 [Validation V-105–V-110](validation.md#project-05--scoped-tc-mirror-proof-packet-capture-and-recovery-2026-10-20).
+
+## Project 05 — Mirrored Windows ICMP Suricata EVE Flow Evidence (2026-10-20)
+
+After verified manual mirror removal, a **read-only** Mint EVE JSON query matched three `ens5` `event_type:"flow"` records for `10.10.30.10 → 10.10.30.1` ICMP echo requests (type 8/code 0). Flow record timestamps were 12:33:57, 12:37:56 and 12:40:46 on 2026-10-20 (-0500). Each reported `pkts_toserver:4`, `bytes_toserver:296`, `pkts_toclient:0`. The final recorded flow start/end of 12:40:08–12:40:11 agrees with Mint `tcpdump` echo request sequences **224–227** recorded during the temporary R2 mirror test.
+
+**Outcome:** PASS for Suricata AF_PACKET ingestion and EVE **flow logging** of the specific mirrored Windows unicast requests. The lack of client reply packets is expected from a request-direction-only flower filter and should not be interpreted as packet loss on Windows (Windows pings replied 4/4). No `event_type:"alert"` or Wazuh forwarding is established by this evidence; verify those separately. Mirror already removed; no new `tc` changes required for the read-only alert query.
+
+[Validation V-111](validation.md#project-05--suricata-eve-flow-ingestion-of-mirrored-victim-traffic-2026-10-20).
