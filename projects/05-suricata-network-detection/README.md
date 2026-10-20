@@ -256,7 +256,7 @@ During a coordinated test, Windows `10.10.30.10` successfully pinged the Victim 
 
 ## Project 05 — R3 Backup Rollback Confirmed (2026-10-20)
 
-**R3 scheduled safety rollback: PASS.** After earlier successful manual mirror removal and independent `vnet13` `noqueue` check, TrueNAS `journalctl` showed `cyberblue-br30-mirror-rollback-r3.service` started at **11:32:57 PDT** on October 20, printed `CYBERBLUE BR30 MIRROR ROLLBACK COMPLETE`, and deactivated successfully. This confirms the timed cleanup script also ran; a separate post-timer qdisc state check remains pending. No permanent mirror is claimed.
+**R3 scheduled safety rollback: PASS.** After earlier successful manual mirror removal and independent `vnet13` `noqueue` check, TrueNAS `journalctl` showed `cyberblue-br30-mirror-rollback-r3.service` started at **11:32:57 PDT** on October 20, printed `CYBERBLUE BR30 MIRROR ROLLBACK COMPLETE`, and deactivated successfully. This confirms the timed cleanup script also ran. The separate post-timer qdisc check was pending at the V-117 checkpoint, then **completed as PASS under V-118**: `vnet13` showed only `noqueue`, without `clsact`. No permanent mirror is claimed.
 
 [Validation V-117](validation.md#project-05--r3-scheduled-rollback-execution-2026-10-20).
 
