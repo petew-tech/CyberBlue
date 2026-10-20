@@ -139,3 +139,13 @@ Each test used an explicitly verified, destination-specific temporary guest rout
 **Current deployed state:** The original two-rule TrueNAS POSTINIT script was not changed, and the six-rule chain is **not attached**. Full persistent three-zone default deny, cross-protocol/IPv6 protection, management-LAN restrictions, Layer-2/host paths, TrueNAS host reboot and full Suricata mirror coverage remain **OPEN**. The previously approved Windows management IP `192.168.1.151` → Kali management IP `192.168.1.91:22/tcp` exception is separate from these lab-bridge rules.
 
 [Validation V-63–V-69](validation.md#module-06--dedicated-cyberblue_zones-chain-test-2026-10-20) · [Procedure and rollback evidence](build-notes.md#module-06--dedicated-chain-candidate-and-safe-rollback-2026-10-20)
+
+## Module 06 — Hardened V2 Startup Candidate and Safe Restore (2026-10-20)
+
+**Reversible test PASS; NOT deployed as persistent startup policy.** A new `/mnt/Pool1/CyberBlue/cyberblue-firewall-persistent-v2.sh` candidate was backed up, syntax-checked and reviewed. Its hardened design checks the exact six directional rules in `CYBERBLUE_ZONES`, rejects unexpected chain contents/references, and does not flush a populated detached chain.
+
+During a fresh 15-minute rollback-protected window, V2 attached `CYBERBLUE_ZONES` first in TrueNAS IPv4 `FORWARD`, ahead of the original Victim ↔ Attack direct DROP rules and Docker forwarding entries. A second V2 run reported `CYBERBLUE CHAIN ALREADY ACTIVE AND VERIFIED`; readback confirmed **one** jump and no duplicate. Manual rollback removed the jump and restored the original two-rule baseline; the systemd rollback timer was verified **not-found/inactive/dead**. **No new guest-packet probes were run in the V2 idempotency window**; the three earlier directed ICMP checks remain separate evidence.
+
+Independent post-test route reads confirmed Ubuntu and Kali's temporary /32 host routes absent and normal management route selection restored (V-70); the detached chain retained its six rules for inspection (V-71). The original TrueNAS POSTINIT startup script remains unchanged. **Persistent full three-zone isolation, reboot/restart ordering, exception enforcement outside the bridge rules, other protocols, IPv6 and full Suricata monitoring remain OPEN.**
+
+[Detailed V2 validation V-72–V-76](validation.md#module-06--hardened-persistent-startup-v2-controlled-trial-2026-10-20) · [V2 build notes](build-notes.md#module-06--hardened-persistent-v2-reversible-test-2026-10-20)
