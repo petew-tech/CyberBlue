@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project validates network intrusion-detection telemetry from Suricata on Linux Mint through the Wazuh agent to the centralized Wazuh SIEM. The project includes a custom ICMP detection rule, centralized alert verification, and a controlled Suricata process-failure/recovery test.
+This project validates network intrusion-detection telemetry from Suricata on Linux Mint through the Wazuh agent to the centralized Wazuh SIEM. The project includes **two custom ICMP detection rules**: Attack-network SID `1000001` (`10.10.40.10 → 10.10.40.1`) and Victim-network SID `1000002` (`10.10.30.10 → 10.10.30.1`). Both were validated with centralized Wazuh alert evidence; the Victim test used a temporary scoped mirror that was subsequently removed. A controlled Suricata process-failure/recovery test was also completed. Comprehensive or persistent network-wide mirroring remains **OPEN**.
 
 ## Lab Components
 
