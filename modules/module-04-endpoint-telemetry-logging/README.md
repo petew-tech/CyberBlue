@@ -4,7 +4,7 @@
 
 ## Overview
 
-This project establishes endpoint visibility across Windows and Linux systems in the CyberBlue lab.
+This module establishes endpoint visibility across Windows and Linux systems in the CyberBlue lab.
 
 The objective was to understand what endpoint activity is visible through native operating-system logging, identify visibility gaps, deploy enhanced telemetry, and validate that security-relevant activity can be reconstructed from endpoint evidence.
 
@@ -32,7 +32,7 @@ The project uses:
 | Kali Linux | Security testing endpoint |
 | TrueNAS SCALE | Virtualization platform |
 
-The Windows and Linux endpoints were connected to the CyberBlue lab network created during the previous networking and segmentation project.
+The Windows and Linux endpoints were connected to the CyberBlue lab network established in Module 03.
 
 ---
 
@@ -370,13 +370,13 @@ Additional project documentation:
 
 ## Project Status
 
-**VALIDATED — DOCUMENTATION COMPLETE WITH ONE HISTORICAL EVIDENCE LIMITATION**
+**VALIDATED CORE EXERCISES — HISTORICAL AND SCREENSHOT EVIDENCE LIMITATIONS DISCLOSED**
 
 Windows and Linux endpoint telemetry exercises were completed, including native logging, Sysmon, auditd, controlled visibility gaps, and recovery testing.
 
 The evidence inventory has been reconciled:
 
-- 14 evidence entries are marked PASS.
+- Evidence entries 01–13 have linked screenshot files; item 14 is Partial historical evidence; item 15's cited screenshot is absent from the repository.
 - Evidence item 14 is marked Partial evidence.
 - The original October 5, 2026 Sysmon Event ID 11 is no longer retained in the current Windows event log.
 - The historical timeline limitation is documented in `validation.md` and `evidence/README.md`.
