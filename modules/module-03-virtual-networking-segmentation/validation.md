@@ -1,5 +1,7 @@
 # Module 03 — Network Validation
 
+**Latest documented topology:** The later October 18–20 migration placed Ubuntu on SOC `br20` (`10.10.20.10`), Windows on Victim `br30` (`10.10.30.10`), Kali on Attack `br40` (`10.10.40.20`), and Linux Mint as the Suricata sensor on Attack `br40` (`10.10.40.10`) with passive Victim and SOC attachments. The October 10 tables below document earlier, successful tests and are not the current guest-placement inventory. Three-zone SOC DROP rules remain a tested, rolled-back candidate rather than persistent policy. See [Module 06 validation](../module-06-network-security-monitoring/validation.md#module-06--three-zone-scoped-ipv4-icmp-firewall-trial-2026-10-19).
+
 ## Validation Objective
 
 Validate the CyberBlue virtual networking environment by confirming:
@@ -221,9 +223,9 @@ The IPv6 FORWARD firewall policy is ACCEPT, and no explicit IPv6 DROP rules exis
 
 No firewall or network configuration changes were required.
 
-## Current Network Validation — October 10, 2026
+## Historical Two-Zone Network Validation — October 10, 2026
 
-### Current Network Configuration
+### Network Configuration Recorded on October 10
 
 | Component | Interface / Bridge | IPv4 Address |
 |---|---|---|
