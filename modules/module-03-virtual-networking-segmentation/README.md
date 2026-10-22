@@ -1,8 +1,8 @@
-# CyberBlue Project 2 — Virtual Networking & Segmentation
+# CyberBlue Module 03 — Virtual Networking & Segmentation
 
 ## Project Overview
 
-This project builds a segmented virtual networking environment on TrueNAS SCALE 24.10.1 using KVM/QEMU and libvirt.
+This module builds a segmented virtual networking environment on TrueNAS SCALE 24.10.1 using KVM/QEMU and libvirt.
 
 The lab demonstrates how virtual machines connect through virtual network interfaces, Linux bridges, DHCP, NAT, routing, and isolated network segments. It also demonstrates how to validate permitted and prohibited communication paths and troubleshoot a deliberately introduced network failure.
 
