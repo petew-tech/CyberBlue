@@ -2,7 +2,7 @@
 
 ## Historical Environment — Initial Lab Configuration
 
-**Documentation note:** This section describes the environment used during the initial libvirt networking experiments. The VM management addresses shown in the table reflect the latest verified addresses, while the networking phases below preserve the original implementation and test results.
+**Documentation note:** This section describes the environment used during the initial libvirt networking experiments. The table below reflects an earlier checkpoint, not the latest VM management addresses. The phases preserve their original implementation and test results; the latest verified guest/bridge assignments are summarized in [Module 03 README](README.md#latest-verified-guest-placement) and evidenced by [Module 06 migration validation](../module-06-network-security-monitoring/validation.md#module-06--staged-network-migration-validation-2026-10-18).
 
 - **Hypervisor:** TrueNAS SCALE 24.10.1
 - **Virtualization:** KVM/QEMU with libvirt
