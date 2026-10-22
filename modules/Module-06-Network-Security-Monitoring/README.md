@@ -70,8 +70,8 @@ The capture statistics are a point-in-time sample, not proof of zero packet loss
 
 - [Build notes](build-notes.md)
 - [Validation record](validation.md)
-- [Project 04 — Centralized Logging & SIEM Foundations](../04-centralized-logging/README.md)
-- [Project 02 — Virtual Networking & Segmentation](../02-networking-segmentation/README.md)
+- [Project 04 — Centralized Logging & SIEM Foundations](../../projects/04-centralized-logging/README.md)
+- [Project 02 — Virtual Networking & Segmentation](../../projects/02-networking-segmentation/README.md)
 
 ---
 
@@ -202,7 +202,7 @@ Each test used a temporary guest /32 route explicitly via the respective lab int
 
 Docker is active with `Restart=always` and `docker.socket` currently active and listening, though both unit files report `disabled`. The existing Docker `ExecStartPost` sets `FORWARD` defaults to ACCEPT. TrueNAS `ix-postinit.service` is `Type=oneshot`, `After=multi-user.target` without `After=docker.service`; earlier boot logs showed POSTINIT finished before Docker initialization. This does **not** provide automatic re-application on Docker restart.
 
-**Infrastructure follow-up (deferred to Project 02):** The V-98–V-102 discovery identified the need for separately managed, Docker-lifecycle-aware CyberBlue enforcement with controlled rollback and explicit operator approval. **The subsequent Project 05 scope reset deferred this design and permanent deployment work to Project 02; it is not the next Project 05 Suricata task.** No POSTINIT registration, Docker override, permanent service or active firewall-rule change was made in this discovery phase. The original TrueNAS Victim ↔ Attack two-rule baseline remains the deployed policy. [Validation V-98–V-102](validation.md#module-06--docker-lifecycle-read-only-discovery-and-v3-preflight-2026-10-20) · [Project 02 follow-up](../02-networking-segmentation/README.md#open-follow-up--permanent-three-zone-firewall-lifecycle-2026-10-20).
+**Infrastructure follow-up (deferred to Project 02):** The V-98–V-102 discovery identified the need for separately managed, Docker-lifecycle-aware CyberBlue enforcement with controlled rollback and explicit operator approval. **The subsequent Project 05 scope reset deferred this design and permanent deployment work to Project 02; it is not the next Project 05 Suricata task.** No POSTINIT registration, Docker override, permanent service or active firewall-rule change was made in this discovery phase. The original TrueNAS Victim ↔ Attack two-rule baseline remains the deployed policy. [Validation V-98–V-102](validation.md#module-06--docker-lifecycle-read-only-discovery-and-v3-preflight-2026-10-20) · [Project 02 follow-up](../../projects/02-networking-segmentation/README.md#open-follow-up--permanent-three-zone-firewall-lifecycle-2026-10-20).
 
 ## Project Scope Reset — Suricata Detection Work (2026-10-20)
 
@@ -210,7 +210,7 @@ Docker is active with `Restart=always` and `docker.socket` currently active and 
 
 **Return to Project 05 objectives — completed follow-up:** Following the firewall-lifecycle deferral, **V-103 confirmed** Linux Mint Suricata/Wazuh service health and active AF_PACKET workers on `ens4` (Attack) and `ens5` (Victim). The first unmirrored Victim unicast check identified a visibility gap (**V-104**); read-only TrueNAS `br30` NIC inspection and rollback-protected scoped ICMP mirroring then passed (**V-105–V-110**). Suricata EVE flow ingestion was validated separately (**V-111**). A later, distinct temporary Victim test using SID `1000002` demonstrated four Suricata alerts, four Wazuh manager alerts, and at least one dashboard match (**V-112–V-116**). Earlier `tc` mirrors had been removed during the October 17 migration, and the later temporary mirror was also rolled back with verified post-timer cleanup (**V-117–V-118**). Historical Attack SID `1000001` / Wazuh rule `86601` detections remain valid. **Full, continuous inter-VM visibility has not been proven and remains OPEN.**
 
-[Project 02 open firewall follow-up](../02-networking-segmentation/README.md#open-follow-up--permanent-three-zone-firewall-lifecycle-2026-10-20).
+[Project 02 open firewall follow-up](../../projects/02-networking-segmentation/README.md#open-follow-up--permanent-three-zone-firewall-lifecycle-2026-10-20).
 
 ## Project 05 — Current Suricata Visibility Check (2026-10-20)
 

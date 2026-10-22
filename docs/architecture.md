@@ -227,7 +227,7 @@ Historical configurations, security limitations, and validation results are pres
 
 ## 13. Approved Target Architecture — SOC / Victim / Attack Segmentation (2026-10-16)
 
-**Status: GUEST NETWORK PLACEMENT VALIDATED — SOC ON `br20`, WINDOWS VICTIM ON `br30`, KALI ATTACK ON `br40`; TESTED VICTIM ↔ ATTACK IPv4 ICMP FORWARDING DENIED; FINAL ISOLATION AND MONITORING COVERAGE REMAIN OPEN.** Project 02 documents the historical baseline. The newest observed guest changes, troubleshooting, and reboot checks are recorded in [Project 05 Module 06](../projects/05-suricata-network-detection/README.md#module-06--staged-network-migration-2026-10-18).
+**Status: GUEST NETWORK PLACEMENT VALIDATED — SOC ON `br20`, WINDOWS VICTIM ON `br30`, KALI ATTACK ON `br40`; TESTED VICTIM ↔ ATTACK IPv4 ICMP FORWARDING DENIED; FINAL ISOLATION AND MONITORING COVERAGE REMAIN OPEN.** Project 02 documents the historical baseline. The newest observed guest changes, troubleshooting, and reboot checks are recorded in [Project 05 Module 06](../modules/Module-06-Network-Security-Monitoring/README.md#module-06--staged-network-migration-2026-10-18).
 
 | Zone | Planned TrueNAS bridge | Planned subnet | Intended systems and role |
 |---|---|---|---|
@@ -305,13 +305,13 @@ Historical configurations, security limitations, and validation results are pres
 6. Reassess TrueNAS packet mirroring after VM port mappings change. The current `vnet5` and `vnet7` references are runtime-specific and must not be hardcoded as future persistent topology.
 7. For each new module: record its zone, systems, security controls, validation, evidence and rollback steps. Update this architecture only when implemented facts are independently verified; keep the target diagram clearly designated as proposed until complete.
 
-**Related evidence:** [Project 05 — Suricata build notes](../projects/05-suricata-network-detection/build-notes.md) and [validation record](../projects/05-suricata-network-detection/validation.md).
+**Related evidence:** [Project 05 — Suricata build notes](../modules/Module-06-Network-Security-Monitoring/build-notes.md) and [validation record](../modules/Module-06-Network-Security-Monitoring/validation.md).
 
 ### Post-Migration Threat Hunting Confirmation — 2026-10-17
 
 - Wazuh dashboard Threat Hunting screenshot verified **4 hits** matching DQL query `rule.id: 86601`, manager `siem-01`, agent `003` / `cyberblue-suricata`, at ~12:24 CDT on October 17. All four rows show level 3 and `Suricata: Alert - CYBERBLUE TEST - ICMP Echo Request`.
 - **Result: PASS** for tested Suricata -> Wazuh agent -> manager -> dashboard alert path after adding Linux Mint's SOC NIC. The earlier `agent.id: 002` dashboard filter had excluded the sensor; opening agent 003 and filtering by rule displayed the correct events.
-- Screenshot [09-wazuh-post-soc-migration-alerts.png](../projects/05-suricata-network-detection/evidence/09-wazuh-post-soc-migration-alerts.png) has been uploaded and verified in GitHub. Unrestricted cross-zone routing, final-state isolation, and comprehensive passive capture are not established.
+- Screenshot [09-wazuh-post-soc-migration-alerts.png](../modules/Module-06-Network-Security-Monitoring/evidence/09-wazuh-post-soc-migration-alerts.png) has been uploaded and verified in GitHub. Unrestricted cross-zone routing, final-state isolation, and comprehensive passive capture are not established.
 
 
 ### Windows 11 Victim Bridge Onboarding — 2026-10-18
@@ -332,7 +332,7 @@ Historical configurations, security limitations, and validation results are pres
 - **Connectivity after Windows reboot:** `ping -S 10.10.30.10 -n 4 10.10.30.1` and `ping -S 192.168.1.151 -n 4 192.168.1.1` each received 4/4 responses (0% loss).
 - **Validated guest-level changes at this checkpoint:** Ubuntu and Windows address/routing persistence. The later Kali migration and guest reboot are recorded directly below. **Still not established:** TrueNAS host reboot persistence for `br20`, current cross-zone firewall enforcement, complete isolation, or broad Suricata mirroring. Guest IP removal does not imply guest NIC detachment.
 
-Four screenshots were uploaded to [Project 05 evidence](../projects/05-suricata-network-detection/evidence/README.md#module-06--network-migration-evidence-2026-10-18), with detailed [build notes](../projects/05-suricata-network-detection/build-notes.md#module-06--ubuntu-and-windows-ip-migration-2026-10-18) and [validation](../projects/05-suricata-network-detection/validation.md#module-06--staged-network-migration-validation-2026-10-18).
+Four screenshots were uploaded to [Project 05 evidence](../modules/Module-06-Network-Security-Monitoring/evidence/README.md#module-06--network-migration-evidence-2026-10-18), with detailed [build notes](../modules/Module-06-Network-Security-Monitoring/build-notes.md#module-06--ubuntu-and-windows-ip-migration-2026-10-18) and [validation](../modules/Module-06-Network-Security-Monitoring/validation.md#module-06--staged-network-migration-validation-2026-10-18).
 
 ### Module 06 — Kali Attack-Zone Migration and Recovery (2026-10-18)
 
@@ -342,7 +342,7 @@ Four screenshots were uploaded to [Project 05 evidence](../projects/05-suricata-
 - **Post-reboot result:** Kali `eth0 10.10.40.20/24` on `br40`, `eth1 192.168.1.91/24` on management, default via `192.168.1.1 dev eth1`, `10.10.40.0/24` connected on `eth0`, no `10.10.30.0/24` connected route. SSH reconnected. Post-reboot `10.10.40.1` and `192.168.1.1` gateway tests each succeeded with 4/4 replies and 0% loss.
 - **Scope:** Kali guest NIC persistence, IPs, routing, gateway reachability and SSH **PASS**. This is not an inter-zone firewall test, a TrueNAS **host** reboot test, or a demonstration of bridge-wide Suricata visibility.
 
-[Pre-reboot Kali evidence](../projects/05-suricata-network-detection/evidence/module06-kali-attack-network-pre-reboot.png) · [Post-reboot Kali evidence](../projects/05-suricata-network-detection/evidence/module06-kali-attack-network-post-reboot.png) · [Detailed validation](../projects/05-suricata-network-detection/validation.md#kali-attack-zone-migration-and-recovery--2026-10-18)
+[Pre-reboot Kali evidence](../modules/Module-06-Network-Security-Monitoring/evidence/module06-kali-attack-network-pre-reboot.png) · [Post-reboot Kali evidence](../modules/Module-06-Network-Security-Monitoring/evidence/module06-kali-attack-network-post-reboot.png) · [Detailed validation](../modules/Module-06-Network-Security-Monitoring/validation.md#kali-attack-zone-migration-and-recovery--2026-10-18)
 
 ### Module 06 — Controlled Victim ↔ Attack IPv4 Firewall Tests (2026-10-19)
 
@@ -354,7 +354,7 @@ The deployed TrueNAS `iptables` FORWARD rules include `-i br40 -o br30 -j DROP` 
 
 **Validation result: PASS — specific bidirectional routed IPv4 ICMP blocking between the Attack and Victim guests.** The SOC bridge `br20`, other IP protocols, IPv6, shared management access, TrueNAS host reboot persistence, and broad Suricata packet visibility have **not** been validated by these tests. No new evidence screenshot is represented as uploaded.
 
-[Project 05 validation V-46–V-51](../projects/05-suricata-network-detection/validation.md#module-06--victim--attack-ipv4-isolation-tests-2026-10-19) · [Repeatable test and rollback notes](../projects/05-suricata-network-detection/build-notes.md#module-06--victim--attack-ipv4-firewall-test-procedure-2026-10-19)
+[Project 05 validation V-46–V-51](../modules/Module-06-Network-Security-Monitoring/validation.md#module-06--victim--attack-ipv4-isolation-tests-2026-10-19) · [Repeatable test and rollback notes](../modules/Module-06-Network-Security-Monitoring/build-notes.md#module-06--victim--attack-ipv4-firewall-test-procedure-2026-10-19)
 
 ## 14. Approved Default-Deny Inter-Zone Policy — Design Decision (2026-10-19)
 
@@ -374,7 +374,7 @@ The deployed TrueNAS `iptables` FORWARD rules include `-i br40 -o br30 -j DROP` 
 
 **State at design approval:** Scoped routed IPv4 ICMP between Kali and Windows had been dropped in both directions by existing `br40` ↔ `br30` rules. SOC-zone ICMP tests had not yet been completed when this decision was recorded. A subsequent reversible candidate trial is documented in Section 15 below; comprehensive or persistent default-deny enforcement remains unproven. This Section 14 records policy intent, **not an authorization to deploy permanent rules**.
 
-[Networking implementation reference](networking.md) · [Project 05 scoped firewall validation](../projects/05-suricata-network-detection/validation.md#module-06--victim--attack-ipv4-isolation-tests-2026-10-19)
+[Networking implementation reference](networking.md) · [Project 05 scoped firewall validation](../modules/Module-06-Network-Security-Monitoring/validation.md#module-06--victim--attack-ipv4-isolation-tests-2026-10-19)
 
 ## 15. Module 06 — Controlled Three-Zone IPv4 ICMP Trial and Restore (2026-10-19)
 
@@ -392,7 +392,7 @@ The operator used specific temporary /32 guest routes and verified the intended 
 
 **Module 06 remains OPEN** for explicit exceptions, more than ICMP, IPv6, management and dual-homed guest bypasses, host/Layer-2 access, TrueNAS host-reboot persistence and Suricata mirror validation. Scoped ICMP DROP results must not be described as six-way *complete* isolation.
 
-[Detailed trial validation](../projects/05-suricata-network-detection/validation.md#module-06--three-zone-scoped-ipv4-icmp-firewall-trial-2026-10-19) · [Rollback and build procedure](../projects/05-suricata-network-detection/build-notes.md#module-06--temporary-soc-default-deny-candidate-and-rollback-procedure-2026-10-19)
+[Detailed trial validation](../modules/Module-06-Network-Security-Monitoring/validation.md#module-06--three-zone-scoped-ipv4-icmp-firewall-trial-2026-10-19) · [Rollback and build procedure](../modules/Module-06-Network-Security-Monitoring/build-notes.md#module-06--temporary-soc-default-deny-candidate-and-rollback-procedure-2026-10-19)
 
 ## 16. Approved Management-LAN SSH Exception (2026-10-19)
 
@@ -413,7 +413,7 @@ The operator used specific temporary /32 guest routes and verified the intended 
 
 **Security boundary:** This is a deliberate reachable management path between guests in different lab roles. The six zone-to-zone TrueNAS `FORWARD` DROP rules do not cover same-subnet management-LAN communication. If later management-network ACLs or endpoint firewalls are introduced, preserve only the named TCP/22 flow (if still required), avoid general guest-to-guest management access, and retest. Reevaluate the exception if Windows becomes an intentionally compromised Victim host. Current `iptables` baseline remains the two existing Victim ↔ Attack DROP rules; permanent SOC-zone policy remains open.
 
-[Validation record](../projects/05-suricata-network-detection/validation.md#module-06--approved-management-lan-ssh-access-2026-10-19)
+[Validation record](../modules/Module-06-Network-Security-Monitoring/validation.md#module-06--approved-management-lan-ssh-access-2026-10-19)
 
 ## 17. Module 06 — Dedicated Firewall Chain Trial and Rollback (2026-10-20)
 
@@ -435,7 +435,7 @@ The other three directional rules were present but not re-probed using this dedi
 
 **Not established:** Persistent SOC default deny, TCP/UDP or IPv6 isolation, management-LAN or dual-homed bypass restrictions, Layer-2/host traffic control, TrueNAS host reboot survival, comprehensive Suricata traffic delivery. The management-LAN Windows→Kali SSH access approved in Section 16 is not a `br30`→`br40` forwarding exception.
 
-[Validation V-63–V-69](../projects/05-suricata-network-detection/validation.md#module-06--dedicated-cyberblue_zones-chain-test-2026-10-20) · [Build and rollback notes](../projects/05-suricata-network-detection/build-notes.md#module-06--dedicated-chain-candidate-and-safe-rollback-2026-10-20)
+[Validation V-63–V-69](../modules/Module-06-Network-Security-Monitoring/validation.md#module-06--dedicated-cyberblue_zones-chain-test-2026-10-20) · [Build and rollback notes](../modules/Module-06-Network-Security-Monitoring/build-notes.md#module-06--dedicated-chain-candidate-and-safe-rollback-2026-10-20)
 
 ## 18. Module 06 — Hardened V2 Firewall Startup Candidate Trial (2026-10-20)
 
@@ -447,7 +447,7 @@ This tested script repeatability and rollback, **not** an additional guest-traff
 
 **Actual deployed state after V2 test:** original two Victim ↔ Attack DROP rules only, `FORWARD ACCEPT`, original registered POSTINIT startup script unmodified. Future work includes failure-path evaluation and reboot/startup ordering, checking Docker/Tailscale changes, TCP/UDP and IPv6 policies, management-LAN/dual-homed bypasses, host/Layer-2 traffic, and Suricata mirror coverage.
 
-[Validation V-72–V-76](../projects/05-suricata-network-detection/validation.md#module-06--hardened-persistent-startup-v2-controlled-trial-2026-10-20) · [V2 build procedure](../projects/05-suricata-network-detection/build-notes.md#module-06--hardened-persistent-v2-reversible-test-2026-10-20)
+[Validation V-72–V-76](../modules/Module-06-Network-Security-Monitoring/validation.md#module-06--hardened-persistent-startup-v2-controlled-trial-2026-10-20) · [V2 build procedure](../modules/Module-06-Network-Security-Monitoring/build-notes.md#module-06--hardened-persistent-v2-reversible-test-2026-10-20)
 
 ## 19. Module 06 — Docker-Compatible Firewall Candidate and Startup Ordering (2026-10-20)
 
@@ -461,7 +461,7 @@ This tested script repeatability and rollback, **not** an additional guest-traff
 
 **Persistence decision still OPEN:** Need Docker-aware lifecycle/restart enforcement, safe failure/recovery path, fresh tested cross-zone traffic under the candidate, reboot checks and operator approval. Existing Windows management `192.168.1.151` → Kali `192.168.1.91:22/tcp` approval remains separate (Section 16). The original two Victim ↔ Attack direct DROP rules are still the documented production baseline.
 
-[Validation V-77–V-85](../projects/05-suricata-network-detection/validation.md#module-06--docker-compatible-docker-user-trial-2026-10-20) · [Build notes](../projects/05-suricata-network-detection/build-notes.md#module-06--docker-startup-dependency-review-and-docker-user-trial-2026-10-20).
+[Validation V-77–V-85](../modules/Module-06-Network-Security-Monitoring/validation.md#module-06--docker-compatible-docker-user-trial-2026-10-20) · [Build notes](../modules/Module-06-Network-Security-Monitoring/build-notes.md#module-06--docker-startup-dependency-review-and-docker-user-trial-2026-10-20).
 
 ## 20. Module 06 — Fresh Six-Direction IPv4 ICMP Traffic Trial (2026-10-20)
 
@@ -473,11 +473,11 @@ All four named Linux destination-specific /32 routes were separately checked abs
 
 **Open:** TrueNAS/Docker restart persistence, safe startup/lifecycle enforcement, other protocols/IPv6, shared management-LAN reachability and approved Windows management `192.168.1.151` → Kali management `192.168.1.91:22/tcp`, host/Layer-2 bypasses and full Suricata mirror coverage. Do not claim comprehensive or permanently enforced three-zone isolation.
 
-[Validation V-86–V-95](../projects/05-suricata-network-detection/validation.md#module-06--fresh-six-direction-ipv4-icmp-test-via-docker-user-2026-10-20) · [Build notes](../projects/05-suricata-network-detection/build-notes.md#module-06--fresh-six-direction-ipv4-icmp-validation-and-rollback-2026-10-20).
+[Validation V-86–V-95](../modules/Module-06-Network-Security-Monitoring/validation.md#module-06--fresh-six-direction-ipv4-icmp-test-via-docker-user-2026-10-20) · [Build notes](../modules/Module-06-Network-Security-Monitoring/build-notes.md#module-06--fresh-six-direction-ipv4-icmp-validation-and-rollback-2026-10-20).
 
-**Post-rollback baseline independently reconfirmed (2026-10-20):** After the temporary six-direction test, manual rollback and verified inactive timer, `iptables -S FORWARD` showed IPv4 policy ACCEPT, the original two Victim ↔ Attack DROP rules and the existing Docker forwarding entries, without a direct CyberBlue jump. The separate `DOCKER-USER` readback had already confirmed that its temporary `CYBERBLUE_ZONES` jump was removed and only `RETURN` remained. This is evidence of **baseline restoration**, not evidence of permanent SOC-zone isolation. [Validation V-96](../projects/05-suricata-network-detection/validation.md#module-06--fresh-six-direction-ipv4-icmp-test-via-docker-user-2026-10-20).
+**Post-rollback baseline independently reconfirmed (2026-10-20):** After the temporary six-direction test, manual rollback and verified inactive timer, `iptables -S FORWARD` showed IPv4 policy ACCEPT, the original two Victim ↔ Attack DROP rules and the existing Docker forwarding entries, without a direct CyberBlue jump. The separate `DOCKER-USER` readback had already confirmed that its temporary `CYBERBLUE_ZONES` jump was removed and only `RETURN` remained. This is evidence of **baseline restoration**, not evidence of permanent SOC-zone isolation. [Validation V-96](../modules/Module-06-Network-Security-Monitoring/validation.md#module-06--fresh-six-direction-ipv4-icmp-test-via-docker-user-2026-10-20).
 
-**Management SSH post-test confirmation (2026-10-20):** After the temporary six-direction IPv4 ICMP isolation test, manual rollback and full `FORWARD` baseline verification, Windows `192.168.1.151` via `Ethernet 3` successfully established TCP connectivity to Kali management `192.168.1.91:22` (`Test-NetConnection` `TcpTestSucceeded=True`). This confirms continued reachability of the separately approved management path (Section 16), **not** SSH authentication, a newly configured ACL, or full management-LAN isolation. [Validation V-97](../projects/05-suricata-network-detection/validation.md#module-06--fresh-six-direction-ipv4-icmp-test-via-docker-user-2026-10-20).
+**Management SSH post-test confirmation (2026-10-20):** After the temporary six-direction IPv4 ICMP isolation test, manual rollback and full `FORWARD` baseline verification, Windows `192.168.1.151` via `Ethernet 3` successfully established TCP connectivity to Kali management `192.168.1.91:22` (`Test-NetConnection` `TcpTestSucceeded=True`). This confirms continued reachability of the separately approved management path (Section 16), **not** SSH authentication, a newly configured ACL, or full management-LAN isolation. [Validation V-97](../modules/Module-06-Network-Security-Monitoring/validation.md#module-06--fresh-six-direction-ipv4-icmp-test-via-docker-user-2026-10-20).
 
 ## 21. Module 06 — Docker Lifecycle and TrueNAS POSTINIT Discovery (2026-10-20)
 
@@ -487,4 +487,4 @@ A revised `cyberblue-firewall-lifecycle-v3.sh` in the TrueNAS pool passed `sh -n
 
 **Design decision:** Retain the working original TrueNAS POSTINIT two-rule baseline while designing a separately managed CyberBlue lifecycle mechanism to verify/restore rules after Docker initialization and subsequent daemon restarts, with explicit failure recovery and management SSH preservation. A service ordered `After=docker.service` alone is insufficient proof of restart-triggered reconciliation; persistence remains OPEN.
 
-[Validation V-98–V-102](../projects/05-suricata-network-detection/validation.md#module-06--docker-lifecycle-read-only-discovery-and-v3-preflight-2026-10-20) · [Build notes](../projects/05-suricata-network-detection/build-notes.md#module-06--docker-lifecycle-architecture-review-2026-10-20).
+[Validation V-98–V-102](../modules/Module-06-Network-Security-Monitoring/validation.md#module-06--docker-lifecycle-read-only-discovery-and-v3-preflight-2026-10-20) · [Build notes](../modules/Module-06-Network-Security-Monitoring/build-notes.md#module-06--docker-lifecycle-architecture-review-2026-10-20).
