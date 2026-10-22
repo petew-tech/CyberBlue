@@ -2,7 +2,7 @@
 
 ## Validation Status
 
-PASS — controlled endpoint telemetry exercises completed on Windows 11 and Ubuntu Server.
+PASS — controlled endpoint telemetry exercises completed on Windows 11 and Ubuntu Server. **Evidence qualification:** item 14 is Partial historical evidence; the item 15 final-service-state screenshot referenced by the evidence index is not present in GitHub. The core test PASS does not establish that every screenshot is available. See [evidence index](evidence/README.md).
 
 ---
 
