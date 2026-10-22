@@ -69,7 +69,7 @@ See the [approved target design and staged-migration safeguards](docs/architectu
 | Project | Focus | Status |
 |---|---|---|
 | [01 — Virtualization Foundation](projects/01-virtualization-foundation/truenas/README.md) | TrueNAS VM provisioning, networking, lifecycle, and recovery | **Validated** |
-| [02 — Virtual Networking & Segmentation](projects/02-networking-segmentation/README.md) | Persistent bridges, addressing, routing controls, and troubleshooting | **Validated** |
+| [Module 03 — Virtual Networking & Segmentation](modules/module-03-virtual-networking-segmentation/README.md) | Persistent bridges, addressing, routing controls, and troubleshooting | **Validated** |
 | [Module 04 — Endpoint Telemetry & Logging](modules/module-04-endpoint-telemetry-logging/README.md) | Windows Event Logs, Sysmon, Linux auditd, visibility gaps, and recovery | **Validated — historical evidence limitation documented** |
 | [Module 05 — Centralized Logging & SIEM Foundations](modules/module-05-centralized-logging-siem/README.md) | Wazuh 4.14.8, Windows Sysmon alerting, Threat Hunting searches, and selected Windows 11 CIS hardening | **Complete — foundational SIEM deployment and Windows 11 telemetry validated** |
 | [Module 06 — Network Security Monitoring (Suricata & Wazuh)](modules/Module-06-Network-Security-Monitoring/README.md) | Suricata/Wazuh validation and Module 06 SOC/Victim/Attack guest network migration | **Sensor validated; all three guest migrations validated; full zone isolation OPEN** |
@@ -95,7 +95,7 @@ Established the TrueNAS SCALE virtualization environment and validated Ubuntu Se
 
 ---
 
-## Project 02 — Virtual Networking & Segmentation
+## Module 03 — Virtual Networking & Segmentation
 
 Implemented dedicated TrueNAS-managed Linux bridges to create separate CyberBlue lab networks.
 
@@ -109,7 +109,7 @@ Implemented dedicated TrueNAS-managed Linux bridges to create separate CyberBlue
 - Controlled failure and recovery testing
 - Distinguishing network segmentation from complete host isolation
 
-[View Project 02 →](projects/02-networking-segmentation/README.md)
+[View Module 03 →](modules/module-03-virtual-networking-segmentation/README.md)
 
 ---
 
