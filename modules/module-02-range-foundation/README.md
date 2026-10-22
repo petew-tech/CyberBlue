@@ -1,4 +1,4 @@
-![CyberBlue Module 02 — Range Foundation banner](module-02-range-foundation-banner.png)
+![CyberBlue Module 02 — Range Foundation banner](assets/module-02-range-foundation-banner.png)
 
 # CyberBlue Module 02 — Range Foundation (TrueNAS Virtualization)
 

@@ -129,7 +129,7 @@ sudo midclt call bootenv.activate "24.10.1"
 
 ## Source Documents
 
-- [Project 01 — Virtualization Foundation](../modules/module-02-range-foundation/truenas/README.md)
+- [Project 01 — Virtualization Foundation](../modules/module-02-range-foundation/README.md)
 - [Project 02 — Networking & Segmentation](../modules/module-03-virtual-networking-segmentation/README.md)
 - [Project 02 Build Notes](../modules/module-03-virtual-networking-segmentation/build-notes.md)
 - [Project 02 Validation](../modules/module-03-virtual-networking-segmentation/validation.md)
