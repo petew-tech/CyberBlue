@@ -162,7 +162,7 @@ sudo grep -c '"groups":\["sysmon"' /var/ossec/logs/alerts/alerts.json
 
 **Observed result: `32`.**
 
-This counts lines containing the matching beginning of the `rule.groups` array, **not** every raw Sysmon event and not necessarily all Sysmon alerts. The server-side matching-alert count screenshot is uploaded as [Complete pipeline.PNG](Complete%20pipeline.PNG).
+This counts lines containing the matching beginning of the `rule.groups` array, **not** every raw Sysmon event and not necessarily all Sysmon alerts. The server-side matching-alert count screenshot is uploaded as [Complete pipeline.PNG](evidence/Complete%20pipeline.PNG).
 
 ## 7. Dashboard Search Troubleshooting and Resolution
 
@@ -192,7 +192,7 @@ These point-in-time search hit counts confirm that Sysmon-related Wazuh alerts w
 
 - The Windows VM console did not support convenient clipboard paste; commands were entered manually. Preserve short, carefully checked PowerShell instructions for future Windows changes.
 - Continue to protect Wazuh credentials and enrollment secrets.
-- Completed: uploaded the [server-side Sysmon alert-count screenshot](Complete%20pipeline.PNG) and linked it in [validation.md](validation.md).
+- Completed: uploaded the [server-side Sysmon alert-count screenshot](evidence/Complete%20pipeline.PNG) and linked it in [validation.md](validation.md).
 - Completed: validated Sysmon-specific Threat Hunting searches by rule ID, event ID, provider, and channel; see [Section 7](#7-dashboard-search-troubleshooting-and-resolution) and [validation.md](validation.md) for point-in-time results. The original unsuccessful queries remain documented; their cause was not established.
 - Expand endpoint onboarding only after separate configuration and validation.
 

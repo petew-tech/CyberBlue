@@ -110,63 +110,63 @@ This confirms that the Sysmon-related rule **is searchable in the dashboard by r
 
 ### Evidence Handling
 
-Screenshot evidence: [Complete pipeline.PNG](Complete%20pipeline.PNG) — server-side Sysmon matching-alert count (`32`) captured during validation.
+Screenshot evidence: [Complete pipeline.PNG](evidence/Complete%20pipeline.PNG) — server-side Sysmon matching-alert count (`32`) captured during validation.
 
-Detailed indexed-event evidence (Word document): [Wazuh-Sysmon-Event-Details.png.docx](Wazuh-Sysmon-Event-Details.png.docx) — event fields from Wazuh Discover, including Sysmon provider, channel, and rule `92021`.
+Detailed indexed-event evidence (Word document): [Wazuh-Sysmon-Event-Details.png.docx](evidence/Wazuh-Sysmon-Event-Details.png.docx) — event fields from Wazuh Discover, including Sysmon provider, channel, and rule `92021`.
 
-Dashboard screenshot: [Wazuh-Sysmon-Rule-92021.png](Wazuh-Sysmon-Rule-92021.png) — Threat Hunting Events search showing 8 matching rule `92021` alerts (Last 7 days).
+Dashboard screenshot: [Wazuh-Sysmon-Rule-92021.png](evidence/Wazuh-Sysmon-Rule-92021.png) — Threat Hunting Events search showing 8 matching rule `92021` alerts (Last 7 days).
 
-Detailed Sysmon Event ID 11 evidence (Word document): [Wazuh-Sysmon-EventID11-Details.docx](Wazuh-Sysmon-EventID11-Details.docx) — indexed File Create alert fields verified in Wazuh Threat Hunting.
+Detailed Sysmon Event ID 11 evidence (Word document): [Wazuh-Sysmon-EventID11-Details.docx](evidence/Wazuh-Sysmon-EventID11-Details.docx) — indexed File Create alert fields verified in Wazuh Threat Hunting.
 
-Dashboard screenshot: [Wazuh-Sysmon-Rule-92205.png](Wazuh-Sysmon-Rule-92205.png) — Threat Hunting Events search showing 10 matching rule `92205` alerts. Screenshot uploaded during the lab session.
+Dashboard screenshot: [Wazuh-Sysmon-Rule-92205.png](evidence/Wazuh-Sysmon-Rule-92205.png) — Threat Hunting Events search showing 10 matching rule `92205` alerts. Screenshot uploaded during the lab session.
 
-CIS remediation after-scan screenshot: [Wazuh-CIS-Remediation-After.png](Wazuh-CIS-Remediation-After.png) — Wazuh Windows 11 SCA summary after the password-history control was corrected, showing 125 Passed, 348 Failed, 9 Not applicable, and scan completion at 07:40:28 on 2026-10-13 (dashboard time).
+CIS remediation after-scan screenshot: [Wazuh-CIS-Remediation-After.png](evidence/Wazuh-CIS-Remediation-After.png) — Wazuh Windows 11 SCA summary after the password-history control was corrected, showing 125 Passed, 348 Failed, 9 Not applicable, and scan completion at 07:40:28 on 2026-10-13 (dashboard time).
 
-Minimum-password-age remediation after-scan screenshot: [Wazuh-CIS-Minimum-Password-Age-After.PNG](Wazuh-CIS-Minimum-Password-Age-After.PNG) — Wazuh Windows 11 SCA summary showing 126 Passed, 347 Failed, and 9 Not applicable after CIS check `26002` passed.
+Minimum-password-age remediation after-scan screenshot: [Wazuh-CIS-Minimum-Password-Age-After.PNG](evidence/Wazuh-CIS-Minimum-Password-Age-After.PNG) — Wazuh Windows 11 SCA summary showing 126 Passed, 347 Failed, and 9 Not applicable after CIS check `26002` passed.
 
-Minimum-password-length remediation after-scan screenshot: [Wazuh-CIS-Minimum-Password-Length-After.PNG](Wazuh-CIS-Minimum-Password-Length-After.PNG) — Wazuh Windows 11 SCA summary after CIS check `26003` passed, showing 127 Passed, 346 Failed, and 9 Not applicable.
+Minimum-password-length remediation after-scan screenshot: [Wazuh-CIS-Minimum-Password-Length-After.PNG](evidence/Wazuh-CIS-Minimum-Password-Length-After.PNG) — Wazuh Windows 11 SCA summary after CIS check `26003` passed, showing 127 Passed, 346 Failed, and 9 Not applicable.
 
-Relaxed password length limits remediation screenshot: [Wazuh-CIS-Relax-Password-Length-After.PNG](Wazuh-CIS-Relax-Password-Length-After.PNG) — Wazuh WIN11 CIS assessment summary after check `26004` passed, showing 128 Passed, 345 Failed, and 9 Not Applicable.
+Relaxed password length limits remediation screenshot: [Wazuh-CIS-Relax-Password-Length-After.PNG](evidence/Wazuh-CIS-Relax-Password-Length-After.PNG) — Wazuh WIN11 CIS assessment summary after check `26004` passed, showing 128 Passed, 345 Failed, and 9 Not Applicable.
 
-Account lockout duration remediation screenshot: [Wazuh-CIS-Account-Lockout-Duration-After.PNG](Wazuh-CIS-Account-Lockout-Duration-After.PNG) — Wazuh WIN11 CIS assessment summary showing 129 Passed, 344 Failed, 9 Not applicable, score 27%, scan completed Oct 13 2026 11:49:29 (dashboard time).
+Account lockout duration remediation screenshot: [Wazuh-CIS-Account-Lockout-Duration-After.PNG](evidence/Wazuh-CIS-Account-Lockout-Duration-After.PNG) — Wazuh WIN11 CIS assessment summary showing 129 Passed, 344 Failed, 9 Not applicable, score 27%, scan completed Oct 13 2026 11:49:29 (dashboard time).
 
-Account lockout threshold remediation screenshot: [Wazuh-CIS-Account-Lockout-Threshold-After.PNG](Wazuh-CIS-Account-Lockout-Threshold-After.PNG) — Wazuh WIN11 CIS assessment summary showing 130 Passed, 343 Failed, 9 Not applicable, score 27%, scan completed Oct 13 2026 11:58:25 (dashboard time).
+Account lockout threshold remediation screenshot: [Wazuh-CIS-Account-Lockout-Threshold-After.PNG](evidence/Wazuh-CIS-Account-Lockout-Threshold-After.PNG) — Wazuh WIN11 CIS assessment summary showing 130 Passed, 343 Failed, 9 Not applicable, score 27%, scan completed Oct 13 2026 11:58:25 (dashboard time).
 
-Account lockout counter remediation screenshot: [Wazuh-CIS-Account-Lockout-Counter-After.PNG](Wazuh-CIS-Account-Lockout-Counter-After.PNG) — Wazuh WIN11 CIS assessment summary showing 131 Passed, 342 Failed, 9 Not applicable, score 27%, scan completed Oct 13 2026 12:06:20 (dashboard time).
+Account lockout counter remediation screenshot: [Wazuh-CIS-Account-Lockout-Counter-After.PNG](evidence/Wazuh-CIS-Account-Lockout-Counter-After.PNG) — Wazuh WIN11 CIS assessment summary showing 131 Passed, 342 Failed, 9 Not applicable, score 27%, scan completed Oct 13 2026 12:06:20 (dashboard time).
 
-Block Microsoft accounts remediation screenshot: [Wazuh-CIS-Block-Microsoft-Accounts-After.PNG](Wazuh-CIS-Block-Microsoft-Accounts-After.PNG) — Wazuh WIN11 CIS assessment summary showing 132 Passed, 341 Failed, 9 Not applicable, score 27%, scan completed Oct 13 2026 12:24:09 (dashboard time).
+Block Microsoft accounts remediation screenshot: [Wazuh-CIS-Block-Microsoft-Accounts-After.PNG](evidence/Wazuh-CIS-Block-Microsoft-Accounts-After.PNG) — Wazuh WIN11 CIS assessment summary showing 132 Passed, 341 Failed, 9 Not applicable, score 27%, scan completed Oct 13 2026 12:24:09 (dashboard time).
 
-Rename Administrator account remediation screenshot: [Wazuh-CIS-Rename-Administrator-After.PNG](Wazuh-CIS-Rename-Administrator-After.PNG) — Wazuh WIN11 CIS assessment summary showing 133 Passed, 340 Failed, 9 Not applicable, score 28%, scan completed Oct 14 2026 09:37:20 (dashboard time).
+Rename Administrator account remediation screenshot: [Wazuh-CIS-Rename-Administrator-After.PNG](evidence/Wazuh-CIS-Rename-Administrator-After.PNG) — Wazuh WIN11 CIS assessment summary showing 133 Passed, 340 Failed, 9 Not applicable, score 28%, scan completed Oct 14 2026 09:37:20 (dashboard time).
 
-Rename Guest account remediation screenshot: [Wazuh-CIS-Rename-Guest-After.PNG](Wazuh-CIS-Rename-Guest-After.PNG) — Wazuh WIN11 CIS assessment summary showing 134 Passed, 339 Failed, 9 Not applicable, score 28%, scan completed Oct 14 2026 00:48:27 (dashboard time).
+Rename Guest account remediation screenshot: [Wazuh-CIS-Rename-Guest-After.PNG](evidence/Wazuh-CIS-Rename-Guest-After.PNG) — Wazuh WIN11 CIS assessment summary showing 134 Passed, 339 Failed, 9 Not applicable, score 28%, scan completed Oct 14 2026 00:48:27 (dashboard time).
 
-Advanced audit policy override remediation screenshot: [Wazuh-CIS-Advanced-Audit-Policy-After.PNG](Wazuh-CIS-Advanced-Audit-Policy-After.PNG) — Wazuh WIN11 CIS assessment summary showing 135 Passed, 338 Failed, 9 Not applicable, score 28%, scan completed Oct 14 2026 14:13:08 (dashboard time).
+Advanced audit policy override remediation screenshot: [Wazuh-CIS-Advanced-Audit-Policy-After.PNG](evidence/Wazuh-CIS-Advanced-Audit-Policy-After.PNG) — Wazuh WIN11 CIS assessment summary showing 135 Passed, 338 Failed, 9 Not applicable, score 28%, scan completed Oct 14 2026 14:13:08 (dashboard time).
 
-Printer driver installation restriction remediation screenshot: [Wazuh-CIS-Printer-Driver-Restriction-After.PNG](Wazuh-CIS-Printer-Driver-Restriction-After.PNG) — Wazuh WIN11 CIS assessment summary showing 136 Passed, 337 Failed, 9 Not applicable, score 28%, scan completed Oct 14 2026 14:19:36 (dashboard time).
+Printer driver installation restriction remediation screenshot: [Wazuh-CIS-Printer-Driver-Restriction-After.PNG](evidence/Wazuh-CIS-Printer-Driver-Restriction-After.PNG) — Wazuh WIN11 CIS assessment summary showing 136 Passed, 337 Failed, 9 Not applicable, score 28%, scan completed Oct 14 2026 14:19:36 (dashboard time).
 
-Secure interactive logon remediation screenshot: [Wazuh-CIS-Secure-Interactive-Logon-After.PNG](Wazuh-CIS-Secure-Interactive-Logon-After.PNG) — Wazuh WIN11 CIS check `26022` showing Passed; assessment summary remained 136 Passed / 337 Failed / 9 Not applicable, score 28% at scan end Oct 14 2026 14:26:25 (dashboard time).
+Secure interactive logon remediation screenshot: [Wazuh-CIS-Secure-Interactive-Logon-After.PNG](evidence/Wazuh-CIS-Secure-Interactive-Logon-After.PNG) — Wazuh WIN11 CIS check `26022` showing Passed; assessment summary remained 136 Passed / 337 Failed / 9 Not applicable, score 28% at scan end Oct 14 2026 14:26:25 (dashboard time).
 
-Last signed-in user protection remediation screenshot: [Wazuh-CIS-Hide-Last-Signed-In-After.PNG](Wazuh-CIS-Hide-Last-Signed-In-After.PNG) — evidence for Wazuh WIN11 CIS check `26023` reported Passed. Assessment summary at Oct 14 2026 14:40:05 (dashboard time): 138 Passed / 335 Failed / 9 Not applicable, score 29%; the net change of two checks is not attributed solely to this remediation.
+Last signed-in user protection remediation screenshot: [Wazuh-CIS-Hide-Last-Signed-In-After.PNG](evidence/Wazuh-CIS-Hide-Last-Signed-In-After.PNG) — evidence for Wazuh WIN11 CIS check `26023` reported Passed. Assessment summary at Oct 14 2026 14:40:05 (dashboard time): 138 Passed / 335 Failed / 9 Not applicable, score 29%; the net change of two checks is not attributed solely to this remediation.
 
-Machine account lockout threshold remediation screenshot: [Wazuh-CIS-Machine-Account-Lockout-After.PNG](Wazuh-CIS-Machine-Account-Lockout-After.PNG) — evidence for Wazuh WIN11 CIS check `26024` reported Passed. Assessment summary at Oct 14 2026 14:45:25 (dashboard time): 139 Passed / 334 Failed / 9 Not applicable, score 29%.
+Machine account lockout threshold remediation screenshot: [Wazuh-CIS-Machine-Account-Lockout-After.PNG](evidence/Wazuh-CIS-Machine-Account-Lockout-After.PNG) — evidence for Wazuh WIN11 CIS check `26024` reported Passed. Assessment summary at Oct 14 2026 14:45:25 (dashboard time): 139 Passed / 334 Failed / 9 Not applicable, score 29%.
 
-Machine inactivity limit remediation screenshot: [Wazuh-CIS-Machine-Inactivity-Limit-After.PNG](Wazuh-CIS-Machine-Inactivity-Limit-After.PNG) — evidence for Wazuh WIN11 CIS check `26025` reported Passed. Assessment summary at Oct 14 2026 14:54:30 (dashboard time): 140 Passed / 333 Failed / 9 Not applicable, score 29%.
+Machine inactivity limit remediation screenshot: [Wazuh-CIS-Machine-Inactivity-Limit-After.PNG](evidence/Wazuh-CIS-Machine-Inactivity-Limit-After.PNG) — evidence for Wazuh WIN11 CIS check `26025` reported Passed. Assessment summary at Oct 14 2026 14:54:30 (dashboard time): 140 Passed / 333 Failed / 9 Not applicable, score 29%.
 
-Interactive logon security notice text remediation screenshot: [Wazuh-CIS-Logon-Message-Text-After.PNG](Wazuh-CIS-Logon-Message-Text-After.PNG) — evidence for Wazuh WIN11 CIS check `26026` reported Passed. Assessment summary at Oct 14 2026 15:03:47 (dashboard time): 141 Passed / 332 Failed / 9 Not applicable, score 29%.
+Interactive logon security notice text remediation screenshot: [Wazuh-CIS-Logon-Message-Text-After.PNG](evidence/Wazuh-CIS-Logon-Message-Text-After.PNG) — evidence for Wazuh WIN11 CIS check `26026` reported Passed. Assessment summary at Oct 14 2026 15:03:47 (dashboard time): 141 Passed / 332 Failed / 9 Not applicable, score 29%.
 
-Interactive logon message title remediation screenshot: [Wazuh-CIS-Logon-Message-Title-After.PNG](Wazuh-CIS-Logon-Message-Title-After.PNG) — evidence for Wazuh WIN11 CIS check `26027` reported Passed. Assessment summary at Oct 14 2026 15:10:17 (dashboard time): 142 Passed / 331 Failed / 9 Not applicable, score 30%.
+Interactive logon message title remediation screenshot: [Wazuh-CIS-Logon-Message-Title-After.PNG](evidence/Wazuh-CIS-Logon-Message-Title-After.PNG) — evidence for Wazuh WIN11 CIS check `26027` reported Passed. Assessment summary at Oct 14 2026 15:10:17 (dashboard time): 142 Passed / 331 Failed / 9 Not applicable, score 30%.
 
-Process command-line auditing remediation screenshot: [Wazuh-CIS-Process-Command-Line-Auditing-After.PNG](Wazuh-CIS-Process-Command-Line-Auditing-After.PNG) — evidence for Wazuh WIN11 CIS check `26222` reported Passed. Group Policy, registry, and process creation audit policy were independently verified.
+Process command-line auditing remediation screenshot: [Wazuh-CIS-Process-Command-Line-Auditing-After.PNG](evidence/Wazuh-CIS-Process-Command-Line-Auditing-After.PNG) — evidence for Wazuh WIN11 CIS check `26222` reported Passed. Group Policy, registry, and process creation audit policy were independently verified.
 
-Credential validation auditing remediation screenshot: [Wazuh-CIS-Credential-Validation-Auditing-After.PNG](Wazuh-CIS-Credential-Validation-Auditing-After.PNG) — Wazuh WIN11 CIS check `26139` Passed following audit policy remediation and independent `auditpol` verification.
+Credential validation auditing remediation screenshot: [Wazuh-CIS-Credential-Validation-Auditing-After.PNG](evidence/Wazuh-CIS-Credential-Validation-Auditing-After.PNG) — Wazuh WIN11 CIS check `26139` Passed following audit policy remediation and independent `auditpol` verification.
 
-User account management auditing remediation screenshot: [Wazuh-CIS-User-Account-Management-Auditing-After.PNG](Wazuh-CIS-User-Account-Management-Auditing-After.PNG) — Wazuh WIN11 CIS check `26142` Passed following audit policy remediation and independent `auditpol` verification.
+User account management auditing remediation screenshot: [Wazuh-CIS-User-Account-Management-Auditing-After.PNG](evidence/Wazuh-CIS-User-Account-Management-Auditing-After.PNG) — Wazuh WIN11 CIS check `26142` Passed following audit policy remediation and independent `auditpol` verification.
 
-SMB client signing policy remediation screenshot: [Wazuh-CIS-SMB-Client-Signing-After.PNG](Wazuh-CIS-SMB-Client-Signing-After.PNG) — Wazuh WIN11 CIS check `26031` Passed; assessment totals 146 Passed / 327 Failed / 9 Not applicable, score 30%, scan Oct 14 2026 16:25:54 (dashboard time).
+SMB client signing policy remediation screenshot: [Wazuh-CIS-SMB-Client-Signing-After.PNG](evidence/Wazuh-CIS-SMB-Client-Signing-After.PNG) — Wazuh WIN11 CIS check `26031` Passed; assessment totals 146 Passed / 327 Failed / 9 Not applicable, score 30%, scan Oct 14 2026 16:25:54 (dashboard time).
 
-SMB server signing policy remediation screenshot: [Wazuh-CIS-SMB-Server-Signing-After.PNG](Wazuh-CIS-SMB-Server-Signing-After.PNG) — Wazuh WIN11 CIS check `26035` Passed; assessment totals 147 Passed / 326 Failed / 9 Not applicable, score 31%, scan Oct 14 2026 16:36:03 (dashboard time).
+SMB server signing policy remediation screenshot: [Wazuh-CIS-SMB-Server-Signing-After.PNG](evidence/Wazuh-CIS-SMB-Server-Signing-After.PNG) — Wazuh WIN11 CIS check `26035` Passed; assessment totals 147 Passed / 326 Failed / 9 Not applicable, score 31%, scan Oct 14 2026 16:36:03 (dashboard time).
 
-LAN Manager authentication level remediation screenshot: [Wazuh-CIS-LAN-Manager-Authentication-After.PNG](Wazuh-CIS-LAN-Manager-Authentication-After.PNG) — Wazuh WIN11 CIS check `26056` Passed; assessment totals 148 Passed / 325 Failed / 9 Not applicable, score 31%, scan Oct 14 2026 16:48:14 (dashboard time).
+LAN Manager authentication level remediation screenshot: [Wazuh-CIS-LAN-Manager-Authentication-After.PNG](evidence/Wazuh-CIS-LAN-Manager-Authentication-After.PNG) — Wazuh WIN11 CIS check `26056` Passed; assessment totals 148 Passed / 325 Failed / 9 Not applicable, score 31%, scan Oct 14 2026 16:48:14 (dashboard time).
 
 ### Scope of Validation
 
