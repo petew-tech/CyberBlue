@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This shared networking reference combines the historical Project 02 baseline with **newer staged migration results from Project 05 Module 06 (2026-10-18)**. The earlier Project 02 addressing, commands, and diagram are retained as historical evidence, not as a live network inventory. See [Project 05 Module 06 validation](../modules/Module-06-Network-Security-Monitoring/validation.md#module-06--staged-network-migration-validation-2026-10-18).
+This shared networking reference combines the historical Project 02 baseline with **newer staged migration results from Project 05 Module 06 (2026-10-18)**. The earlier Project 02 addressing, commands, and diagram are retained as historical evidence, not as a live network inventory. See [Project 05 Module 06 validation](../modules/module-06-network-security-monitoring/validation.md#module-06--staged-network-migration-validation-2026-10-18).
 
 ## Network Inventory
 
@@ -41,7 +41,7 @@ The home/management LAN uses gateway `192.168.1.1`. The existing `br30` and `br4
 - TrueNAS Mint VM ID `7` retained management NIC device `20` (`enp4s0`), Suricata monitoring NIC `43` (`br40`), and monitoring NIC `51` (`br30`). Added fourth VirtIO NIC device `53` to `br20`, MAC `00:a0:98:7e:12:f8`; guest interface `ens6`.
 - Linux Mint's NetworkManager connection `Wired connection 4` for `ens6` was changed from automatic addressing to `ipv4.method manual`, `ipv4.addresses 10.10.20.11/24`, no IPv4 gateway, `ipv4.never-default yes`, and `ipv6.method disabled`. Activation succeeded; `ip -4 addr show ens6` showed `10.10.20.11/24`, link UP.
 - **Connectivity (2026-10-17):** `ping -I ens6 -c 4 10.10.20.1` (TrueNAS) = 4/4, 0% loss; `ping -I ens6 -c 4 10.10.20.10` (Ubuntu) = 4/4, 0% loss. This confirms **guest-to-guest SOC network communication**.
-- After restarting Mint, Suricata and Wazuh agent both returned `active`; Wazuh agent log showed connection to `192.168.1.213:1514/tcp`. Suricata 7.0.3 initialized two capture threads on both `ens4` and `ens5`, loaded 53,144 rules with no failures, and logged fresh `ens5` flow and capture telemetry. A 4-ping `ens4` test to `10.10.40.1` passed, Suricata generated four SID `1000001` EVE alerts, and `siem-01` Wazuh manager received matching level-3 rule `86601` alerts from agent `003`. Manager ingestion was validated at this stage; the Wazuh dashboard was subsequently verified on 2026-10-17 (see [Project 05 validation](../modules/Module-06-Network-Security-Monitoring/validation.md#threat-hunting-dashboard-confirmation--2026-10-17)).
+- After restarting Mint, Suricata and Wazuh agent both returned `active`; Wazuh agent log showed connection to `192.168.1.213:1514/tcp`. Suricata 7.0.3 initialized two capture threads on both `ens4` and `ens5`, loaded 53,144 rules with no failures, and logged fresh `ens5` flow and capture telemetry. A 4-ping `ens4` test to `10.10.40.1` passed, Suricata generated four SID `1000001` EVE alerts, and `siem-01` Wazuh manager received matching level-3 rule `86601` alerts from agent `003`. Manager ingestion was validated at this stage; the Wazuh dashboard was subsequently verified on 2026-10-17 (see [Project 05 validation](../modules/module-06-network-security-monitoring/validation.md#threat-hunting-dashboard-confirmation--2026-10-17)).
 - Removed the temporary `vnet5` `tc clsact` mirroring proof-of-concept filters before stopping Mint; TrueNAS `tc qdisc show dev vnet5` returned only `noqueue`. Earlier mirroring evidence is historical, **not a live packet-mirroring deployment**. After NIC changes, virtual port IDs may change.
 - After the Mint restart, `ens3` management connectivity to gateway `192.168.1.1` and `ens4` connectivity to `10.10.40.1` were both verified with four successful pings and 0% loss. Inter-zone isolation and TrueNAS `br20` reboot persistence remain open.
 
@@ -176,7 +176,7 @@ The duplicate DHCP address was removed; gateway connectivity, DNS, and SSH were 
 
 Windows and Kali post-reboot Victim/Attack and management gateway pings each returned 4/4 replies, zero loss. Ubuntu maintained SSH after restart, with management and SOC routes present. This proves those specific guest addressing/routing behaviors. The later 2026-10-19 scoped IPv4 firewall validation is documented below, but full inter-zone firewall enforcement and full network isolation are not established. TrueNAS `br20` **host** reboot persistence remains untested.
 
-[Project 05 Module 06 evidence](../modules/Module-06-Network-Security-Monitoring/evidence/README.md#module-06--network-migration-evidence-2026-10-18) · [Validation details](../modules/Module-06-Network-Security-Monitoring/validation.md#module-06--staged-network-migration-validation-2026-10-18)
+[Project 05 Module 06 evidence](../modules/module-06-network-security-monitoring/evidence/README.md#module-06--network-migration-evidence-2026-10-18) · [Validation details](../modules/module-06-network-security-monitoring/validation.md#module-06--staged-network-migration-validation-2026-10-18)
 
 ### Module 06 — Kali Attack NIC Migration and Reboot Validation (2026-10-18)
 
@@ -189,7 +189,7 @@ After moving device `42` from `br30` to `br40`, Kali's interface names initially
 
 **Guest reboot verification:** Attack and management IPv4 addresses and routes persisted; PuTTY reconnected; post-reboot `10.10.40.20 → 10.10.40.1` and `192.168.1.91 → 192.168.1.1` pings each returned four replies and zero loss. No `10.10.30.0/24` connected route remained in Kali. This validates the guest migration but does not demonstrate inter-zone firewall isolation, an unrestricted traffic path, comprehensive passive IDS visibility, or TrueNAS host reboot persistence.
 
-[Pre-reboot evidence](../modules/Module-06-Network-Security-Monitoring/evidence/module06-kali-attack-network-pre-reboot.png) · [Post-reboot evidence](../modules/Module-06-Network-Security-Monitoring/evidence/module06-kali-attack-network-post-reboot.png) · [Project 05 validation](../modules/Module-06-Network-Security-Monitoring/validation.md#kali-attack-zone-migration-and-recovery--2026-10-18)
+[Pre-reboot evidence](../modules/module-06-network-security-monitoring/evidence/module06-kali-attack-network-pre-reboot.png) · [Post-reboot evidence](../modules/module-06-network-security-monitoring/evidence/module06-kali-attack-network-post-reboot.png) · [Project 05 validation](../modules/module-06-network-security-monitoring/validation.md#kali-attack-zone-migration-and-recovery--2026-10-18)
 
 ### Module 06 — Current Victim ↔ Attack Firewall Test Results (2026-10-19)
 
@@ -203,7 +203,7 @@ After moving device `42` from `br30` to `br40`, Kali's interface names initially
 - **Current scope:** Both directed `br30` ↔ `br40` IPv4 ICMP tests PASS for the two tested guests. Other protocols, SOC `br20`, IPv6, management-LAN bypass paths, firewall persistence through TrueNAS host reboot, and complete sensor visibility remain OPEN.
 - No new screenshots were uploaded as part of this test; values come from user-supplied terminal/PowerShell outputs.
 
-[Project 05 validation V-46–V-51](../modules/Module-06-Network-Security-Monitoring/validation.md#module-06--victim--attack-ipv4-isolation-tests-2026-10-19) · [Commands and cleanup](../modules/Module-06-Network-Security-Monitoring/build-notes.md#module-06--victim--attack-ipv4-firewall-test-procedure-2026-10-19)
+[Project 05 validation V-46–V-51](../modules/module-06-network-security-monitoring/validation.md#module-06--victim--attack-ipv4-isolation-tests-2026-10-19) · [Commands and cleanup](../modules/module-06-network-security-monitoring/build-notes.md#module-06--victim--attack-ipv4-firewall-test-procedure-2026-10-19)
 
 ## Approved Default-Deny Inter-Zone Policy — Planning Stage (2026-10-19)
 
@@ -221,4 +221,4 @@ The reference Cyber Forge image uses Proxmox and labels the zone boundaries *iso
 
 **Boundaries that need separate treatment:** shared home/management `192.168.1.0/24` access, dual-/multi-homed guests (including Mint capture interfaces), same-bridge Layer-2 paths, TrueNAS host `INPUT`/`OUTPUT`, IPv6, and actual monitored traffic delivery to Suricata. Continue testing these instead of marking whole-zone isolation PASS.
 
-[Approved architecture decision](architecture.md#14-approved-default-deny-inter-zone-policy--design-decision-2026-10-19) · [Current Module 06 validation](../modules/Module-06-Network-Security-Monitoring/validation.md#module-06--victim--attack-ipv4-isolation-tests-2026-10-19)
+[Approved architecture decision](architecture.md#14-approved-default-deny-inter-zone-policy--design-decision-2026-10-19) · [Current Module 06 validation](../modules/module-06-network-security-monitoring/validation.md#module-06--victim--attack-ipv4-isolation-tests-2026-10-19)
