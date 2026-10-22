@@ -2,11 +2,11 @@
 
 > **Illustrative banner:** The artwork contains example Proxmox/IP labels; the authoritative CyberBlue implementation uses TrueNAS SCALE and the configurations documented below.
 
-# Project 05 — Suricata Network Detection & Wazuh Integration
+# Module 06 — Network Security Monitoring (Suricata & Wazuh)
 
 ## Overview
 
-This project validates network intrusion-detection telemetry from Suricata on Linux Mint through the Wazuh agent to the centralized Wazuh SIEM. The project includes **two custom ICMP detection rules**: Attack-network SID `1000001` (`10.10.40.10 → 10.10.40.1`) and Victim-network SID `1000002` (`10.10.30.10 → 10.10.30.1`). Both were validated with centralized Wazuh alert evidence; the Victim test used a temporary scoped mirror that was subsequently removed. A controlled Suricata process-failure/recovery test was also completed. Comprehensive or persistent network-wide mirroring remains **OPEN**.
+This module validates network intrusion-detection telemetry from Suricata on Linux Mint through the Wazuh agent to the centralized Wazuh SIEM. The project includes **two custom ICMP detection rules**: Attack-network SID `1000001` (`10.10.40.10 → 10.10.40.1`) and Victim-network SID `1000002` (`10.10.30.10 → 10.10.30.1`). Both were validated with centralized Wazuh alert evidence; the Victim test used a temporary scoped mirror that was subsequently removed. A controlled Suricata process-failure/recovery test was also completed. Comprehensive or persistent network-wide mirroring remains **OPEN**.
 
 ## Lab Components
 
