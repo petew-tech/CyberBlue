@@ -149,9 +149,9 @@ The duplicate DHCP address was removed; gateway connectivity, DNS, and SSH were 
 ## Related Documentation
 
 - [Lab Architecture](architecture.md)
-- [Project 02 — Networking & Segmentation](../projects/02-networking-segmentation/README.md)
-- [Project 02 Build Notes](../projects/02-networking-segmentation/build-notes.md)
-- [Project 02 Validation](../projects/02-networking-segmentation/validation.md)
+- [Project 02 — Networking & Segmentation](../modules/module-03-virtual-networking-segmentation/README.md)
+- [Project 02 Build Notes](../modules/module-03-virtual-networking-segmentation/build-notes.md)
+- [Project 02 Validation](../modules/module-03-virtual-networking-segmentation/validation.md)
 
 **Documentation status:** Project 02 implementation details are preserved as historical context. Project 05 Module 06 records the newer verified Ubuntu, Windows, and Kali guest network changes, with final security controls and host-reboot persistence still open.
 
