@@ -68,7 +68,7 @@ See the [approved target design and staged-migration safeguards](docs/architectu
 
 | Project | Focus | Status |
 |---|---|---|
-| [01 — Virtualization Foundation](projects/01-virtualization-foundation/truenas/README.md) | TrueNAS VM provisioning, networking, lifecycle, and recovery | **Validated** |
+| [Module 02 — Range Foundation](modules/module-02-range-foundation/truenas/README.md) | TrueNAS VM provisioning, networking, lifecycle, and recovery | **Validated** |
 | [Module 03 — Virtual Networking & Segmentation](modules/module-03-virtual-networking-segmentation/README.md) | Persistent bridges, addressing, routing controls, and troubleshooting | **Validated** |
 | [Module 04 — Endpoint Telemetry & Logging](modules/module-04-endpoint-telemetry-logging/README.md) | Windows Event Logs, Sysmon, Linux auditd, visibility gaps, and recovery | **Validated — historical evidence limitation documented** |
 | [Module 05 — Centralized Logging & SIEM Foundations](modules/module-05-centralized-logging-siem/README.md) | Wazuh 4.14.8, Windows Sysmon alerting, Threat Hunting searches, and selected Windows 11 CIS hardening | **Complete — foundational SIEM deployment and Windows 11 telemetry validated** |
@@ -78,7 +78,7 @@ Additional projects will be added only as implementation and validation progress
 
 ---
 
-## Project 01 — Virtualization Foundation
+## Module 02 — Range Foundation
 
 Established the TrueNAS SCALE virtualization environment and validated Ubuntu Server VM deployment.
 
@@ -91,7 +91,7 @@ Established the TrueNAS SCALE virtualization environment and validated Ubuntu Se
 - Snapshot recovery validation
 - Infrastructure documentation
 
-[View Project 01 →](projects/01-virtualization-foundation/truenas/README.md)
+[View Module 02 →](modules/module-02-range-foundation/truenas/README.md)
 
 ---
 
