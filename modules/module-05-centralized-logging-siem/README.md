@@ -1,3 +1,7 @@
+![CyberBlue Module 05 — Centralized Logging and SIEM banner](module-05-centralized-logging-siem-banner.png)
+
+> **Illustrative banner:** Device and event details in the artwork are conceptual; the verified Wazuh configuration and validation evidence are documented below.
+
 # Module 05 — Centralized Logging & SIEM Foundations
 
 ## Overview
