@@ -1,3 +1,7 @@
+![CyberBlue Module 06 — Suricata Network Detection shield banner](evidence/module06-suricata-banner.png)
+
+> **Illustrative banner:** The artwork contains example Proxmox/IP labels; the authoritative CyberBlue implementation uses TrueNAS SCALE and the configurations documented below.
+
 # Project 05 — Suricata Network Detection & Wazuh Integration
 
 ## Overview
