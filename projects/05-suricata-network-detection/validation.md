@@ -361,3 +361,15 @@ This section validates **guest address cleanup and migration only**, not full zo
 **Boundary:** `tc qdisc` validates this host VM interface's qdisc state; it does not prove absence of unrelated packet capture settings on other devices or ongoing full-network IDS coverage. The narrowly scoped Victim ICMP mirror was a temporary test and is off.
 
 [Build notes](build-notes.md#project-05--post-r3-rollback-qdisc-verification-2026-10-20).
+
+## Project 05 — Post-Recovery Attack Detection Validation (2026-10-22)
+
+| ID | Check | Operator-supplied evidence | Result |
+|---|---|---|---|
+| V-119 | Sensor and agent service state | Linux Mint `systemctl is-active suricata wazuh-agent` returned `active` and `active` after VM startup. | **PASS — both running** |
+| V-120 | Live Suricata ruleset statistics | `sudo suricatasc -c ruleset-stats` returned `rules_loaded:53145`, `rules_failed:0`, `rules_skipped:0`, `return:"OK"`. This command does not independently enumerate individual loaded SIDs. | **PASS — load statistics** |
+| V-121 | Attack-network ICMP connectivity | Mint `ping -4 -I 10.10.40.10 -c 4 10.10.40.1`: 4 transmitted, 4 received, 0% loss. | **PASS — tested connectivity** |
+| V-122 | Fresh Suricata signature detection | EVE `/var/log/suricata/eve.json` (`grep -aF`): four `event_type:"alert"` records on `ens4`, signature `1000001`, source `10.10.40.10`, destination `10.10.40.1`, ICMP type 8, timestamps 2026-10-22 06:29:57–06:30:00 -0500. | **PASS — four fresh sensor alerts** |
+| V-123 | Wazuh manager receives alerts and screenshot exists | At `cyberblue@siem-01`, four manager `alerts.json` records with rule `86601`, agent `003` / `cyberblue-suricata`, `data.alert.signature_id:"1000001"`, source location `/var/log/suricata/eve.json`; manager records around 2026-10-22 11:30:01 UTC. Operator uploaded `evidence/12-project05-post-recovery-wazuh-validation.png`, whose presence was confirmed in GitHub; image contents not independently inspected. | **PASS — four manager alerts; evidence file present** |
+
+**Boundary:** This establishes the controlled Attack-path Suricata → Wazuh manager pipeline after the storage recovery and VM restart. The earlier Victim SID `1000002` temporary-mirror validation remains historical. Persistent/bridge-wide mirroring, complete protocol coverage and continuous full-network visibility remain **OPEN**. The underlying TrueNAS storage and boot-pool remediation are separate and are **not** certified by these service/alert tests.
