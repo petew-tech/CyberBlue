@@ -1,4 +1,4 @@
-# Project 04 — Centralized Logging & SIEM Foundations
+# Module 05 — Centralized Logging & SIEM Foundations
 
 ## Overview
 

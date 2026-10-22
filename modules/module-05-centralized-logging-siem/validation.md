@@ -1,4 +1,4 @@
-# Project 04 — Centralized Logging & SIEM Foundations
+# Module 05 — Centralized Logging & SIEM Foundations
 ## Module 05 — Validation Record
 
 **Validation period:** 2026-10-13 through 2026-10-14  

@@ -71,7 +71,7 @@ See the [approved target design and staged-migration safeguards](docs/architectu
 | [01 — Virtualization Foundation](projects/01-virtualization-foundation/truenas/README.md) | TrueNAS VM provisioning, networking, lifecycle, and recovery | **Validated** |
 | [02 — Virtual Networking & Segmentation](projects/02-networking-segmentation/README.md) | Persistent bridges, addressing, routing controls, and troubleshooting | **Validated** |
 | [03 — Endpoint Telemetry & Logging](projects/03-endpoint-telemetry/README.md) | Windows Event Logs, Sysmon, Linux auditd, visibility gaps, and recovery | **Validated — historical evidence limitation documented** |
-| [04 — Centralized Logging & SIEM Foundations](projects/04-centralized-logging/README.md) | Wazuh 4.14.8, Windows Sysmon alerting, Threat Hunting searches, and selected Windows 11 CIS hardening | **Complete — foundational SIEM deployment and Windows 11 telemetry validated** |
+| [Module 05 — Centralized Logging & SIEM Foundations](modules/module-05-centralized-logging-siem/README.md) | Wazuh 4.14.8, Windows Sysmon alerting, Threat Hunting searches, and selected Windows 11 CIS hardening | **Complete — foundational SIEM deployment and Windows 11 telemetry validated** |
 | [Module 06 — Network Security Monitoring (Suricata & Wazuh)](modules/Module-06-Network-Security-Monitoring/README.md) | Suricata/Wazuh validation and Module 06 SOC/Victim/Attack guest network migration | **Sensor validated; all three guest migrations validated; full zone isolation OPEN** |
 
 Additional projects will be added only as implementation and validation progress.
@@ -133,7 +133,7 @@ Investigated native and enhanced security telemetry across Windows and Linux sys
 
 ---
 
-## Project 04 — Centralized Logging & SIEM Foundations
+## Module 05 — Centralized Logging & SIEM Foundations
 
 **Status: Complete — Foundational SIEM Deployment**
 
@@ -141,7 +141,7 @@ Deployed Wazuh 4.14.8 on a dedicated Ubuntu Server VM and enrolled the Windows 1
 
 Additional endpoint onboarding, complete raw-event ingestion coverage, and outstanding CIS findings remain future work.
 
-[View Project 04 →](projects/04-centralized-logging/README.md)
+[View Module 05 →](modules/module-05-centralized-logging-siem/README.md)
 
 ---
 

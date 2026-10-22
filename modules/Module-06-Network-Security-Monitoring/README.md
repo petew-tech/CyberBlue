@@ -70,7 +70,7 @@ The capture statistics are a point-in-time sample, not proof of zero packet loss
 
 - [Build notes](build-notes.md)
 - [Validation record](validation.md)
-- [Project 04 — Centralized Logging & SIEM Foundations](../../projects/04-centralized-logging/README.md)
+- [Project 04 — Centralized Logging & SIEM Foundations](../../modules/module-05-centralized-logging-siem/README.md)
 - [Project 02 — Virtual Networking & Segmentation](../../projects/02-networking-segmentation/README.md)
 
 ---
