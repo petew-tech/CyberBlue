@@ -10,70 +10,44 @@ This module builds a segmented virtual networking environment on TrueNAS SCALE 2
 
 The lab demonstrates how virtual machines connect through virtual network interfaces, Linux bridges, DHCP, NAT, routing, and isolated network segments. It also demonstrates how to validate permitted and prohibited communication paths and troubleshoot a deliberately introduced network failure.
 
-## Lab Environment
+## Lab Environment and Latest Documented Topology (October 20, 2026)
 
-| Component | Role |
-|---|---|
-| TrueNAS SCALE 24.10.1 | Virtualization host |
-| Ubuntu Server 26.04.1 | CyberBlue / SOC management server |
-| Linux Mint 22.3 | Lab endpoint |
-| Kali Linux 2026.2 | Security testing workstation |
-| `enp4s0` | TrueNAS physical network interface |
-| `br30` | Persistent TrueNAS bridge — Security Lab (`10.10.30.0/24`) |
-| `br40` | Persistent TrueNAS bridge — Isolated Lab (`10.10.40.0/24`) |
+TrueNAS SCALE 24.10.1 runs the VMs using KVM/QEMU. The management LAN uses `enp4s0`; three TrueNAS-managed bridges provide SOC, Victim and Attack lab networks. The October 10 two-zone layout shown in the historical section below was superseded by the October 18–20 staged migration documented in Module 06.
 
-## Network Architecture
-
-| Network | Subnet | Gateway | Bridge / Interface | Purpose |
+| Network | Bridge / interface | Subnet | TrueNAS gateway | Role |
 |---|---|---|---|---|
-| Home / Management LAN | `192.168.1.0/24` | `192.168.1.1` | `enp4s0` | Management access |
-| CyberBlue Security Lab | `10.10.30.0/24` | `10.10.30.1` | `br30` | Ubuntu and Kali |
-| CyberBlue Isolated Lab | `10.10.40.0/24` | `10.10.40.1` | `br40` | Linux Mint |
+| Management | `enp4s0` | `192.168.1.0/24` | Home gateway `192.168.1.1` | Administrative access |
+| SOC | `br20` | `10.10.20.0/24` | `10.10.20.1` | Ubuntu and Mint SOC interfaces |
+| Victim | `br30` | `10.10.30.0/24` | `10.10.30.1` | Windows Victim and Mint passive capture NIC |
+| Attack | `br40` | `10.10.40.0/24` | `10.10.40.1` | Kali Attack and Mint sensor |
 
-**Security:** Routed IPv4 traffic between `br30` and `br40` is blocked by persistent TrueNAS firewall rules. All three Linux VMs retain separate management-network connections.
+### Latest Verified Guest Placement
 
-### Current Lab Placement
+| VM | Management address | Lab attachment / address |
+|---|---|---|
+| Ubuntu Server 26.04.1 | `192.168.1.243/24` | SOC `br20`: `10.10.20.10/24`; unused `br30` NIC has no guest IPv4 |
+| Windows 11 | `192.168.1.151/24` | Victim `br30`: `10.10.30.10/24` |
+| Kali Linux 2026.2 | `192.168.1.91/24` | Attack `br40`: `10.10.40.20/24` |
+| Linux Mint 22.3 | `192.168.1.92/24` | SOC `br20`: `10.10.20.11/24`; Attack `br40`: `10.10.40.10/24`; passive Victim `br30`: `ens5`, no IPv4 |
 
-| Virtual Machine | Management IP | Lab IP | Lab Bridge |
-|---|---|---|---|
-| Ubuntu Server | `192.168.1.245/24` | `10.10.30.10/24` | `br30` |
-| Kali Linux | `192.168.1.91/24` | `10.10.30.20/24` | `br30` |
-| Linux Mint | `192.168.1.92/24` | `10.10.40.10/24` | `br40` |
-| Windows 11 | Management network | Not assigned | None |
-
-**Implementation note:** The lab NICs are configured through TrueNAS VM management and persist across VM restarts. Ubuntu and Kali share the `br30` security lab, while Linux Mint uses the separate `br40` lab.
-
-All three Linux VMs retain management interfaces on `192.168.1.0/24`. The firewall blocks routed IPv4 forwarding between the two lab bridges but does not isolate the shared management network.
-
-## Architecture Diagram
+### Architecture Diagram
 
 ```text
-                  Home / Management LAN
-                       192.168.1.0/24
-                              |
-                       TrueNAS SCALE
-                       192.168.1.90
-                              |
-             +----------------+----------------+
-             |                                 |
-        Security Lab                      Isolated Lab
-       10.10.30.0/24                     10.10.40.0/24
-        Bridge: br30                      Bridge: br40
-       GW: 10.10.30.1                    GW: 10.10.40.1
-             |                                 |
-       +-----+-----+                           |
-       |           |                           |
-     Ubuntu       Kali                       Linux Mint
-  10.10.30.10  10.10.30.20                 10.10.40.10
-
-          br30  <-- IPv4 DROP -->  br40
+                    Management LAN 192.168.1.0/24
+                                    |
+                          TrueNAS SCALE 24.10.1
+                      +-------------+-------------+
+                      |             |             |
+                 SOC br20      Victim br30     Attack br40
+                10.10.20/24    10.10.30/24     10.10.40/24
+                      |             |             |
+                Ubuntu / Mint   Windows / Mint  Kali / Mint
+                   20.10, .11   30.10 / ens5    40.20, .10
 ```
 
-The two dedicated Linux bridges separate CyberBlue lab traffic into security and isolated segments. Persistent TrueNAS firewall rules block routed IPv4 forwarding between `br30` and `br40`.
+**Enforcement scope:** The existing TrueNAS POSTINIT firewall script enforces the two direct routed IPv4 `br30 ↔ br40` DROP rules. Tests of a six-direction SOC/Victim/Attack candidate passed for scoped ICMP traffic, but the SOC DROP rules were rolled back and are **not persistently deployed**. Shared management LAN paths, host/Layer-2 traffic, broader IPv6/protocol testing, and continuous bridge-wide Suricata mirroring remain open.
 
-Ubuntu Server and Kali Linux communicate within the `10.10.30.0/24` lab. Linux Mint operates on the separate `10.10.40.0/24` lab.
-
-All three Linux VMs also retain independent management connections on `192.168.1.0/24`. Therefore, the firewall controls cross-bridge IPv4 forwarding but does not provide complete VM isolation.
+[Module 06 staged guest migration](../module-06-network-security-monitoring/README.md#module-06--staged-network-migration-2026-10-18) · [Module 06 three-zone validation](../module-06-network-security-monitoring/validation.md#module-06--three-zone-scoped-ipv4-icmp-firewall-trial-2026-10-19).
 
 ## Historical Troubleshooting — Initial Libvirt Networking Configuration
 
@@ -311,11 +285,11 @@ Key lessons included:
 - Documenting implementation limitations instead of hiding them.
 
 
-## Network Segmentation — Implementation and Validation (October 10, 2026)
+## Historical Two-Zone Network Segmentation — Implementation and Validation (October 10, 2026)
 
 ### Lab Network Configuration
 
-TrueNAS SCALE 24.10.1 hosts the CyberBlue virtual machines and two dedicated Linux bridges.
+At this October 10 checkpoint, TrueNAS SCALE 24.10.1 hosted the CyberBlue virtual machines with two dedicated Linux bridges. This table is historical; see the October 20 topology above for current assignments.
 
 | Network | Bridge / Interface | Addressing | Purpose |
 |---|---|---|---|
@@ -511,12 +485,12 @@ No Docker restart or firewall modification was required during this review.
 
 ## Open Follow-Up — Permanent Three-Zone Firewall Lifecycle (2026-10-20)
 
-**Status: DEFERRED to Project 02 — NOT DEPLOYED.** During Project 05 Module 06 the lab temporarily validated six directed routed IPv4 ICMP paths across SOC (`br20`), Victim (`br30`) and Attack (`br40`). Each fresh direction produced four dropped probes and a corresponding four-packet increase in an observed rule counter. The four SOC-related directions matched temporary `DOCKER-USER → CYBERBLUE_ZONES` drops; both Victim↔Attack directions matched the original direct `FORWARD` DROP rules. This was **not** a permanent six-direction deployment or general TCP/UDP/IPv6/L2/management-path isolation demonstration.
+**Status: DEFERRED to Module 03 — NOT DEPLOYED.** During Project 05 Module 06 the lab temporarily validated six directed routed IPv4 ICMP paths across SOC (`br20`), Victim (`br30`) and Attack (`br40`). Each fresh direction produced four dropped probes and a corresponding four-packet increase in an observed rule counter. The four SOC-related directions matched temporary `DOCKER-USER → CYBERBLUE_ZONES` drops; both Victim↔Attack directions matched the original direct `FORWARD` DROP rules. This was **not** a permanent six-direction deployment or general TCP/UDP/IPv6/L2/management-path isolation demonstration.
 
 After the controlled test, the temporary `DOCKER-USER` jump was independently verified removed, its chain restored to `RETURN` only, automatic rollback timer verified inactive, and `FORWARD` independently verified containing just the original two direct Victim↔Attack drops ahead of existing Docker rules. Approved Windows management `192.168.1.151` → Kali management `192.168.1.91:22/tcp` connectivity remained successful.
 
 Three lifecycle candidates were prepared but **none permanently activated**. V3 (`/mnt/Pool1/CyberBlue/cyberblue-firewall-lifecycle-v3.sh`) passed `sh -n` and read-only `--check`, returning `CYBERBLUE V3 PREFLIGHT PASS - CHAIN DETACHED`. A confirmed six-rule `CYBERBLUE_ZONES` chain remains detached. TrueNAS `ix-postinit.service` has `After=multi-user.target` but no explicit ordering after Docker. Docker is active with an active socket, `Restart=always`, and an existing post-start override setting both FORWARD policies to ACCEPT. Ordering/re-application after Docker restarts, safe automatic recovery, reboot behavior, and non-ICMP boundary tests remain **OPEN**.
 
-**Follow-up when resuming Project 02:** Design and validate a managed, restart-aware firewall reconciliation mechanism and rollback plan; retain the original TrueNAS startup script and Docker override until operator-approved changes; verify management access and Docker/Tailscale compatibility. Do not treat a simple `After=docker.service` service dependency as sufficient evidence of re-application on every Docker restart.
+**Follow-up when resuming Module 03:** Design and validate a managed, restart-aware firewall reconciliation mechanism and rollback plan; retain the original TrueNAS startup script and Docker override until operator-approved changes; verify management access and Docker/Tailscale compatibility. Do not treat a simple `After=docker.service` service dependency as sufficient evidence of re-application on every Docker restart.
 
-[Project 05 test evidence](../05-suricata-network-detection/validation.md#module-06--fresh-six-direction-ipv4-icmp-test-via-docker-user-2026-10-20) · [Lifecycle discovery](../05-suricata-network-detection/validation.md#module-06--docker-lifecycle-read-only-discovery-and-v3-preflight-2026-10-20).
+[Project 05 test evidence](../module-06-network-security-monitoring/validation.md#module-06--fresh-six-direction-ipv4-icmp-test-via-docker-user-2026-10-20) · [Lifecycle discovery](../module-06-network-security-monitoring/validation.md#module-06--docker-lifecycle-read-only-discovery-and-v3-preflight-2026-10-20).
