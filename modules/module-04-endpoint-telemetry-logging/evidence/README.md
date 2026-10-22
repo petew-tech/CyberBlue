@@ -1,4 +1,4 @@
-# Project 03 — Evidence
+# Module 04 — Endpoint Telemetry Evidence
 
 This directory contains screenshots and supporting evidence collected during the endpoint telemetry validation.
 
@@ -20,7 +20,9 @@ This directory contains screenshots and supporting evidence collected during the
 | 12 | [Controlled Windows Sysmon visibility gap — Event ID 11 absent](16-visibility-gap.PNG) | PASS |
 | 13 | [Windows Sysmon telemetry restoration — Event ID 11](17-windows-sysmon-telemetry-restored.PNG) | PASS |
 | 14 | Sysmon historical timeline — Events 1 and 3 supported by screenshots 07 and 08; original October 5 Event ID 11 no longer retained in the current Sysmon log | Partial evidence |
-| 15 | [Final Windows Sysmon service status — Running / Automatic](18-windows-sysmon-final-service-status.PNG) | PASS |
+| 15 | Final Windows Sysmon service status — Running / Automatic (documented in validation records; screenshot `18-windows-sysmon-final-service-status.PNG` is **not present** in the repository) | SCREENSHOT MISSING — do not mark as uploaded |
+
+**Repository reconciliation (2026-10-22):** Evidence entries 01–13 have linked files; entry 14 is Partial historical evidence; entry 15 references an absent screenshot. Service state may be documented elsewhere, but this file is not present and cannot count as screenshot evidence.
 
 ## Evidence Handling
 
