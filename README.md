@@ -70,7 +70,7 @@ See the [approved target design and staged-migration safeguards](docs/architectu
 |---|---|---|
 | [01 — Virtualization Foundation](projects/01-virtualization-foundation/truenas/README.md) | TrueNAS VM provisioning, networking, lifecycle, and recovery | **Validated** |
 | [02 — Virtual Networking & Segmentation](projects/02-networking-segmentation/README.md) | Persistent bridges, addressing, routing controls, and troubleshooting | **Validated** |
-| [Module 04 — Endpoint Telemetry & Logging](modules/module-04--endpoint-telemetry-logging/README.md) | Windows Event Logs, Sysmon, Linux auditd, visibility gaps, and recovery | **Validated — historical evidence limitation documented** |
+| [Module 04 — Endpoint Telemetry & Logging](modules/module-04-endpoint-telemetry-logging/README.md) | Windows Event Logs, Sysmon, Linux auditd, visibility gaps, and recovery | **Validated — historical evidence limitation documented** |
 | [Module 05 — Centralized Logging & SIEM Foundations](modules/module-05-centralized-logging-siem/README.md) | Wazuh 4.14.8, Windows Sysmon alerting, Threat Hunting searches, and selected Windows 11 CIS hardening | **Complete — foundational SIEM deployment and Windows 11 telemetry validated** |
 | [Module 06 — Network Security Monitoring (Suricata & Wazuh)](modules/Module-06-Network-Security-Monitoring/README.md) | Suricata/Wazuh validation and Module 06 SOC/Victim/Attack guest network migration | **Sensor validated; all three guest migrations validated; full zone isolation OPEN** |
 
@@ -129,7 +129,7 @@ Investigated native and enhanced security telemetry across Windows and Linux sys
 
 **Evidence note:** Fourteen evidence entries are marked PASS, and one historical Sysmon timeline evidence item is marked Partial because the original event is no longer retained in the current event log.
 
-[View Module 04 →](modules/module-04--endpoint-telemetry-logging/README.md)
+[View Module 04 →](modules/module-04-endpoint-telemetry-logging/README.md)
 
 ---
 

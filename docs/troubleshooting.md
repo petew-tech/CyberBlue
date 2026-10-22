@@ -98,7 +98,7 @@ sudo midclt call bootenv.activate "24.10.1"
 
 ## Case 06 — Controlled Linux Audit Visibility Gap
 
-**Project:** [03 — Endpoint Telemetry](../modules/module-04--endpoint-telemetry-logging/README.md)
+**Project:** [03 — Endpoint Telemetry](../modules/module-04-endpoint-telemetry-logging/README.md)
 
 **Test:** `auditd` was deliberately stopped, creating a period when expected audit telemetry was unavailable.
 
@@ -108,7 +108,7 @@ sudo midclt call bootenv.activate "24.10.1"
 
 ## Case 07 — Controlled Windows Sysmon File-Event Blind Spot
 
-**Project:** [03 — Endpoint Telemetry](../modules/module-04--endpoint-telemetry-logging/README.md)
+**Project:** [03 — Endpoint Telemetry](../modules/module-04-endpoint-telemetry-logging/README.md)
 
 **Test:** Sysmon remained running, but a temporary configuration suppressed File Create telemetry. Creating `C:\CyberBlue\sysmon-blind-test.txt` produced no matching Sysmon Event ID 11 in the targeted search.
 
@@ -133,7 +133,7 @@ sudo midclt call bootenv.activate "24.10.1"
 - [Project 02 — Networking & Segmentation](../projects/02-networking-segmentation/README.md)
 - [Project 02 Build Notes](../projects/02-networking-segmentation/build-notes.md)
 - [Project 02 Validation](../projects/02-networking-segmentation/validation.md)
-- [Project 03 — Endpoint Telemetry](../modules/module-04--endpoint-telemetry-logging/README.md)
-- [Project 03 Validation](../modules/module-04--endpoint-telemetry-logging/validation.md)
+- [Project 03 — Endpoint Telemetry](../modules/module-04-endpoint-telemetry-logging/README.md)
+- [Project 03 Validation](../modules/module-04-endpoint-telemetry-logging/validation.md)
 
 **Journal status:** Summary of previously documented work. No new host, VM, firewall, or telemetry changes were performed to create this file.
