@@ -32,7 +32,7 @@ This repository records actual lab work, including successful tests, troubleshoo
 
 ## Network Architecture
 
-**Current verified guest-network state (2026-10-18, Project 05 Module 06):** CyberBlue uses a home/management LAN and three TrueNAS-managed virtual lab bridges. The new zone layout is **partially implemented**, not yet a fully validated isolation boundary.
+**Current verified guest-network state (2026-10-18, Module 06):** CyberBlue uses a home/management LAN and three TrueNAS-managed virtual lab bridges. The new zone layout is **partially implemented**, not yet a fully validated isolation boundary.
 
 ```text
                HOME / MANAGEMENT LAN
@@ -60,7 +60,7 @@ On **2026-10-19**, controlled Kali Attack ↔ Windows Victim **IPv4 ICMP forward
 
 The intended **guest placement** is now validated: `br20` for SOC (Ubuntu and Mint), `br30` for Windows Victim, and `br40` for Kali Attack, with Mint sensor connections and management access preserved in the recorded layout. **Default-deny inter-zone communication with narrowly authorized exceptions is the approved security design as of 2026-10-19; it is not yet fully implemented or validated.** [See the approved policy](docs/architecture.md#14-approved-default-deny-inter-zone-policy--design-decision-2026-10-19). TrueNAS host reboot persistence and comprehensive passive monitoring also remain open.
 
-See the [approved target design and staged-migration safeguards](docs/architecture.md#13-approved-target-architecture--soc--victim--attack-segmentation-2026-10-16) and [Project 05 Module 06 results](modules/module-06-network-security-monitoring/README.md#module-06--staged-network-migration-2026-10-18).
+See the [approved target design and staged-migration safeguards](docs/architecture.md#13-approved-target-architecture--soc--victim--attack-segmentation-2026-10-16) and [Module 06 results](modules/module-06-network-security-monitoring/README.md#module-06--staged-network-migration-2026-10-18).
 
 ---
 
@@ -145,7 +145,7 @@ Additional endpoint onboarding, complete raw-event ingestion coverage, and outst
 
 ---
 
-## Project 05 — Suricata Network Detection & Wazuh Integration
+## Module 06 — Network Security Monitoring (Suricata & Wazuh)
 
 **Status: Sensor Detection Validated; Module 06 Guest Network Migration Validated; six of six directed, routed IPv4 ICMP firewall tests PASS in controlled windows (persistent three-zone isolation still OPEN)**
 
