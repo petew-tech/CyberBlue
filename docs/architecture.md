@@ -189,7 +189,7 @@ Virtual machines may be shut down when not required for a particular exercise.
 
 - [Project 01 — Virtualization Foundation](../projects/01-virtualization-foundation/truenas/README.md)
 - [Project 02 — Virtual Networking & Segmentation](../projects/02-networking-segmentation/README.md)
-- [Project 03 — Endpoint Telemetry & Logging](../projects/03-endpoint-telemetry/README.md)
+- [Project 03 — Endpoint Telemetry & Logging](../modules/module-04--endpoint-telemetry-logging/README.md)
 
 ---
 

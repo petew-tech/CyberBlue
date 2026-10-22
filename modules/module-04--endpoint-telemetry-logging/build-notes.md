@@ -1,4 +1,4 @@
-# Project 03 — Endpoint Telemetry Build Notes
+# Module 04 — Endpoint Telemetry Build Notes
 
 ## Status
 
