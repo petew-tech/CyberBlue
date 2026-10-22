@@ -265,3 +265,9 @@ During a coordinated test, Windows `10.10.30.10` successfully pinged the Victim 
 **Recovery verification complete (V-118):** After R3 scheduled rollback ran at 11:32:57 PDT, a fresh TrueNAS `sudo tc qdisc show dev vnet13` returned only `qdisc noqueue 8023: root refcnt 2`. No `clsact` is present. Thus the temporary ingress mirroring attachment was absent both after manual cleanup and after the redundant scheduled timer. This proves safe rollback of the scoped test, not continuous Victim traffic monitoring.
 
 [Validation V-118](validation.md#project-05--post-r3-timer-qdisc-state-confirmed-2026-10-20).
+
+## October 22, 2026 — Post-Recovery Suricata–Wazuh Verification
+
+**PASS — controlled Attack-network detection pipeline restored after TrueNAS storage recovery.** On Linux Mint, `suricata` and `wazuh-agent` both reported `active`. `suricatasc -c ruleset-stats` returned **53,145 loaded, 0 failed, 0 skipped**. Four ICMP echo requests from Mint `10.10.40.10` to the `br40` gateway `10.10.40.1` received four replies (0% loss). Suricata EVE recorded **four fresh** `event_type:"alert"` entries on `ens4`, SID `1000001`, timestamps **06:29:57–06:30:00 -0500**. On `siem-01`, Wazuh manager `alerts.json` contained **four corresponding events** under rule `86601`, agent `003` (`cyberblue-suricata`), at **11:30:01 UTC**. This establishes sensor-to-manager detection after VM restart, not a new validation of persistent Victim-network mirroring or full bridge-wide visibility.
+
+[Validation V-119–V-123](validation.md#project-05--post-recovery-attack-detection-validation-2026-10-22) · [Evidence screenshot](evidence/12-project05-post-recovery-wazuh-validation.png) (GitHub file presence verified; pixels not independently reviewed).
