@@ -60,3 +60,11 @@ This is a **terminal evidence screenshot**, not a Wazuh dashboard screenshot. It
 The operator separately confirmed in Wazuh Threat Hunting that `data.alert.signature_id` was `1000002` for an October 20 alert returned under Wazuh `rule.id:86601`. Earlier read-only manager `alerts.json` queries verified **four** matching SID 1000002 events from agent `003`; dashboard screenshot upload verification by itself does **not** establish that all four are visible in the same dashboard view. No persistent packet mirroring is claimed.
 
 [Validation V-116](../validation.md#project-05--wazuh-victim-alert-dashboard-and-screenshot-evidence-2026-10-20).
+
+## Post-Recovery Wazuh Validation — 2026-10-22
+
+| Screenshot | Recorded scope | Verification |
+|---|---|---|
+| [12-project05-post-recovery-wazuh-validation.png](12-project05-post-recovery-wazuh-validation.png) | Operator-uploaded SIEM_01 terminal screenshot intended to document Wazuh ingestion of four Attack SID `1000001` alerts under rule `86601` from agent `003` after restarting the VMs. Four corresponding manager JSON records were independently supplied in the guided test. | **GitHub file presence verified**; screenshot pixels not independently inspected |
+
+[Validation V-119–V-123](../validation.md#project-05--post-recovery-attack-detection-validation-2026-10-22). No permanent Victim-network mirror or bridge-wide IDS coverage is implied.
