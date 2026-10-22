@@ -15,7 +15,7 @@ This shared journal indexes **documented** CyberBlue faults, diagnoses, correcti
 
 ## Case 01 — VM NIC Attached to the Wrong Virtual Network Type
 
-**Project:** [02 — Networking & Segmentation](../projects/02-networking-segmentation/README.md)  
+**Project:** [02 — Networking & Segmentation](../modules/module-03-virtual-networking-segmentation/README.md)  
 **Context:** Historical initial libvirt network implementation; not the current persistent bridge design.
 
 **Symptom:** A second Linux Mint NIC appeared inside the guest, but it did not receive an address from the intended `cyberblue-lab` DHCP service.
@@ -30,7 +30,7 @@ This shared journal indexes **documented** CyberBlue faults, diagnoses, correcti
 
 ## Case 02 — Deliberate Linux Mint NIC Removal and Recovery
 
-**Project:** [02 — Networking & Segmentation](../projects/02-networking-segmentation/README.md)  
+**Project:** [02 — Networking & Segmentation](../modules/module-03-virtual-networking-segmentation/README.md)  
 **Context:** Historical `cyberblue-isolated` libvirt test.
 
 **Symptom:** Linux Mint lost its connection to the isolated lab after the live virtual interface was deliberately detached.
@@ -45,7 +45,7 @@ This shared journal indexes **documented** CyberBlue faults, diagnoses, correcti
 
 ## Case 03 — Linux Mint Duplicate Management IPv4 Address
 
-**Project:** [02 — Networking & Segmentation](../projects/02-networking-segmentation/README.md)
+**Project:** [02 — Networking & Segmentation](../modules/module-03-virtual-networking-segmentation/README.md)
 
 **Symptom:** Mint had two IPv4 addresses on its management NIC `ens3`: manually configured `192.168.1.92/24` and DHCP-assigned `192.168.1.212/24`.
 
@@ -61,7 +61,7 @@ This shared journal indexes **documented** CyberBlue faults, diagnoses, correcti
 
 ## Case 04 — Cross-Bridge IPv4 Segmentation and Docker Firewall Interaction
 
-**Project:** [02 — Networking & Segmentation](../projects/02-networking-segmentation/README.md)
+**Project:** [02 — Networking & Segmentation](../modules/module-03-virtual-networking-segmentation/README.md)
 
 **Goal:** Confirm routed IPv4 traffic between `br30` (`10.10.30.0/24`) and `br40` (`10.10.40.0/24`) is blocked while legitimate same-bridge traffic remains available.
 
@@ -77,7 +77,7 @@ This shared journal indexes **documented** CyberBlue faults, diagnoses, correcti
 
 ## Case 05 — TrueNAS Booted the Unintended Boot Environment
 
-**Project:** [02 — Networking & Segmentation](../projects/02-networking-segmentation/README.md)  
+**Project:** [02 — Networking & Segmentation](../modules/module-03-virtual-networking-segmentation/README.md)  
 **Date recorded:** October 10, 2026.
 
 **Symptom:** A TrueNAS restart selected version `24.10.2.4` rather than the intended `24.10.1` environment.
@@ -130,9 +130,9 @@ sudo midclt call bootenv.activate "24.10.1"
 ## Source Documents
 
 - [Project 01 — Virtualization Foundation](../projects/01-virtualization-foundation/truenas/README.md)
-- [Project 02 — Networking & Segmentation](../projects/02-networking-segmentation/README.md)
-- [Project 02 Build Notes](../projects/02-networking-segmentation/build-notes.md)
-- [Project 02 Validation](../projects/02-networking-segmentation/validation.md)
+- [Project 02 — Networking & Segmentation](../modules/module-03-virtual-networking-segmentation/README.md)
+- [Project 02 Build Notes](../modules/module-03-virtual-networking-segmentation/build-notes.md)
+- [Project 02 Validation](../modules/module-03-virtual-networking-segmentation/validation.md)
 - [Project 03 — Endpoint Telemetry](../modules/module-04-endpoint-telemetry-logging/README.md)
 - [Project 03 Validation](../modules/module-04-endpoint-telemetry-logging/validation.md)
 
