@@ -1,4 +1,4 @@
-# CyberBlue — TrueNAS virtualization foundation
+# CyberBlue Module 02 — Range Foundation (TrueNAS Virtualization)
 
 ## Objective
 Build, validate, and recover one Ubuntu VM using TrueNAS-managed virtualization.
