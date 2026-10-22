@@ -1,3 +1,7 @@
+![CyberBlue Module 03 — Virtual Networking and Segmentation banner](evidence/cyberblue_module_03_network_architecture.png)
+
+> **Illustrative banner:** Zone names and subnet labels in the artwork are conceptual and do not replace the verified TrueNAS `br20` SOC (`10.10.20.0/24`), `br30` Victim (`10.10.30.0/24`), and `br40` Attack (`10.10.40.0/24`) configuration documented below.
+
 # CyberBlue Module 03 — Virtual Networking & Segmentation
 
 ## Project Overview
