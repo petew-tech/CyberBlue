@@ -518,3 +518,15 @@ Operator navigated to Wazuh Threat Hunting, applied filter `rule.id:86601` for O
 After confirmed R3 systemd timer execution at **11:32:57 PDT, October 20**, operator independently ran `sudo tc qdisc show dev vnet13` on TrueNAS. Output: `qdisc noqueue 8023: root refcnt 2`. The **absence of `clsact`** verifies the test-only ingress mirror attachment remains removed following the automatic safety rollback. This completes the R3 recovery chain: manual script invocation and clean qdisc state earlier, scheduled idempotent cleanup at 11:32:57 PDT, and an additional clean qdisc readback afterward. It does not establish any persistent packet-monitoring deployment.
 
 [Validation V-117–V-118](validation.md#project-05--post-r3-timer-qdisc-state-confirmed-2026-10-20).
+
+## Project 05 — Post-Recovery Attack Detection (2026-10-22)
+
+After TrueNAS storage recovery, the operator started Linux Mint and SIEM_01. On Mint, `systemctl is-active suricata wazuh-agent` returned `active` for both services, and `sudo suricatasc -c ruleset-stats` returned `rules_loaded:53145`, `rules_failed:0`, `rules_skipped:0`, `return:"OK"`.
+
+The operator ran `ping -4 -I 10.10.40.10 -c 4 10.10.40.1`: 4 requests, 4 replies, 0% loss. Initial `grep` on Mint `/var/log/suricata/eve.json` reported `binary file matches`; adding `-a` allowed four complete JSON alert lines to be read. Those records identified `ens4`, ICMP echo type 8, Attack source `10.10.40.10`, destination `10.10.40.1`, and local signature `1000001` at 06:29:57–06:30:00 -0500.
+
+An initial manager-path lookup executed at the Mint prompt returned `No such file or directory` because `/var/ossec/logs/alerts/alerts.json` resides on `siem-01`. A subsequent query at the `cyberblue@siem-01` prompt returned four matching Wazuh manager JSON alerts with rule `86601`, agent `003`, `data.alert.signature_id:"1000001"`, `location:"/var/log/suricata/eve.json"`, and timestamps around 11:30:01 UTC. `firedtimes` values 1–4 were present; JSON line order was not chronological.
+
+**Result: scoped post-recovery Attack SID 1000001 end-to-end PASS.** This run did not retest the Victim SID 1000002, full mirroring, Docker firewall lifecycle, or TrueNAS host storage health. The operator uploaded screenshot `evidence/12-project05-post-recovery-wazuh-validation.png`; repository file presence was independently verified, but screenshot pixels were not inspected.
+
+[Validation V-119–V-123](validation.md#project-05--post-recovery-attack-detection-validation-2026-10-22).
