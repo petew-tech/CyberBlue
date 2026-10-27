@@ -1,5 +1,7 @@
 # Module 07 — Network Forensics & Session Investigation
 
+![CyberBlue Module 07 — Network Forensics & Session Investigation banner](evidence/module07-network-forensics-banner.png)
+
 ## Overview
 
 This module investigates controlled SSH, TCP reconnaissance, and HTTP sessions in the CyberBlue lab using **tcpdump, TShark, Zeek 8.0.10, Suricata 7.0.3, and Wazuh**. It validates the path from captured packets to protocol metadata, recoverable HTTP content, custom IDS alerts, and centralized SIEM evidence. A deliberately incomplete copy of an HTTP capture demonstrates how missing packets change forensic conclusions.
@@ -18,7 +20,7 @@ This module investigates controlled SSH, TCP reconnaissance, and HTTP sessions i
 | Zeek | 8.0.10 **core-only**, installed on `siem-01`; offline PCAP analysis with `/opt/zeek/bin/zeek` |
 | Suricata | 7.0.3 on Linux Mint, AF_PACKET interfaces `ens4` and `ens5`; EVE at `/var/log/suricata/eve.json` |
 | Wazuh | Agent `cyberblue-suricata` (003); matching alerts under rule `86601`, level 3 |
-| Evidence | Five PCAP files on Kali; Zeek JSON logs on `siem-01`; 15 screenshots uploaded to the review branch (visual review pending) |
+| Evidence | Five PCAP files on Kali; Zeek JSON logs on `siem-01`; 15 evidence screenshots uploaded to this module (visual review pending) |
 
 ## Implementation Summary
 
