@@ -1,6 +1,6 @@
 # Module 07 — Screenshot Evidence Inventory
 
-The operator confirmed these **15 filenames** in the network-share folder ``\\192.168.1.70\h\BLUE SOC\Mod 07`` on October 26, 2026 (US Central). **All 15 PNG files are now uploaded to this GitHub review branch, and their filenames and file presence have been independently verified.** Individual screenshot readability and pixel contents have not yet been fully reviewed.
+The operator confirmed these **15 filenames** in the network-share folder `\\192.168.1.70\h\BLUE SOC\Mod 07` on October 26, 2026 (US Central). **All 15 PNG files are now uploaded to this GitHub review branch, and their filenames and file presence have been independently verified.** Individual screenshot readability and pixel contents have not yet been fully reviewed.
 
 | Evidence filename | Purpose |
 |---|---|
