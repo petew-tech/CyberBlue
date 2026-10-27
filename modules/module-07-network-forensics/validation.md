@@ -31,7 +31,7 @@
 | V-21 | Suricata reload and health | `suricata -T` PASS; reload OK; service active; 53,145 loaded, zero failed/skipped | PASS |
 | V-22 | Evidence inventory | Five PCAPs and extracted file rehashed; 15 screenshot filenames inventoried on operator network share | PASS — inventory |
 | V-23 | Continuous Zeek / bridge-wide capture | No safe persistent capture or traffic mirror established | OPEN / BLOCKED |
-| V-24 | GitHub screenshot upload | 15 operator-saved screenshots not yet verified in this module's repository folder | PENDING |
+| V-24 | GitHub screenshot upload | All 15 filenames verified as present in this module's `evidence/` directory; visual review remains pending | PASS — file presence |
 
 ## Key Evidence Values
 
