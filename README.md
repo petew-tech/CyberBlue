@@ -74,6 +74,7 @@ See the [approved target design and staged-migration safeguards](docs/architectu
 | [Module 05 — Centralized Logging & SIEM Foundations](modules/module-05-centralized-logging-siem/README.md) | Wazuh 4.14.8, Windows Sysmon alerting, Threat Hunting searches, and selected Windows 11 CIS hardening | **Complete — foundational SIEM deployment and Windows 11 telemetry validated** |
 | [Module 06 — Network Security Monitoring (Suricata & Wazuh)](modules/module-06-network-security-monitoring/README.md) | Suricata/Wazuh validation and Module 06 SOC/Victim/Attack guest network migration | **Sensor validated; all three guest migrations validated; full zone isolation OPEN** |
 | [Module 07 — Network Forensics & Session Investigation](modules/module-07-network-forensics/README.md) | Offline SSH/HTTP and TCP recon forensics, Suricata→Wazuh correlation, controlled packet-loss analysis | **Scoped tests PASS; 15 evidence screenshots uploaded; persistent Zeek and bridge-wide visibility OPEN** |
+| [Module 08 — Vulnerability Management](modules/module-08-vulnerability-management/README.md) | Planned Greenbone scanning of one authorized disposable target; baseline, validation, remediation and rescan lifecycle | **In Progress — preflight pending; no scans performed** |
 
 Additional projects will be added only as implementation and validation progress.
 
