@@ -23,6 +23,7 @@ Each module follows a structured learning process:
 | 04 — Endpoint Telemetry & Logging | [Module 04](module-04-endpoint-telemetry-logging/README.md) | Core exercises validated; one historical partial item and one absent evidence screenshot disclosed |
 | 05 — Centralized Logging & SIEM | [Module 05](module-05-centralized-logging-siem/README.md) | Foundational SIEM and Windows telemetry validated |
 | 06 — Network Security Monitoring | [Module 06](module-06-network-security-monitoring/README.md) | Scoped Suricata/Wazuh pipeline validated; persistent bridge-wide mirroring open |
+| 07 — Network Forensics & Session Investigation | [Module 07](module-07-network-forensics/README.md) | SSH, reconnaissance, HTTP recovery and packet-loss analysis validated; continuous Zeek monitoring open |
 
 These are evidence-based completion descriptions, not claims of comprehensive isolation or production hardening. Historical configurations remain in their original dated sections, while each module's README describes the latest verified layout.
 
