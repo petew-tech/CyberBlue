@@ -18,7 +18,7 @@ This module investigates controlled SSH, TCP reconnaissance, and HTTP sessions i
 | Zeek | 8.0.10 **core-only**, installed on `siem-01`; offline PCAP analysis with `/opt/zeek/bin/zeek` |
 | Suricata | 7.0.3 on Linux Mint, AF_PACKET interfaces `ens4` and `ens5`; EVE at `/var/log/suricata/eve.json` |
 | Wazuh | Agent `cyberblue-suricata` (003); matching alerts under rule `86601`, level 3 |
-| Evidence | Five PCAP files on Kali; Zeek JSON logs on `siem-01`; 15 operator-saved screenshots awaiting repository upload |
+| Evidence | Five PCAP files on Kali; Zeek JSON logs on `siem-01`; 15 screenshots uploaded to the review branch (visual review pending) |
 
 ## Implementation Summary
 
@@ -53,7 +53,7 @@ This module investigates controlled SSH, TCP reconnaissance, and HTTP sessions i
 - SID `1000003` detected repeated TCP SYN packets between specified lab IPs; it did **not** require distinct destination ports and did not block the scan. The EVE category string is not evidence of actual data exfiltration.
 - The removed HTTP packet represents **missing evidence**, not an HTTP service failure. Zeek's 1,757 missed TCP sequence bytes include sequence accounting; it does not mean 1,757 additional application bytes were transferred.
 - SID `1000003` was temporary. The original two local ICMP rules were restored; previously collected alerts remain available.
-- The 15 screenshot filenames were inventoried in the operator's network-share folder. They are **not yet asserted to exist in this GitHub module**; links should only be enabled after upload.
+- All 15 screenshot files have been uploaded to this module's `evidence/` directory and their filenames verified. Their visual content and readability still require final review.
 
 ## Related Documentation
 
